@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import team1 from "@/assets/team1.png";
-import team2 from "@/assets/team2.png";
-import team3 from "@/assets/team3.png";
-import team4 from "@/assets/team4.png";
-import team5 from "@/assets/team5.png";
-import team6 from "@/assets/team6.png";
+import team2 from "@/assets/null.png";
+import team3 from "@/assets/null.png";
+import team4 from "@/assets/null.png";
+import team5 from "@/assets/null.png";
+import team6 from "@/assets/null.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,23 +31,23 @@ type ChromaGridProps = {
 const TEAM: TeamMember[] = [
   {
     image: team1,
-    title: "Armaan Qureshi",
-    subtitle: "Founder & AI Architect",
+    title: "Ali Haider",
+    subtitle: "Founder & AI Engineer",
     borderColor: "#38BDF8",
     gradient: "linear-gradient(145deg, #38BDF8, #050B14)",
     url: "",
   },
   {
     image: team2,
-    title: "Sana Malik",
-    subtitle: "Lead ML Engineer",
+    title: "Irfan Ul Haq",
+    subtitle: "UI/UX Designer",
     borderColor: "#0EA5E9",
     gradient: "linear-gradient(210deg, #0EA5E9, #050B14)",
     url: "",
   },
   {
     image: team3,
-    title: "Daniyal Sheikh",
+    title: "Muhammad Faizan",
     subtitle: "Automation Engineer",
     borderColor: "#22D3EE",
     gradient: "linear-gradient(165deg, #22D3EE, #050B14)",
@@ -55,7 +55,7 @@ const TEAM: TeamMember[] = [
   },
   {
     image: team4,
-    title: "Hira Baig",
+    title: "Saad Arif",
     subtitle: "Product Designer",
     borderColor: "#60A5FA",
     gradient: "linear-gradient(195deg, #60A5FA, #050B14)",
@@ -63,7 +63,7 @@ const TEAM: TeamMember[] = [
   },
   {
     image: team5,
-    title: "Usman Raza",
+    title: "Laraib",
     subtitle: "Full-Stack Developer",
     borderColor: "#2563EB",
     gradient: "linear-gradient(225deg, #2563EB, #050B14)",
@@ -71,7 +71,7 @@ const TEAM: TeamMember[] = [
   },
   {
     image: team6,
-    title: "Meerab Khan",
+    title: "Taha Madni",
     subtitle: "Data Scientist",
     borderColor: "#0891B2",
     gradient: "linear-gradient(135deg, #0891B2, #050B14)",
