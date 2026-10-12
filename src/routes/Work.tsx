@@ -11,7 +11,7 @@ import workDev from "@/assets/work-dev.jpg";
 import workSaas from "@/assets/work-saas.jpg";
 import workData from "@/assets/work-data.jpg";
 
-export const Route = createFileRoute("/Work")({
+export const Route = createFileRoute("/work")({
   head: () => ({
     meta: [
       { title: "Our Work — Tech Agenz" },
