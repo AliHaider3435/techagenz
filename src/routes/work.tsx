@@ -7,15 +7,15 @@ import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import workDev from "@/assets/work-dev.jpg";
-import workSaas from "@/assets/work-saas.jpg";
-import workData from "@/assets/work-data.jpg";
+import garwanLawChamber from "@/assets/garwan-law-chamber.jpg";
+import drIqbalKharal from "@/assets/dr-iqbal-kharal.jpg";
+import drSajidSohail from "@/assets/dr-sajid-sohail.jpg";
 
 export const Route = createFileRoute("/work")({
   head: () => ({
     meta: [
       { title: "Our Work — Tech Agenz" },
-      { name: "description", content: "Explore the AI, automation, web, and data platforms Tech Agenz has engineered for clients worldwide." },
+      { name: "description", content: "Explore the AI, automation, web, and healthcare platforms Tech Agenz has engineered for clients worldwide." },
     ],
   }),
   component: WorkPage,
@@ -23,56 +23,32 @@ export const Route = createFileRoute("/work")({
 
 const projects = [
   {
-    img: workSaas,
-    tag: "SaaS Platform",
-    title: "Adaptive Analytics Dashboard",
-    desc: "AI-assisted analytics platform with predictive insights and automated reporting.",
-    details: "Built a full-stack analytics suite that ingests client data streams in real time, applies predictive models to surface trends before they happen, and auto-generates weekly stakeholder reports, cutting manual reporting time by 70%.",
-    stack: ["React", "Python", "PostgreSQL", "LLM Fine-tuning"],
+    img: garwanLawChamber,
+    tag: "Legal Tech",
+    title: "Garwan Law Chamber",
+    desc: "Comprehensive legal practice portal with client consultations, attorney profiles, and appointment management.",
+    details: "Designed and engineered an authoritative digital platform for Garwan Law Chamber. Features include online consultation scheduling, client case intake workflows, practice area directories, and secure document sharing.",
+    stack: ["React", "TypeScript", "Tailwind CSS", "Next.js"],
   },
   {
-    img: workDev,
-    tag: "AI Agent",
-    title: "Autonomous Support Agent",
-    desc: "LLM-powered support automation handling 60% of tickets end-to-end.",
-    details: "Designed and deployed a RAG-based support agent trained on the client's knowledge base, integrated with their existing helpdesk. Handles common queries autonomously and escalates edge cases with full context to human agents.",
-    stack: ["RAG Pipeline", "Node.js", "Vector DB", "Zendesk API"],
+    img: drIqbalKharal,
+    tag: "Booking Systems",
+    title: "Dr Iqbal Ahmad Kharal Appointment Booking System",
+    desc: "Clinical appointment scheduling platform with patient queue management and real-time consultation tracking.",
+    details: "Built an end-to-end appointment scheduling and clinic operations system for Dr. Iqbal Ahmad Kharal. Features patient time-slot reservation, queue status tracking, doctor schedule controls, and automated SMS/WhatsApp alerts.",
+    stack: ["React", "Node.js", "PostgreSQL", "Calendar API"],
   },
   {
-    img: workData,
-    tag: "Data Solutions",
-    title: "Realtime Trading Insights",
-    desc: "Streaming pipeline surfacing signals across markets in under 200ms.",
-    details: "Engineered a low-latency streaming data pipeline processing market feeds across multiple exchanges, with anomaly detection and signal surfacing delivered to traders in under 200ms end-to-end.",
-    stack: ["Kafka", "Go", "TimescaleDB", "WebSockets"],
-  },
-  {
-    img: workDev,
-    tag: "Web Development",
-    title: "Enterprise Booking Platform",
-    desc: "High-throughput booking system built for a multi-location hospitality client.",
-    details: "Delivered a custom booking and reservations platform handling thousands of concurrent bookings across multiple locations, with real-time availability sync and integrated payments.",
-    stack: ["Next.js", "TypeScript", "Stripe", "Redis"],
-  },
-  {
-    img: workSaas,
-    tag: "Automation",
-    title: "Workflow Orchestration Suite",
-    desc: "Replaced manual ops workflows with autonomous agent-driven pipelines.",
-    details: "Automated a client's internal operations workflow, document processing, approvals, and notifications, using orchestrated AI agents, reducing manual ops overhead by half.",
-    stack: ["LangGraph", "Python", "AWS Lambda", "PostgreSQL"],
-  },
-  {
-    img: workData,
-    tag: "Data Solutions",
-    title: "Customer Intelligence Warehouse",
-    desc: "Unified data warehouse turning fragmented customer data into actionable segments.",
-    details: "Consolidated data from 6+ disparate sources into a single warehouse, built segmentation models, and shipped a self-serve dashboard for the client's marketing team.",
-    stack: ["dbt", "Snowflake", "Airflow", "Looker"],
+    img: drSajidSohail,
+    tag: "Healthcare",
+    title: "Dr Sajid Sohail Appointment Booking System",
+    desc: "Doctor consultation booking and patient scheduling workflow system with calendar slot reservations.",
+    details: "Developed a responsive patient appointment portal for Dr. Sajid Sohail. Includes real-time consultation slot selection, patient intake questionnaires, instant booking confirmations, and physician dashboard management.",
+    stack: ["React", "TypeScript", "Tailwind CSS", "REST API"],
   },
 ];
 
-const categories = ["All", "SaaS Platform", "AI Agent", "Data Solutions", "Web Development", "Automation"];
+const categories = ["All", "Legal Tech", "Booking Systems", "Healthcare"];
 
 function ProjectCard({ p, index }: { p: (typeof projects)[number]; index: number }) {
   return (

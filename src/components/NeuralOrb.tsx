@@ -28,7 +28,7 @@ const LINE_COLOR = "rgba(56, 130, 246, OPACITY)";
 
 export function NeuralOrb({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;

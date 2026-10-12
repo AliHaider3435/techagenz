@@ -23,6 +23,9 @@ import secureAi from "@/assets/secure-ai.jpg";
 import workDev from "@/assets/work-dev.jpg";
 import workSaas from "@/assets/work-saas.jpg";
 import workData from "@/assets/work-data.jpg";
+import garwanLawChamber from "@/assets/garwan-law-chamber.jpg";
+import drIqbalKharal from "@/assets/dr-iqbal-kharal.jpg";
+import drSajidSohail from "@/assets/dr-sajid-sohail.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -206,7 +209,7 @@ function AIVision() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasPlayedRef = useRef(false);
-  const unlockTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const unlockTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const progress = useMotionValue(0);
   const isInView = useInView(sectionRef, { amount: 0.6 });
@@ -547,9 +550,24 @@ export { About, StatCard };
 
 function Work() {
   const projects = [
-    { img: workSaas, tag: "SaaS Platform", title: "Adaptive Analytics Dashboard", desc: "AI-assisted analytics platform with predictive insights and automated reporting." },
-    { img: workDev, tag: "AI Agent", title: "Autonomous Support Agent", desc: "LLM-powered support automation handling 60% of tickets end-to-end." },
-    { img: workData, tag: "Data Solutions", title: "Realtime Trading Insights", desc: "Streaming pipeline surfacing signals across markets in under 200ms." },
+    {
+      img: garwanLawChamber,
+      tag: "Legal Tech",
+      title: "Garwan Law Chamber",
+      desc: "Full-scale digital legal practice portal with client consultations, attorney profiles, and appointment bookings.",
+    },
+    {
+      img: drIqbalKharal,
+      tag: "Booking System",
+      title: "Dr Iqbal Ahmad Kharal Appointment Booking System",
+      desc: "Clinical appointment scheduling platform with patient queue management and real-time consultation tracking.",
+    },
+    {
+      img: drSajidSohail,
+      tag: "Healthcare",
+      title: "Dr Sajid Sohail Appointment Booking System",
+      desc: "Doctor consultation booking and patient scheduling workflow system with calendar slot reservations.",
+    },
   ];
   return (
     <section id="work" className="relative py-20">
@@ -656,7 +674,7 @@ function Testimonials() {
                 <a href="mailto:info@techagenz.com" className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]">
                   Start a project <ArrowUpRight className="h-4 w-4" />
                 </a>
-                <a href="tel:+923197484843" className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card">
+                <a href="tel:03394555004" className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card">
                   Schedule a call
                 </a>
               </div>
