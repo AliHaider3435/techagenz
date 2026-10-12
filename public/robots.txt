@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+# Sitemaps
 Sitemap: https://www.techagenz.com/sitemap.xml
+Sitemap: https://www.techagenz.com/sitemaps.xml
