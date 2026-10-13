@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     "unknown";
 
   if (isRateLimited(clientIp)) {
-    return res.status(429).json({ error: "Too many enquiries. Please try again in a few minutes." });
+    return res.status(429).json({ error: "Too many enquiries. Please try again in a few minutes or email info@techagenz.com directly." });
   }
 
   const parseResult = enquirySchema.safeParse(req.body);
@@ -67,63 +67,91 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const cleanMessage = escapeHtml(message);
 
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn("[send-enquiry] RESEND_API_KEY environment variable is not configured.");
-    return res.status(200).json({
-      success: true,
-      notice: "Enquiry received (Resend API key pending configuration in Vercel)",
+  if (!apiKey || apiKey.includes("your_actual_key")) {
+    console.error("[send-enquiry] RESEND_API_KEY is not configured in Vercel.");
+    return res.status(503).json({
+      error: "RESEND_API_KEY is not yet configured in Vercel. Please add RESEND_API_KEY in Vercel project environment variables, or email info@techagenz.com directly.",
     });
   }
 
   const resend = new Resend(apiKey);
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "Tech Agenz Website <noreply@techagenz.com>";
 
   try {
-    await resend.emails.send({
-      from: "Tech Agenz Website <noreply@techagenz.com>",
-      to: "info@techagenz.com",
-      replyTo: email,
-      subject: `New enquiry from ${name} (${company || "Individual"})`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
-          <h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">New Client Enquiry</h2>
-          <p><strong>Name:</strong> ${cleanName}</p>
-          <p><strong>Email:</strong> <a href="mailto:${cleanEmail}">${cleanEmail}</a></p>
-          <p><strong>Company:</strong> ${cleanCompany || "Not specified"}</p>
-          <p><strong>Message:</strong></p>
-          <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 16px; border-radius: 4px;">
-            ${cleanMessage.replace(/\n/g, "<br />")}
+    try {
+      await resend.emails.send({
+        from: fromEmail,
+        to: "info@techagenz.com",
+        replyTo: email,
+        subject: `New enquiry from ${cleanName} (${cleanCompany || "Individual"})`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
+            <h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">New Client Enquiry</h2>
+            <p><strong>Sender Name:</strong> ${cleanName}</p>
+            <p><strong>Sender Email:</strong> <a href="mailto:${cleanEmail}">${cleanEmail}</a></p>
+            <p><strong>Company:</strong> ${cleanCompany || "Not specified"}</p>
+            <p><strong>Project Details:</strong></p>
+            <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 16px; border-radius: 4px;">
+              ${cleanMessage.replace(/\n/g, "<br />")}
+            </div>
+            <p style="margin-top: 16px; font-size: 13px; color: #64748b;">
+              💡 <em>You can reply directly to this email to respond to ${cleanName} (${cleanEmail}).</em>
+            </p>
           </div>
-          <p style="font-size: 12px; color: #94a3b8; margin-top: 24px;">Submitted via Tech Agenz Website Contact Form.</p>
-        </div>
-      `,
-    });
+        `,
+      });
+    } catch (primarySendErr: any) {
+      if (primarySendErr?.message?.includes("domain") || primarySendErr?.statusCode === 403) {
+        await resend.emails.send({
+          from: "Tech Agenz <onboarding@resend.dev>",
+          to: "info@techagenz.com",
+          replyTo: email,
+          subject: `New enquiry from ${cleanName} (${cleanCompany || "Individual"})`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
+              <h2 style="color: #0284c7;">New Client Enquiry</h2>
+              <p><strong>Sender Name:</strong> ${cleanName}</p>
+              <p><strong>Sender Email:</strong> <a href="mailto:${cleanEmail}">${cleanEmail}</a></p>
+              <p><strong>Company:</strong> ${cleanCompany || "Not specified"}</p>
+              <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 16px; margin: 12px 0;">
+                ${cleanMessage.replace(/\n/g, "<br />")}
+              </div>
+            </div>
+          `,
+        });
+      } else {
+        throw primarySendErr;
+      }
+    }
 
     try {
       await resend.emails.send({
-        from: "Tech Agenz <noreply@techagenz.com>",
+        from: fromEmail,
         to: email,
-        subject: "We received your enquiry — Tech Agenz",
+        replyTo: "info@techagenz.com",
+        subject: "Confirmation: We received your enquiry — Tech Agenz",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b; line-height: 1.6;">
             <h2 style="color: #0284c7;">Thank you for contacting Tech Agenz</h2>
             <p>Hi ${cleanName},</p>
             <p>We've received your enquiry and our engineering team will get back to you shortly within 24 hours.</p>
             <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 12px 16px; border-radius: 4px; margin: 16px 0;">
-              <p style="margin: 0;"><strong>Your message:</strong></p>
+              <p style="margin: 0;"><strong>Summary of your enquiry:</strong></p>
               <p style="margin-top: 6px;">${cleanMessage.replace(/\n/g, "<br />")}</p>
             </div>
-            <p>In the meantime, feel free to explore our work at <a href="https://www.techagenz.com/work">techagenz.com/work</a> or chat directly with us on WhatsApp.</p>
-            <p style="margin-top: 24px; color: #64748b; font-size: 13px;">Warm regards,<br /><strong>Tech Agenz Team</strong><br /><a href="https://www.techagenz.com">www.techagenz.com</a></p>
+            <p>Warm regards,<br /><strong>Tech Agenz Team</strong><br /><a href="https://www.techagenz.com">www.techagenz.com</a></p>
           </div>
         `,
       });
-    } catch (autoReplyErr) {
-      console.warn("[send-enquiry] Auto-reply warning:", autoReplyErr);
+    } catch {
+      // ignore
     }
 
     return res.status(200).json({ success: true });
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.error("[send-enquiry] Resend error:", err);
-    return res.status(500).json({ error: "Failed to send email. Please reach out to info@techagenz.com directly." });
+    return res.status(500).json({
+      error: err?.message || "Failed to deliver email through Resend.",
+    });
   }
 }
