@@ -23,9 +23,9 @@ import secureAi from "@/assets/secure-ai.jpg";
 import workDev from "@/assets/work-dev.jpg";
 import workSaas from "@/assets/work-saas.jpg";
 import workData from "@/assets/work-data.jpg";
-import garwanLawChamber from "@/assets/garwan-law-chamber.jpg";
-import drIqbalKharal from "@/assets/dr-iqbal-kharal.jpg";
-import drSajidSohail from "@/assets/dr-sajid-sohail.jpg";
+import garwanLawChamber from "@/assets/garwan-law-chamber.webp";
+import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
+import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -442,7 +442,7 @@ function About() {
 function Impact() {
   const stats = [
     {
-      value: "20+",
+      value: "50+",
       label: "Projects Delivered",
       desc: "Custom AI systems, production web apps, and automation platforms shipped for ambitious teams.",
     },
@@ -459,7 +459,7 @@ function Impact() {
   ];
 
   return (
-    <section id="about" className="relative py-20">
+    <section id="impact" className="relative py-20">
       <div className="mx-auto max-w-7xl px-6">
         <div className="relative overflow-hidden rounded-[2.5rem] border border-border/60 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900 px-8 py-16 sm:px-14 sm:py-20">
           <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-brand/20 blur-[100px]" />
@@ -590,7 +590,9 @@ function Work() {
               <div className="p-6">
                 <h3 className="font-display text-lg font-semibold">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-                <div className="mt-4 inline-flex items-center gap-1 text-sm text-brand">Case study <ArrowUpRight className="h-4 w-4" /></div>
+                <a href="/work" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
+                  View case study <ArrowUpRight className="h-4 w-4" />
+                </a>
               </div>
             </div>
           ))}
@@ -625,8 +627,10 @@ function Testimonials() {
     email: "",
     company: "",
     message: "",
+    _gotcha: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -636,6 +640,7 @@ function Testimonials() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMessage("");
 
     try {
       const res = await fetch("/api/send-enquiry", {
@@ -644,14 +649,18 @@ function Testimonials() {
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json().catch(() => null);
+
       if (res.ok) {
         setStatus("sent");
-        setFormData({ name: "", email: "", company: "", message: "" });
+        setFormData({ name: "", email: "", company: "", message: "", _gotcha: "" });
       } else {
         setStatus("error");
+        setErrorMessage(data?.error || "Something went wrong — please try again or email info@techagenz.com.");
       }
     } catch {
       setStatus("error");
+      setErrorMessage("Network error — please check your connection or contact info@techagenz.com directly.");
     }
   };
 
@@ -682,6 +691,18 @@ function Testimonials() {
 
             <div className="space-y-4">
               <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 sm:p-5">
+                {/* Honeypot field for bot protection */}
+                <input
+                  type="text"
+                  name="_gotcha"
+                  value={formData._gotcha}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  style={{ display: "none" }}
+                />
+
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="text-sm text-muted-foreground">
                     <span className="mb-1 block">Name</span>
@@ -738,10 +759,14 @@ function Testimonials() {
                 </button>
 
                 {status === "sent" && (
-                  <p className="text-sm text-emerald-500">Thanks — your message has been sent.</p>
+                  <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
+                    ✓ Thanks — your message has been sent. We'll get back to you within 24 hours.
+                  </p>
                 )}
                 {status === "error" && (
-                  <p className="text-sm text-red-500">Something went wrong — please try again or email us directly.</p>
+                  <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                    ✕ {errorMessage || "Something went wrong — please try again or email info@techagenz.com directly."}
+                  </p>
                 )}
               </form>
             </div>

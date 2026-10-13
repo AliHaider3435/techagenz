@@ -11,20 +11,30 @@ function Nav() {
         </Link>
         <nav className="hidden items-center gap-1 text-sm text-muted-foreground md:flex">
           {[
-            ["Home", "/"],
-            ["Services", "/#services"],
-            ["About", "/#about"],
-            ["Work", "/work"],
-            ["Contact", "/#contact"],
-          ].map(([label, href]) => (
-            <a
-              key={label}
-              href={href}
-              className="rounded-full px-4 py-1.5 transition-colors hover:bg-brand/10 hover:text-foreground"
-            >
-              [ {label} ]
-            </a>
-          ))}
+            { label: "Home", to: "/" },
+            { label: "Services", href: "/#services" },
+            { label: "About", href: "/#about" },
+            { label: "Work", to: "/work" },
+            { label: "Contact", href: "/#contact" },
+          ].map((item) =>
+            item.to ? (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="rounded-full px-4 py-1.5 transition-colors hover:bg-brand/10 hover:text-foreground [&.active]:text-brand [&.active]:font-medium"
+              >
+                [ {item.label} ]
+              </Link>
+            ) : (
+              <a
+                key={item.label}
+                href={item.href}
+                className="rounded-full px-4 py-1.5 transition-colors hover:bg-brand/10 hover:text-foreground"
+              >
+                [ {item.label} ]
+              </a>
+            ),
+          )}
         </nav>
         <BouncyButton
           href="/#contact"

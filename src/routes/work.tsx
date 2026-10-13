@@ -7,9 +7,9 @@ import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import garwanLawChamber from "@/assets/garwan-law-chamber.jpg";
-import drIqbalKharal from "@/assets/dr-iqbal-kharal.jpg";
-import drSajidSohail from "@/assets/dr-sajid-sohail.jpg";
+import garwanLawChamber from "@/assets/garwan-law-chamber.webp";
+import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
+import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
 
 export const Route = createFileRoute("/work")({
   head: () => ({
@@ -107,12 +107,12 @@ function ProjectCard({ p, index }: { p: (typeof projects)[number]; index: number
             ))}
           </div>
 
-          <div className="mt-5 inline-flex items-center gap-1 text-sm text-brand">
-            Learn more
+          <a href="/#contact" className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
+            Inquire about this project
             <motion.span className="inline-flex" initial={{ x: 0 }} whileHover={{ x: 4 }}>
               <ArrowUpRight className="h-4 w-4" />
             </motion.span>
-          </div>
+          </a>
         </div>
       </div>
     </motion.div>

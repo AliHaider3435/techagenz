@@ -23,7 +23,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
           >
             Go home
           </Link>
@@ -37,29 +37,55 @@ function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    // Local error logging — swap this for Sentry, LogRocket, etc. if/when you add one.
     console.error("[root error boundary]", error);
   }, [error]);
 
   return (
-    <div className="mt-6 flex flex-wrap justify-center gap-2">
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 py-20 text-center">
+      <div className="mx-auto max-w-md rounded-3xl border border-border/60 bg-card/60 p-8 shadow-xl backdrop-blur-xl">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 text-red-500 ring-1 ring-red-500/20">
+          <span className="text-2xl">!</span>
+        </div>
+        <h2 className="font-display text-2xl font-bold text-foreground">Something went wrong</h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {error?.message || "An unexpected error occurred while loading this view. Please try again or return home."}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
           >
             Try again
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+          <a
+            href="/"
+            className="inline-flex items-center justify-center rounded-full border border-border bg-background/80 px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-card"
+          >
             Go home
           </a>
         </div>
-      
-
+      </div>
+    </div>
   );
 }
+
+const organizationSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Tech Agenz",
+  url: "https://www.techagenz.com",
+  logo: "https://www.techagenz.com/assets/logo.png",
+  description:
+    "AI-powered software house engineering intelligent solutions, automation pipelines, and modern web platforms.",
+  telephone: "+923394555004",
+  sameAs: [
+    "https://www.linkedin.com/in/haider5617/",
+    "https://github.com/AliHaider3435",
+  ],
+});
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -67,14 +93,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Tech Agenz — AI-Powered Software House" },
-      { name: "description", content: "Tech Agenz builds intelligent AI, automation, and web solutions that scale. 50+ projects delivered across 7+ countries." },
+      {
+        name: "description",
+        content:
+          "Tech Agenz builds intelligent AI, automation, and web solutions that scale. 50+ projects delivered across 7+ countries.",
+      },
       { name: "author", content: "Tech Agenz" },
+      { property: "og:site_name", content: "Tech Agenz" },
       { property: "og:title", content: "Tech Agenz — AI-Powered Software House" },
-      { property: "og:description", content: "Intelligent AI, automation, and web solutions built for the future." },
+      {
+        property: "og:description",
+        content:
+          "Intelligent AI, automation, and web solutions built for ambitious teams. 50+ projects delivered worldwide.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.techagenz.com/" },
+      { property: "og:image", content: "https://www.techagenz.com/assets/logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House" },
+      {
+        name: "twitter:description",
+        content:
+          "Intelligent AI, automation, and web solutions built for ambitious teams. 50+ projects delivered worldwide.",
+      },
+      { name: "twitter:image", content: "https://www.techagenz.com/assets/logo.png" },
     ],
     links: [
+      { rel: "canonical", href: "https://www.techagenz.com/" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -82,7 +127,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -96,6 +144,10 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: organizationSchema }}
+        />
       </head>
       <body>
         {children}
@@ -110,7 +162,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );

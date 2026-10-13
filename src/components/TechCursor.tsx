@@ -7,7 +7,9 @@ export function TechCursor() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isCoarse || prefersReducedMotion) return;
 
     let mouseX = 0, mouseY = 0;
     let ringX = 0, ringY = 0;

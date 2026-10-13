@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import team1 from "@/assets/team1.png";
-import team2 from "@/assets/null.png";
-import team3 from "@/assets/null.png";
-import team4 from "@/assets/null.png";
-import team5 from "@/assets/null.png";
-import team6 from "@/assets/null.png";
+import team1 from "@/assets/team1.webp";
+import team2 from "@/assets/team2.webp";
+import team3 from "@/assets/team3.webp";
+import team4 from "@/assets/team4.webp";
+import team5 from "@/assets/team5.webp";
+import team6 from "@/assets/team6.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 

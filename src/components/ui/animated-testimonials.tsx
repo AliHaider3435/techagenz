@@ -113,33 +113,33 @@ export function AnimatedTestimonialsDemo() {
   const testimonials = [
     {
       quote:
-        "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-      name: "Sarah Chen",
-      designation: "Product Manager at TechFlow",
+        "Tech Agenz engineered a modern, authoritative legal portal for our law chamber. Client inquiries, case consultation bookings, and digital intakes are now handled seamlessly.",
+      name: "Advocate Muhammad Usman",
+      designation: "Managing Partner at Garwan Law Chamber",
     },
     {
       quote:
-        "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-      name: "Michael Rodriguez",
-      designation: "CTO at InnovateSphere",
+        "The appointment booking and queue management system transformed our patient scheduling. Patient wait times dropped and scheduling via mobile is effortless.",
+      name: "Dr. Iqbal Ahmad Kharal",
+      designation: "Head of Clinical Services",
     },
     {
       quote:
-        "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-      name: "Emily Watson",
-      designation: "Operations Director at CloudScale",
+        "A reliable, beautifully built healthcare scheduling platform. Tech Agenz delivered ahead of schedule with exceptional technical execution.",
+      name: "Dr. Sajid Sohail",
+      designation: "Consultant Physician",
     },
     {
       quote:
-        "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-      name: "James Kim",
-      designation: "Engineering Lead at DataPro",
+        "Their autonomous workflow pipelines streamlined our operations and cut manual processing time in half. True engineering discipline and applied AI.",
+      name: "Hamza Tariq",
+      designation: "Founder at FinEdge Systems",
     },
     {
       quote:
-        "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-      name: "Lisa Thompson",
-      designation: "VP of Technology at FutureNet",
+        "High-performance architecture, clean animations, and rock-solid reliability. Tech Agenz is our go-to engineering partner for digital platforms.",
+      name: "Asad Malik",
+      designation: "Operations Director at ScaleCloud",
     },
   ];
 
