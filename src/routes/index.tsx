@@ -639,9 +639,17 @@ function Testimonials() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formData._gotcha) {
+      setStatus("sent");
+      return;
+    }
+
     setStatus("sending");
     setErrorMessage("");
 
+    let success = false;
+
+    // 1. Primary: Send through server endpoint
     try {
       const res = await fetch("/api/send-enquiry", {
         method: "POST",
@@ -649,18 +657,46 @@ function Testimonials() {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json().catch(() => null);
-
       if (res.ok) {
-        setStatus("sent");
-        setFormData({ name: "", email: "", company: "", message: "", _gotcha: "" });
-      } else {
-        setStatus("error");
-        setErrorMessage(data?.error || "Something went wrong — please try again or email info@techagenz.com.");
+        success = true;
       }
     } catch {
+      // Endpoint unreachable, continue to fallback
+    }
+
+    // 2. Direct client fallback: FormSubmit directly to info@techagenz.com
+    if (!success) {
+      try {
+        const fallbackRes = await fetch("https://formsubmit.co/ajax/info@techagenz.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            company: formData.company || "Not specified",
+            message: formData.message,
+            _subject: `New Enquiry from ${formData.name}`,
+            _replyto: formData.email,
+          }),
+        });
+
+        if (fallbackRes.ok) {
+          success = true;
+        }
+      } catch {
+        // Fallback failed
+      }
+    }
+
+    if (success) {
+      setStatus("sent");
+      setFormData({ name: "", email: "", company: "", message: "", _gotcha: "" });
+    } else {
       setStatus("error");
-      setErrorMessage("Network error — please check your connection or contact info@techagenz.com directly.");
+      setErrorMessage("Something went wrong — please try again or email info@techagenz.com directly.");
     }
   };
 
@@ -750,28 +786,14 @@ function Testimonials() {
                     placeholder="Tell us about your idea, timeline, or goals..."
                   />
                 </label>
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="pt-1">
                   <button
                     type="submit"
                     disabled={status === "sending"}
-                    className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
+                    className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                   >
                     {status === "sending" ? "Sending..." : "Send enquiry"} <ArrowUpRight className="h-4 w-4" />
                   </button>
-
-                  <a
-                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=info@techagenz.com&su=${encodeURIComponent(
-                      formData.name ? `Project Enquiry from ${formData.name}` : "Project Enquiry"
-                    )}&body=${encodeURIComponent(
-                      `Hi Tech Agenz,\n\nName: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\n\nProject details:\n${formData.message}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/60 px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
-                    title="Send directly from your personal Gmail so it appears in your Sent folder"
-                  >
-                    Send via Gmail <ArrowUpRight className="h-3 w-3" />
-                  </a>
                 </div>
 
                 {status === "sent" && (
