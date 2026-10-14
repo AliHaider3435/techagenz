@@ -38,7 +38,6 @@ function ContactPage() {
     email: "",
     company: "",
     message: "",
-    _gotcha: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -50,11 +49,6 @@ function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formData._gotcha) {
-      setStatus("sent");
-      return;
-    }
-
     setStatus("sending");
     setErrorMessage("");
 
@@ -104,7 +98,7 @@ function ContactPage() {
 
     if (success) {
       setStatus("sent");
-      setFormData({ name: "", email: "", company: "", message: "", _gotcha: "" });
+      setFormData({ name: "", email: "", company: "", message: "" });
     } else {
       setStatus("error");
       setErrorMessage("Something went wrong — please try again or email info@techagenz.com directly.");
@@ -253,17 +247,6 @@ function ContactPage() {
                     Fill in your project details below and we'll reply directly to your email inbox.
                   </p>
 
-                  {/* Honeypot field for bot protection */}
-                  <input
-                    type="text"
-                    name="_gotcha"
-                    value={formData._gotcha}
-                    onChange={handleChange}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                    style={{ display: "none" }}
-                  />
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="text-sm text-muted-foreground">

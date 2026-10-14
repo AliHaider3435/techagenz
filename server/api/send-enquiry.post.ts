@@ -3,11 +3,10 @@ import { Resend } from "resend";
 import { z } from "zod";
 
 const enquirySchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+  name: z.string().trim().min(1, "Name is required").max(100),
   email: z.string().trim().email("Invalid email address"),
   company: z.string().trim().max(100).optional().default(""),
-  message: z.string().trim().min(5, "Message must be at least 5 characters").max(3000),
-  _gotcha: z.string().optional().default(""),
+  message: z.string().trim().min(1, "Message is required").max(3000),
 });
 
 function escapeHtml(str: string): string {
@@ -47,10 +46,7 @@ export default defineEventHandler(async (event) => {
     return { error: parseResult.error.errors[0]?.message || "Invalid input data" };
   }
 
-  const { name, email, company, message, _gotcha } = parseResult.data;
-  if (_gotcha && _gotcha.trim().length > 0) {
-    return { success: true };
-  }
+  const { name, email, company, message } = parseResult.data;
 
   const cleanName = escapeHtml(name);
   const cleanEmail = escapeHtml(email);
@@ -59,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
   const apiKey = process.env.RESEND_API_KEY;
 
-  if (apiKey && !apiKey.includes("your_actual_key")) {
+  if (apiKey && !apiKey.includes("your_actual_key") && !apiKey.includes("re_ci_build_key")) {
     try {
       const resend = new Resend(apiKey);
       const fromEmail = process.env.RESEND_FROM_EMAIL || "Tech Agenz <onboarding@resend.dev>";
@@ -93,8 +89,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    await sendViaFormSubmit({ name, email, company, message });
-    return { success: true };
+    const fsRes = await sendViaFormSubmit({ name, email, company, message });
+    if (fsRes.ok) {
+      return { success: true };
+    } else {
+      const fsData = await fsRes.json().catch(() => ({}));
+      console.error("[send-enquiry] FormSubmit rejected submission:", fsData);
+      return { error: "Form delivery service rejected the request. Please email info@techagenz.com directly." };
+    }
   } catch (err: any) {
     console.error("[send-enquiry] Delivery failed:", err);
     return { error: "Unable to deliver enquiry. Please contact info@techagenz.com directly." };

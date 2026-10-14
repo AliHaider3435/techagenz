@@ -727,7 +727,6 @@ function BlogsTeaser() {
     email: "",
     company: "",
     message: "",
-    _gotcha: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -739,11 +738,6 @@ function BlogsTeaser() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (formData._gotcha) {
-      setStatus("sent");
-      return;
-    }
-
     setStatus("sending");
     setErrorMessage("");
 
@@ -793,7 +787,7 @@ function BlogsTeaser() {
 
     if (success) {
       setStatus("sent");
-      setFormData({ name: "", email: "", company: "", message: "", _gotcha: "" });
+      setFormData({ name: "", email: "", company: "", message: "" });
     } else {
       setStatus("error");
       setErrorMessage("Something went wrong — please try again or email info@techagenz.com directly.");
@@ -827,17 +821,6 @@ function BlogsTeaser() {
 
             <div className="space-y-4">
               <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 sm:p-5">
-                {/* Honeypot field for bot protection */}
-                <input
-                  type="text"
-                  name="_gotcha"
-                  value={formData._gotcha}
-                  onChange={handleChange}
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                  style={{ display: "none" }}
-                />
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="text-sm text-muted-foreground">
