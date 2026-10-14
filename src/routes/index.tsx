@@ -585,7 +585,7 @@ function Work() {
       img: drSajidSohail,
       tag: "Healthcare",
       title: "Dr Sajid Sohail Appointment Booking System",
-      desc: "Doctor consultation booking and patient scheduling workflow system with calendar slot reservations.",
+      desc: "Clinical appointment booking and patient consultation workflow system for Rahmania Medical Center.",
     },
   ];
   return (

@@ -42,8 +42,8 @@ const projects = [
     img: drSajidSohail,
     tag: "Healthcare",
     title: "Dr Sajid Sohail Appointment Booking System",
-    desc: "Doctor consultation booking and patient scheduling workflow system with calendar slot reservations.",
-    details: "Developed a responsive patient appointment portal for Dr. Sajid Sohail. Includes real-time consultation slot selection, patient intake questionnaires, instant booking confirmations, and physician dashboard management.",
+    desc: "Clinical appointment booking and patient consultation workflow system for Rahmania Medical Center.",
+    details: "Developed a modern, responsive patient appointment scheduling platform for Dr. Sajid Sohail at Rahmania Medical Center. Features real-time consultation slot reservations, daily 15-minute time-slot selection, patient intake questionnaires, and automated clinic confirmations.",
     stack: ["React", "TypeScript", "Tailwind CSS", "REST API"],
   },
 ];
