@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { NeuralOrb } from "@/components/NeuralOrb";
@@ -66,6 +66,9 @@ function Index() {
       </RevealSection>
       <RevealSection>
         <Testimonials />
+      </RevealSection>
+      <RevealSection>
+        <BlogsTeaser />
       </RevealSection>
       <RevealSection>
         <CTA />
@@ -145,12 +148,12 @@ function Hero() {
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="#contact"
+            <Link
+              to="/contact"
               className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
             >
               Start a project
-            </a>
+            </Link>
             <div className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2.5 text-xs text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-brand" />
               50+ projects shipped
@@ -387,14 +390,22 @@ function Services() {
                 <div className="p-5">
                   <div className="font-display text-[11px] uppercase tracking-widest text-brand">{tag}</div>
                   <h3 className="font-cyber mt-1 text-base font-bold">{title}</h3>
-                  <p className="font-display mt-2 text-xs leading-relaxed text-muted-foreground">{desc}</p>
-                  <div className="font-display mt-3 inline-flex items-center gap-1 text-xs text-brand opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <Link to="/services" className="font-display mt-3 inline-flex items-center gap-1 text-xs text-brand opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     Learn more <ArrowUpRight className="h-3 w-3" />
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-brand/20 hover:scale-105"
+          >
+            Explore all capabilities & services <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>
@@ -434,6 +445,14 @@ function About() {
           <p className="mt-5 text-muted-foreground">
             Tech Agenz blends deep engineering with applied AI to help ambitious teams launch, scale, and modernize. We architect systems that think, automate, and grow — from first prototype to global production.
           </p>
+          <div className="mt-8">
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
+            >
+              Learn more about Tech Agenz <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -483,12 +502,12 @@ function Impact() {
                 <p className="mt-5 max-w-md text-sm text-slate-400 sm:text-base">
                   Every metric here is earned across real production systems — not vanity figures. It's what happens when engineering discipline meets applied AI.
                 </p>
-                <a
-                  href="#team"
+                <Link
+                  to="/about"
                   className="mt-8 inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2.5 text-sm text-white transition-colors hover:bg-brand/20"
                 >
                   Meet the team <ChevronRight className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -590,12 +609,21 @@ function Work() {
               <div className="p-6">
                 <h3 className="font-display text-lg font-semibold">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-                <a href="/work" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
+                <Link to="/work" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
                   View case study <ArrowUpRight className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            to="/work"
+            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-brand/20 hover:scale-105"
+          >
+            Explore all projects & case studies <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>
@@ -614,6 +642,78 @@ function Testimonials() {
         </div>
         <div className="mt-14">
           <AnimatedTestimonialsDemo />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BlogsTeaser() {
+  const posts = [
+    {
+      title: "Architecting Production RAG: Eliminating Hallucinations at Enterprise Scale",
+      category: "AI & ML",
+      readTime: "6 min read",
+      date: "Oct 2026",
+    },
+    {
+      title: "Digitizing Healthcare Scheduling: Lessons from High-Throughput Clinic Systems",
+      category: "Case Studies",
+      readTime: "5 min read",
+      date: "Oct 2026",
+    },
+    {
+      title: "From Brittle Scripts to Self-Healing Autonomous Agentic Workflows",
+      category: "Automation",
+      readTime: "7 min read",
+      date: "Sep 2026",
+    },
+  ];
+
+  return (
+    <section id="blogs" className="relative py-20">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <SectionPill>Insights & Articles</SectionPill>
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+              Latest from our <span className="text-gradient-brand">engineering blog</span>
+            </h2>
+          </div>
+          <Link
+            to="/blogs"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:underline"
+          >
+            View all articles <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {posts.map((p) => (
+            <Link
+              key={p.title}
+              to="/blogs"
+              className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-all duration-300 hover:border-brand/40 hover:-translate-y-1"
+            >
+              <div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="rounded-full bg-brand/10 px-3 py-1 font-medium text-brand">
+                    {p.category}
+                  </span>
+                  <span>{p.readTime}</span>
+                </div>
+                <h3 className="mt-4 font-display text-base font-semibold transition-colors group-hover:text-brand">
+                  {p.title}
+                </h3>
+              </div>
+              <div className="mt-6 flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground">
+                <span>{p.date}</span>
+                <span className="inline-flex items-center gap-1 font-medium text-brand">
+                  Read article <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
@@ -107,12 +107,12 @@ function ProjectCard({ p, index }: { p: (typeof projects)[number]; index: number
             ))}
           </div>
 
-          <a href="/#contact" className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
+          <Link to="/contact" className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
             Inquire about this project
             <motion.span className="inline-flex" initial={{ x: 0 }} whileHover={{ x: 4 }}>
               <ArrowUpRight className="h-4 w-4" />
             </motion.span>
-          </a>
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -212,7 +212,7 @@ function WorkPage() {
           <p className="mt-3 text-muted-foreground">Let's talk about what we can engineer for you next.</p>
           <div className="mt-6 flex justify-center">
             <BouncyButton
-              href="/#contact"
+              href="/contact"
               className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground"
             >
               Start a project <ArrowUpRight className="h-4 w-4" />

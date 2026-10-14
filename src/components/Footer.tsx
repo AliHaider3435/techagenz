@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Linkedin, Github } from "lucide-react";
 import logo from "@/assets/logo.png";
 
@@ -6,12 +7,12 @@ function Footer() {
     <footer className="relative border-t border-border/50 py-14">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Tech Agenz" className="h-12 w-12" />
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logo} alt="Tech Agenz" className="h-12 w-12 object-contain" />
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
-          </div>
+          </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            An AI-powered software house building intelligent solutions for tomorrow's teams.
+            An AI-powered software house engineering intelligent solutions, autonomous workflows, and modern web platforms.
           </p>
           <div className="mt-6 flex gap-3">
             <a
@@ -34,33 +35,36 @@ function Footer() {
             </a>
           </div>
         </div>
+
         <div>
           <div className="text-xs uppercase tracking-widest text-muted-foreground">Services</div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><a href="/#services" className="hover:text-brand">AI / ML</a></li>
-            <li><a href="/#services" className="hover:text-brand">Automation</a></li>
-            <li><a href="/#services" className="hover:text-brand">Web Development</a></li>
-            <li><a href="/#services" className="hover:text-brand">Data Solutions</a></li>
+            <li><Link to="/services" className="hover:text-brand">AI & Machine Learning</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Intelligent Automation</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Web Development</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Data Solutions</Link></li>
           </ul>
         </div>
+
         <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">Company</div>
+          <div className="text-xs uppercase tracking-widest text-muted-foreground">Navigation</div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><a href="/#about" className="hover:text-brand">About</a></li>
-            <li><a href="/work" className="hover:text-brand">Work</a></li>
-            <li><a href="/#contact" className="hover:text-brand">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">Contact</div>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li><a href="mailto:info@techagenz.com" className="hover:text-brand">info@techagenz.com</a></li>
-            <li><a href="tel:03394555004" className="hover:text-brand">03394555004</a></li>
+            <li><Link to="/" className="hover:text-brand">Home</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Services</Link></li>
+            <li><Link to="/about" className="hover:text-brand">About</Link></li>
+            <li><Link to="/work" className="hover:text-brand">Work</Link></li>
+            <li><Link to="/blogs" className="hover:text-brand">Blogs</Link></li>
+            <li><Link to="/contact" className="hover:text-brand">Contact</Link></li>
           </ul>
         </div>
       </div>
+
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-start justify-between gap-3 border-t border-border/50 px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
         <div>© {new Date().getFullYear()} Tech Agenz. All rights reserved.</div>
+        <div className="flex gap-6">
+          <a href="mailto:info@techagenz.com" className="hover:text-brand">info@techagenz.com</a>
+          <a href="tel:03394555004" className="hover:text-brand">03394555004</a>
+        </div>
       </div>
     </footer>
   );
