@@ -189,8 +189,8 @@ function Hero() {
           }}
         >
           <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-brand/10 blur-3xl" />
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-brand/20 to-transparent blur-2xl" />
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl">
+          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-b from-brand/20 to-transparent blur-2xl" />
+          <div className="relative z-10 aspect-[4/5] w-full overflow-hidden rounded-3xl">
             {show3D ? (
               <SplineScene
                 scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
@@ -222,14 +222,14 @@ function Hero() {
             ref={(element) => {
               orbitRefs.current[0] = element;
             }}
-            className="pointer-events-none absolute inset-0 -m-8 rounded-full border border-brand/30 animate-float-slow"
+            className="pointer-events-none absolute inset-0 z-0 -m-8 rounded-full border border-brand/30 animate-float-slow"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
           <div
             ref={(element) => {
               orbitRefs.current[1] = element;
             }}
-            className="pointer-events-none absolute inset-0 -m-16 rounded-full border border-dashed border-brand/15"
+            className="pointer-events-none absolute inset-0 z-0 -m-16 rounded-full border border-dashed border-brand/15"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
         </div>
