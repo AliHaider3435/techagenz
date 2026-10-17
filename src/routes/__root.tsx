@@ -99,6 +99,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "google-adsense-account",
+        content: "ca-pub-2324408013770466",
+      },
       { title: "Tech Agenz — AI-Powered Software House" },
       {
         name: "description",
@@ -155,6 +159,11 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: organizationSchema }}
+        />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466"
+          crossOrigin="anonymous"
         />
       </head>
       <body>
