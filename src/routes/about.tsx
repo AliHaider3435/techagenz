@@ -18,7 +18,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
-import workDev from "@/assets/work-dev.jpg";
+import workDev from "@/assets/work-dev.webp";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

@@ -80,6 +80,7 @@ function ProjectCard({ p, index }: { p: (typeof projects)[number]; index: number
             src={p.img}
             alt={p.title}
             className="h-full w-full object-cover"
+            loading="lazy"
             transition={{ duration: 0.6, ease: "easeOut" }}
             whileHover={{ scale: 1.08 }}
           />

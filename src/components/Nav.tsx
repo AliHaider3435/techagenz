@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.webp?no-inline";
 import BouncyButton from "@/components/BouncyButton";
 
 const navItems = [

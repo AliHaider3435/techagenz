@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { NeuralOrb } from "@/components/NeuralOrb";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
 import { useEffect, useRef, useState } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { useScroll, useTransform, useMotionValue, useInView, animate, MotionValue, motion } from "framer-motion";
-import aiVisionVideo from "@/assets/ai-vision.mp4";
+import { useTransform, useMotionValue, useInView, animate, MotionValue, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import {
   Brain, Cpu, Code2, Database, ArrowUpRight, Sparkles, Shield,
@@ -18,11 +16,15 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import logo from "@/assets/logo.png";
-import secureAi from "@/assets/secure-ai.jpg";
-import workDev from "@/assets/work-dev.jpg";
-import workSaas from "@/assets/work-saas.jpg";
-import workData from "@/assets/work-data.jpg";
+import heroAiPoster from "@/assets/hero-ai.webp";
+import secureAi from "@/assets/secure-ai.webp";
+import secureAiCard from "@/assets/secure-ai-card.webp";
+import workDev from "@/assets/work-dev.webp";
+import workDevCard from "@/assets/work-dev-card.webp";
+import workSaas from "@/assets/work-saas.webp";
+import workSaasCard from "@/assets/work-saas-card.webp";
+import workData from "@/assets/work-data.webp";
+import workDataCard from "@/assets/work-data-card.webp";
 import garwanLawChamber from "@/assets/garwan-law-chamber.webp";
 import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
 import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
@@ -45,34 +47,36 @@ function Index() {
       <TechCursor />
       <WhatsAppButton />
       <Nav />
-      <Hero />
-      <Marquee />
-           <AIVision /> 
-      <RevealSection>
-        <Services />
-      </RevealSection>
-      <RevealSection>
-        <About />
-      </RevealSection>
-      <RevealSection>
-  <Impact />
-</RevealSection>
-      <RevealSection>
-        <div id="team"></div>
-        <TeamSection />
-      </RevealSection>
-      <RevealSection>
-        <Work />
-      </RevealSection>
-      <RevealSection>
-        <Testimonials />
-      </RevealSection>
-      <RevealSection>
-        <BlogsTeaser />
-      </RevealSection>
-      <RevealSection>
-        <CTA />
-      </RevealSection>
+      <main>
+        <Hero />
+        <Marquee />
+        <AIVision />
+        <RevealSection>
+          <Services />
+        </RevealSection>
+        <RevealSection>
+          <About />
+        </RevealSection>
+        <RevealSection>
+          <Impact />
+        </RevealSection>
+        <RevealSection>
+          <div id="team"></div>
+          <TeamSection />
+        </RevealSection>
+        <RevealSection>
+          <Work />
+        </RevealSection>
+        <RevealSection>
+          <Testimonials />
+        </RevealSection>
+        <RevealSection>
+          <BlogsTeaser />
+        </RevealSection>
+        <RevealSection>
+          <CTA />
+        </RevealSection>
+      </main>
       <Footer />
     </div>
   );
@@ -80,27 +84,40 @@ function Index() {
 
 function Hero() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const orbitRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [show3D, setShow3D] = useState(false);
 
   useEffect(() => {
     const el = wrapRef.current;
-    if (!el) return;
+    const scene = sceneRef.current;
+    if (!el || !scene) return;
+    if (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
+
     const onMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const dx = (e.clientX - cx) / rect.width;
       const dy = (e.clientY - cy) / rect.height;
-      setTilt({ x: dx, y: dy });
+      scene.style.transform = `perspective(1000px) rotateX(${dy * -6}deg) rotateY(${dx * 8}deg) translate3d(${dx * 12}px, ${dy * 12}px, 0)`;
+      if (glowRef.current) {
+        glowRef.current.style.transform = `translate(calc(-50% + ${dx * 18}px), calc(-30% + ${dy * 18}px))`;
+      }
+      orbitRefs.current.forEach((orbit, index) => {
+        if (orbit) {
+          const factor = index === 0 ? 24 : 36;
+          orbit.style.transform = `translate3d(${dx * factor}px, ${dy * factor}px, 0)`;
+        }
+      });
     };
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
-
-  const tx = tilt.x * 30;
-  const ty = tilt.y * 30;
-  const rx = tilt.y * -6;
-  const ry = tilt.x * 8;
 
   return (
     <section id="home" ref={wrapRef} className="relative min-h-screen pt-32 pb-16">
@@ -116,11 +133,12 @@ function Hero() {
         }}
       />
       <div
+        ref={glowRef}
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background: "radial-gradient(circle, oklch(0.7 0.19 240 / 0.35), transparent 60%)",
-          transform: `translate(calc(-50% + ${tx * 0.6}px), calc(-30% + ${ty * 0.6}px))`,
+          transform: "translate(-50%, -30%)",
         }}
       />
 
@@ -163,28 +181,56 @@ function Hero() {
 
         {/* Right: AI head */}
         <div
+          ref={sceneRef}
           className="relative mx-auto w-full max-w-[620px] lg:max-w-[700px]"
           style={{
-            transform: `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translate3d(${tx * 0.4}px, ${ty * 0.4}px, 0)`,
+            transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)",
             transition: "transform 0.15s ease-out",
           }}
         >
           <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-brand/10 blur-3xl" />
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-brand/20 to-transparent blur-2xl" />
           <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl">
-            <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="h-full w-full"
-            />
+            {show3D ? (
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="h-full w-full"
+              />
+            ) : (
+              <>
+                <img
+                  src={heroAiPoster}
+                  alt=""
+                  aria-hidden="true"
+                  width={900}
+                  height={1125}
+                  className="h-full w-full object-cover"
+                  fetchPriority="high"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow3D(true)}
+                  className="absolute bottom-4 right-4 rounded-full border border-brand/40 bg-background/80 px-4 py-2 text-xs font-medium text-foreground backdrop-blur transition-colors hover:bg-brand/20"
+                >
+                  Load interactive 3D
+                </button>
+              </>
+            )}
           </div>
           {/* orbit rings */}
           <div
+            ref={(element) => {
+              orbitRefs.current[0] = element;
+            }}
             className="pointer-events-none absolute inset-0 -m-8 rounded-full border border-brand/30 animate-float-slow"
-            style={{ transform: `translate3d(${tx * 0.8}px, ${ty * 0.8}px, 0)` }}
+            style={{ transform: "translate3d(0, 0, 0)" }}
           />
           <div
+            ref={(element) => {
+              orbitRefs.current[1] = element;
+            }}
             className="pointer-events-none absolute inset-0 -m-16 rounded-full border border-dashed border-brand/15"
-            style={{ transform: `translate3d(${tx * 1.2}px, ${ty * 1.2}px, 0)` }}
+            style={{ transform: "translate3d(0, 0, 0)" }}
           />
         </div>
       </div>
@@ -267,7 +313,6 @@ function AIVision() {
     <section ref={sectionRef} className="relative h-screen">
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* No autoPlay — starts only when isInView triggers video.play() above */}
-       <NeuralOrb className="absolute inset-0 h-full w-full opacity-90" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/30 to-background/65" />
         <div
           className="pointer-events-none absolute inset-0 opacity-20"
@@ -322,10 +367,10 @@ function RevealWord({
 }
 function Services() {
   const services = [
-    { icon: Brain, tag: "AI / ML Engineering", title: "Intelligent Systems", desc: "Custom models, LLM fine-tuning, RAG pipelines, and computer vision built for production.", img: secureAi },
-    { icon: Cpu, tag: "Intelligent Automation", title: "Autonomous Workflows", desc: "Agents and workflow automation that replace repetitive work with reliable systems.", img: workSaas },
-    { icon: Code2, tag: "Web Development", title: "High-Performance Apps", desc: "SEO-first web apps and platforms powered by modern JavaScript stacks.", img: workDev },
-    { icon: Database, tag: "Data Solutions", title: "Data Infrastructure", desc: "End-to-end pipelines, analytics, and warehousing that turn signals into decisions.", img: workData },
+    { icon: Brain, tag: "AI / ML Engineering", title: "Intelligent Systems", desc: "Custom models, LLM fine-tuning, RAG pipelines, and computer vision built for production.", img: secureAi, imgWidth: 600, cardImg: secureAiCard },
+    { icon: Cpu, tag: "Intelligent Automation", title: "Autonomous Workflows", desc: "Agents and workflow automation that replace repetitive work with reliable systems.", img: workSaas, imgWidth: 900, cardImg: workSaasCard },
+    { icon: Code2, tag: "Web Development", title: "High-Performance Apps", desc: "SEO-first web apps and platforms powered by modern JavaScript stacks.", img: workDev, imgWidth: 900, cardImg: workDevCard },
+    { icon: Database, tag: "Data Solutions", title: "Data Infrastructure", desc: "End-to-end pipelines, analytics, and warehousing that turn signals into decisions.", img: workData, imgWidth: 900, cardImg: workDataCard },
   ];
   return (
     <section id="services" className="relative pt-16 pb-20">
@@ -344,7 +389,7 @@ function Services() {
         </div>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map(({ icon: Icon, tag, title, desc, img }) => (
+          {services.map(({ icon: Icon, tag, title, desc, img, imgWidth, cardImg }) => (
             <div
               key={title}
               className="group relative overflow-hidden rounded-2xl"
@@ -375,8 +420,11 @@ function Services() {
                 <div className="relative h-36 overflow-hidden">
                   <img
                     src={img}
+                    srcSet={`${cardImg} 480w, ${img} ${imgWidth}w`}
+                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 19vw"
                     alt={title}
                     className="h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10" />
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -391,7 +439,7 @@ function Services() {
                   <div className="font-display text-[11px] uppercase tracking-widest text-brand">{tag}</div>
                   <h3 className="font-cyber mt-1 text-base font-bold">{title}</h3>
                   <Link to="/services" className="font-display mt-3 inline-flex items-center gap-1 text-xs text-brand opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    Learn more <ArrowUpRight className="h-3 w-3" />
+                    Explore {tag} <ArrowUpRight className="h-3 w-3" />
                   </Link>
                 </div>
               </div>
@@ -811,7 +859,7 @@ function BlogsTeaser() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="mailto:info@techagenz.com" className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]">
-                  Start a project <ArrowUpRight className="h-4 w-4" />
+                  Email us <ArrowUpRight className="h-4 w-4" />
                 </a>
                 <a href="tel:03394555004" className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card">
                   Schedule a call

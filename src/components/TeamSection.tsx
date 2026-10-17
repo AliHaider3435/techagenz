@@ -90,15 +90,13 @@ export const ChromaGrid = ({
   const data = items?.length ? items : TEAM;
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const grid = gridRef.current;
     if (!grid) return;
 
     const cards = Array.from(grid.querySelectorAll<HTMLElement>(".chroma-card"));
 
-    // Make sure every card starts fully grayscale (no leftover paint from a fast refresh)
-    cards.forEach((card) => card.style.setProperty("--paint-r", "0px"));
-
-    // One-time "paint splash" cascade the moment the section scrolls into view
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: grid,
@@ -106,25 +104,21 @@ export const ChromaGrid = ({
         once: true,
         onEnter: () => {
           cards.forEach((card, i) => {
-            const rect = card.querySelector(".chroma-img-wrapper")?.getBoundingClientRect();
-            const w = rect?.width ?? 300;
-            const h = rect?.height ?? 300;
-            card.style.setProperty("--mouse-x", `${w / 2}px`);
-            card.style.setProperty("--mouse-y", `${h / 2}px`);
-
+            const image = card.querySelector(".chroma-img-color");
+            if (!image) return;
             const tl = gsap.timeline({ delay: i * 0.12 });
-            tl.to(card, {
-              "--paint-r": "260px",
+            tl.to(image, {
+              opacity: 1,
+              scale: 1.03,
               duration: 0.85,
-              ease: "back.out(1.6)",
-            }).to(
-              card,
-              {
-                "--paint-r": "0px",
+              ease: "power2.out",
+            }).to(image, {
+                opacity: 0,
+                scale: 1,
                 duration: 0.55,
                 ease: "power2.in",
               },
-              "+=0.35"
+              "+=0.35",
             );
           });
         },
@@ -140,28 +134,26 @@ export const ChromaGrid = ({
     }
   };
 
-  const handleCardMove = (e: React.MouseEvent<HTMLElement>) => {
-    const card = e.currentTarget;
-    const wrapper = card.querySelector<HTMLElement>(".chroma-img-wrapper");
-    const rect = (wrapper ?? card).getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    card.style.setProperty("--mouse-x", `${x}px`);
-    card.style.setProperty("--mouse-y", `${y}px`);
-  };
-
   const handleCardEnter = (e: React.MouseEvent<HTMLElement>) => {
-    gsap.to(e.currentTarget, {
-      "--paint-r": "230px",
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const image = e.currentTarget.querySelector(".chroma-img-color");
+    if (!image) return;
+    gsap.to(image, {
+      opacity: 1,
+      scale: 1.03,
       duration: 0.6,
-      ease: "back.out(1.7)",
+      ease: "power2.out",
       overwrite: true,
     });
   };
 
   const handleCardLeave = (e: React.MouseEvent<HTMLElement>) => {
-    gsap.to(e.currentTarget, {
-      "--paint-r": "0px",
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const image = e.currentTarget.querySelector(".chroma-img-color");
+    if (!image) return;
+    gsap.to(image, {
+      opacity: 0,
+      scale: 1,
       duration: 0.5,
       ease: "power2.in",
       overwrite: true,
@@ -178,14 +170,12 @@ export const ChromaGrid = ({
         <article
           key={`${c.title}-${i}`}
           className="chroma-card"
-          onMouseMove={handleCardMove}
           onMouseEnter={handleCardEnter}
           onMouseLeave={handleCardLeave}
           onClick={() => handleCardClick(c.url)}
           style={{
             "--card-border": c.borderColor || "transparent",
             "--card-gradient": c.gradient,
-            "--paint-r": "0px",
             cursor: c.url ? "pointer" : "default",
           } as React.CSSProperties}
         >
@@ -305,11 +295,7 @@ export default function TeamSection() {
           border-radius: 20px;
           overflow: hidden;
           border: 1px solid rgba(148,178,205,0.18);
-          transition: border-color 0.3s ease;
           background: var(--card-gradient);
-          --mouse-x: 50%;
-          --mouse-y: 50%;
-          --paint-r: 0px;
         }
         .chroma-card:hover {
           border-color: var(--card-border);
@@ -338,20 +324,7 @@ export default function TeamSection() {
         }
         .chroma-img-color {
           filter: saturate(1.15) contrast(1.03);
-          -webkit-mask-image:
-            radial-gradient(circle var(--paint-r) at var(--mouse-x) var(--mouse-y), black 58%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.4) at calc(var(--mouse-x) + 34px) calc(var(--mouse-y) - 26px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.3) at calc(var(--mouse-x) - 30px) calc(var(--mouse-y) + 22px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.22) at calc(var(--mouse-x) + 10px) calc(var(--mouse-y) + 42px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.18) at calc(var(--mouse-x) - 40px) calc(var(--mouse-y) - 10px), black 55%, transparent 100%);
-          -webkit-mask-composite: source-over, source-over, source-over, source-over, source-over;
-          mask-image:
-            radial-gradient(circle var(--paint-r) at var(--mouse-x) var(--mouse-y), black 58%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.4) at calc(var(--mouse-x) + 34px) calc(var(--mouse-y) - 26px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.3) at calc(var(--mouse-x) - 30px) calc(var(--mouse-y) + 22px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.22) at calc(var(--mouse-x) + 10px) calc(var(--mouse-y) + 42px), black 55%, transparent 100%),
-            radial-gradient(circle calc(var(--paint-r) * 0.18) at calc(var(--mouse-x) - 40px) calc(var(--mouse-y) - 10px), black 55%, transparent 100%);
-          mask-composite: add;
+          opacity: 0;
         }
         .chroma-info {
           position: relative;

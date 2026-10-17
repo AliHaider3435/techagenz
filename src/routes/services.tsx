@@ -19,10 +19,14 @@ import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import secureAi from "@/assets/secure-ai.jpg";
-import workDev from "@/assets/work-dev.jpg";
-import workSaas from "@/assets/work-saas.jpg";
-import workData from "@/assets/work-data.jpg";
+import secureAi from "@/assets/secure-ai.webp";
+import secureAiCard from "@/assets/secure-ai-card.webp";
+import workDev from "@/assets/work-dev.webp";
+import workDevCard from "@/assets/work-dev-card.webp";
+import workSaas from "@/assets/work-saas.webp";
+import workSaasCard from "@/assets/work-saas-card.webp";
+import workData from "@/assets/work-data.webp";
+import workDataCard from "@/assets/work-data-card.webp";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -46,6 +50,8 @@ const serviceList = [
     title: "Intelligent AI & ML Systems",
     lead: "Custom models, domain-specific RAG pipelines, and vision intelligence engineered for high-throughput production.",
     img: secureAi,
+    imgWidth: 600,
+    cardImg: secureAiCard,
     capabilities: [
       "Enterprise Retrieval-Augmented Generation (RAG) with semantic re-ranking",
       "Model fine-tuning and distillation (Llama, Mistral, DeepSeek)",
@@ -61,6 +67,8 @@ const serviceList = [
     title: "Autonomous Agentic Workflows",
     lead: "Self-healing pipelines and multi-agent systems that replace manual bottlenecks with deterministic speed.",
     img: workSaas,
+    imgWidth: 900,
+    cardImg: workSaasCard,
     capabilities: [
       "Multi-agent autonomous workflows for operations and support",
       "End-to-end API orchestration between CRMs, ERPs, and databases",
@@ -76,6 +84,8 @@ const serviceList = [
     title: "High-Performance Web Platforms",
     lead: "Modern, responsive, and SEO-engineered web applications designed for conversion and global scale.",
     img: workDev,
+    imgWidth: 900,
+    cardImg: workDevCard,
     capabilities: [
       "Production React 19, TanStack Start, and Next.js applications",
       "Real-time reactive features using WebSockets and streaming protocols",
@@ -91,6 +101,8 @@ const serviceList = [
     title: "Data Infrastructure & Analytics",
     lead: "Robust telemetry ingestion, warehousing, and executive intelligence dashboards that turn raw signals into decisions.",
     img: workData,
+    imgWidth: 900,
+    cardImg: workDataCard,
     capabilities: [
       "Real-time streaming and batch ETL/ELT pipelines",
       "Analytical warehousing with sub-second queries on large datasets",
@@ -238,7 +250,10 @@ function ServicesPage() {
                     <div className="group relative overflow-hidden rounded-2xl border border-border/60">
                       <img
                         src={service.img}
+                        srcSet={`${service.cardImg} 480w, ${service.img} ${service.imgWidth}w`}
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         alt={service.title}
+                        loading="lazy"
                         className="h-80 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-96"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />

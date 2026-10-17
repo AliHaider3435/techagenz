@@ -9,6 +9,12 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/orbitron";
+import "@fontsource-variable/sora";
+import heroFont from "@fontsource-variable/orbitron/files/orbitron-latin-wght-normal.woff2?url";
+import logo from "@/assets/logo.webp?no-inline";
 
 import appCss from "../styles.css?url";
 
@@ -78,7 +84,7 @@ const organizationSchema = JSON.stringify({
   "@type": "Organization",
   name: "Tech Agenz",
   url: "https://www.techagenz.com",
-  logo: "https://www.techagenz.com/assets/logo.png",
+  logo: `https://www.techagenz.com${logo}`,
   description:
     "AI-powered software house engineering intelligent solutions, automation pipelines, and modern web platforms.",
   telephone: "+923394555004",
@@ -109,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.techagenz.com/" },
-      { property: "og:image", content: "https://www.techagenz.com/assets/logo.png" },
+      { property: "og:image", content: `https://www.techagenz.com${logo}` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House" },
       {
@@ -117,7 +123,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Intelligent AI, automation, and web solutions built for ambitious teams. 50+ projects delivered worldwide.",
       },
-      { name: "twitter:image", content: "https://www.techagenz.com/assets/logo.png" },
+      { name: "twitter:image", content: `https://www.techagenz.com${logo}` },
     ],
     links: [
       { rel: "canonical", href: "https://www.techagenz.com/" },
@@ -125,13 +131,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap",
+        rel: "preload",
+        href: heroFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
       },
+      { rel: "icon", href: logo, type: "image/webp" },
     ],
   }),
   shellComponent: RootShell,

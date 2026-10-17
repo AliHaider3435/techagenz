@@ -18,8 +18,9 @@ type Particle = {
   r: number; // sphere radius factor (slight jitter for depth)
 };
 
-const PARTICLE_COUNT = 90;
+const PARTICLE_COUNT = 52;
 const CONNECT_DISTANCE = 90; // px, in projected space
+const MAX_CONNECTION_DISTANCE_SQUARED = CONNECT_DISTANCE * CONNECT_DISTANCE;
 const ROTATION_SPEED = 0.00018; // radians per ms
 
 // brand blue — matches oklch(0.7 0.19 240) used elsewhere in the site
@@ -28,7 +29,6 @@ const LINE_COLOR = "rgba(56, 130, 246, OPACITY)";
 
 export function NeuralOrb({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,17 +57,13 @@ export function NeuralOrb({ className }: { className?: string }) {
     };
 
     resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-
     let rotation = 0;
     let last = performance.now();
+    let isIntersecting = false;
+    let isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf: number | undefined;
 
-    const tick = (now: number) => {
-      const dt = now - last;
-      last = now;
-      rotation += dt * ROTATION_SPEED;
-
+    const draw = () => {
       ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
@@ -96,8 +92,9 @@ export function NeuralOrb({ className }: { className?: string }) {
           const b = projected[j];
           const dx = a.x2 - b.x2;
           const dy = a.y2 - b.y2;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECT_DISTANCE) {
+          const distanceSquared = dx * dx + dy * dy;
+          if (distanceSquared < MAX_CONNECTION_DISTANCE_SQUARED) {
+            const dist = Math.sqrt(distanceSquared);
             const avgDepth = (a.depth + b.depth) / 2;
             const opacity = (1 - dist / CONNECT_DISTANCE) * avgDepth * 0.35;
             if (opacity <= 0.01) continue;
@@ -123,14 +120,60 @@ export function NeuralOrb({ className }: { className?: string }) {
         ctx.fill();
       }
       ctx.shadowBlur = 0;
-
-      rafRef.current = requestAnimationFrame(tick);
     };
 
-    rafRef.current = requestAnimationFrame(tick);
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (raf === undefined) draw();
+    });
+    ro.observe(canvas);
+
+    const shouldAnimate = () =>
+      isIntersecting && !document.hidden && !isReducedMotion;
+
+    const tick = (now: number) => {
+      raf = undefined;
+      if (!shouldAnimate()) return;
+
+      rotation += (now - last) * ROTATION_SPEED;
+      last = now;
+      draw();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const updateAnimation = () => {
+      if (shouldAnimate()) {
+        if (raf === undefined) {
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+      } else if (raf !== undefined) {
+        cancelAnimationFrame(raf);
+        raf = undefined;
+      }
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry.isIntersecting;
+      updateAnimation();
+    });
+    observer.observe(canvas);
+    const onVisibilityChange = () => updateAnimation();
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotionPreferenceChange = (event: MediaQueryListEvent) => {
+      isReducedMotion = event.matches;
+      updateAnimation();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    motionPreference.addEventListener("change", onMotionPreferenceChange);
+
+    draw();
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (raf !== undefined) cancelAnimationFrame(raf);
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      motionPreference.removeEventListener("change", onMotionPreferenceChange);
       ro.disconnect();
     };
   }, []);

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin, Github } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.webp?no-inline";
 
 function Footer() {
   return (
@@ -8,7 +8,7 @@ function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Tech Agenz" className="h-12 w-12 object-contain" />
+            <img src={logo} alt="" className="h-12 w-12 object-contain" />
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
