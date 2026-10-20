@@ -6,7 +6,7 @@ import team2 from "@/assets/null.png";
 import team3 from "@/assets/null.png";
 import team4 from "@/assets/null.png";
 import team5 from "@/assets/null.png";
-import team6 from "@/assets/null.png";
+import team6 from "@/assets/team6.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,7 +71,7 @@ const TEAM: TeamMember[] = [
   },
   {
     image: team6,
-    title: "Taha Madni",
+    title: "Muhammad Rizwan",
     subtitle: "Data Scientist",
     borderColor: "#0891B2",
     gradient: "linear-gradient(135deg, #0891B2, #050B14)",

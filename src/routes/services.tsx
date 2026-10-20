@@ -13,6 +13,8 @@ import {
   Zap,
   Activity,
   Terminal,
+  MessageSquare,
+  Rocket,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -31,11 +33,11 @@ import workDataCard from "@/assets/work-data-card.webp";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services — Tech Agenz | AI & Applied Engineering" },
+      { title: "Services — Tech Agenz | AI-Powered Software House in Pakistan" },
       {
         name: "description",
         content:
-          "Explore Tech Agenz services: AI & ML Engineering, Intelligent Automation, Full-Stack Web Applications, and Real-Time Data Infrastructure.",
+          "Explore Tech Agenz services: Smart Business Automation, WhatsApp Automation for Business, AI Chatbot Development, Custom Software Development, Web Development, and ERPNext Implementation.",
       },
     ],
   }),
@@ -44,72 +46,106 @@ export const Route = createFileRoute("/services")({
 
 const serviceList = [
   {
-    id: "ai-ml",
-    icon: Brain,
-    tag: "AI & Machine Learning",
-    title: "Intelligent AI & ML Systems",
-    lead: "Custom models, domain-specific RAG pipelines, and vision intelligence engineered for high-throughput production.",
-    img: secureAi,
-    imgWidth: 600,
-    cardImg: secureAiCard,
-    capabilities: [
-      "Enterprise Retrieval-Augmented Generation (RAG) with semantic re-ranking",
-      "Model fine-tuning and distillation (Llama, Mistral, DeepSeek)",
-      "High-accuracy computer vision and automated document extraction",
-      "MLOps, low-latency inference caching, and model monitoring",
-    ],
-    techStack: ["PyTorch", "LangChain", "Qdrant", "Hugging Face", "OpenAI", "vLLM"],
-  },
-  {
-    id: "automation",
+    id: "business-automation",
     icon: Cpu,
-    tag: "Intelligent Automation",
-    title: "Autonomous Agentic Workflows",
-    lead: "Self-healing pipelines and multi-agent systems that replace manual bottlenecks with deterministic speed.",
+    tag: "Business Process Automation",
+    title: "Smart Business Automation & AI Solutions",
+    lead: "Modern businesses need more than traditional software to remain competitive. Tech Agenz helps organizations streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications.",
     img: workSaas,
     imgWidth: 900,
     cardImg: workSaasCard,
     capabilities: [
-      "Multi-agent autonomous workflows for operations and support",
-      "End-to-end API orchestration between CRMs, ERPs, and databases",
-      "Event-driven background task processing with automated recovery",
-      "Custom RPA and intelligent notification dispatching",
+      "Streamlining everyday operations and reducing manual workloads",
+      "Automating customer communication and connecting core business tools",
+      "Custom workflow automation for clinics managing patient appointments",
+      "Tailored inquiry intake and document workflows for law firms",
     ],
     techStack: ["Python", "FastAPI", "Temporal", "LangGraph", "Redis", "Celery"],
   },
   {
-    id: "web-dev",
-    icon: Code2,
-    tag: "Full-Stack Web",
-    title: "High-Performance Web Platforms",
-    lead: "Modern, responsive, and SEO-engineered web applications designed for conversion and global scale.",
+    id: "whatsapp-automation",
+    icon: MessageSquare,
+    tag: "Customer Communication",
+    title: "WhatsApp Automation for Business",
+    lead: "Improve customer communication with WhatsApp automation for business. Automated messaging workflows help businesses communicate more efficiently while maintaining a consistent customer experience.",
+    img: secureAi,
+    imgWidth: 600,
+    cardImg: secureAiCard,
+    capabilities: [
+      "Automated appointment booking and clinic confirmation reminders",
+      "Customer inquiry routing and intelligent lead follow-ups",
+      "Real-time order updates, shipment notices, and receipt delivery",
+      "Instant 24/7 answers to frequently asked questions (FAQs)",
+    ],
+    techStack: ["WhatsApp Cloud API", "Node.js", "Webhooks", "PostgreSQL", "Docker"],
+  },
+  {
+    id: "ai-chatbots",
+    icon: Brain,
+    tag: "Intelligent Support",
+    title: "AI Chatbot Development",
+    lead: "Our AI chatbot development solutions help businesses respond to customer questions, guide website visitors, and provide relevant information around the clock with context-aware interactions.",
     img: workDev,
     imgWidth: 900,
     cardImg: workDevCard,
     capabilities: [
-      "Production React 19, TanStack Start, and Next.js applications",
-      "Real-time reactive features using WebSockets and streaming protocols",
-      "Scalable REST and GraphQL backend architectures",
-      "Sub-second load times and 95+ Core Web Vitals guarantees",
+      "Connect chatbots directly with proprietary business knowledge bases",
+      "Integrate with customer support desks and CRM workflows",
+      "Context-aware, multi-turn conversational agents with sentiment tracking",
+      "Escalation to human agents when complex assistance is required",
     ],
-    techStack: ["TypeScript", "React", "Node.js", "Tailwind CSS", "PostgreSQL", "Docker"],
+    techStack: ["PyTorch", "LangChain", "Qdrant", "OpenAI", "vLLM", "Next.js"],
   },
   {
-    id: "data-solutions",
-    icon: Database,
-    tag: "Data Solutions",
-    title: "Data Infrastructure & Analytics",
-    lead: "Robust telemetry ingestion, warehousing, and executive intelligence dashboards that turn raw signals into decisions.",
+    id: "custom-software",
+    icon: Code2,
+    tag: "Tailored Platforms",
+    title: "Custom Software Development in Pakistan",
+    lead: "Through custom software development in Pakistan, Tech Agenz helps organizations build applications tailored to their workflows, users, and growth plans, addressing operational gaps off-the-shelf tools cannot resolve.",
     img: workData,
     imgWidth: 900,
     cardImg: workDataCard,
     capabilities: [
-      "Real-time streaming and batch ETL/ELT pipelines",
-      "Analytical warehousing with sub-second queries on large datasets",
-      "Interactive executive dashboards and predictive visual modeling",
-      "Automated schema validation, deduplication, and data hygiene",
+      "Internal management tools and centralized administrative dashboards",
+      "Integrated business platforms unifying fragmented software stacks",
+      "Role-based access control, security compliance, and auditing",
+      "Architectures engineered specifically for unique operational logic",
     ],
-    techStack: ["ClickHouse", "PostgreSQL", "DuckDB", "Apache Kafka", "Python", "Metabase"],
+    techStack: ["TypeScript", "React", "Node.js", "PostgreSQL", "Tailwind CSS", "Docker"],
+  },
+  {
+    id: "web-dev",
+    icon: Rocket,
+    tag: "High-Performance Web",
+    title: "Web Development Company in Pakistan",
+    lead: "As a web development company in Pakistan, Tech Agenz focuses on building modern, responsive, and functional web applications that support business objectives with top performance and usability.",
+    img: workDev,
+    imgWidth: 900,
+    cardImg: workDevCard,
+    capabilities: [
+      "Conversion-focused business websites and customer portals",
+      "Web-based management systems with sub-second load times",
+      "SEO-engineered architectures and 95+ Core Web Vitals guarantees",
+      "Responsive, mobile-first design across all device screen sizes",
+    ],
+    techStack: ["React 19", "TanStack Start", "TypeScript", "Tailwind CSS", "Vite", "REST/GraphQL"],
+  },
+  {
+    id: "erpnext",
+    icon: Database,
+    tag: "Enterprise Integration",
+    title: "ERPNext Implementation",
+    lead: "Managing accounting, inventory, sales, purchasing, and other business functions across disconnected systems creates complexity. With ERPNext implementation, businesses bring key processes into an integrated platform.",
+    img: workSaas,
+    imgWidth: 900,
+    cardImg: workSaasCard,
+    capabilities: [
+      "Centralized accounting, sales pipeline, and purchasing workflows",
+      "Real-time inventory tracking and multi-warehouse coordination",
+      "Cross-departmental visibility and customized executive reporting",
+      "Configured precisely to each organization's operational requirements",
+    ],
+    techStack: ["ERPNext", "Frappe Framework", "Python", "MariaDB", "Redis", "Linux"],
   },
 ];
 
@@ -170,8 +206,8 @@ function ServicesPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-hero mt-5 text-4xl font-bold uppercase sm:text-6xl"
           >
-            Engineering Systems That <br />
-            <span className="text-gradient-brand">Think, Automate & Scale</span>
+            Simplify Operations. Automate Tasks. <br />
+            <span className="text-gradient-brand">Build Smarter Experiences.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -179,8 +215,7 @@ function ServicesPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
           >
-            From custom AI models and autonomous agentic workflows to high-throughput web platforms and data pipelines,
-            we engineer solutions that deliver measurable competitive advantages.
+            Tech Agenz helps businesses streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications that connect people, processes, and systems to support long-term growth.
           </motion.p>
         </div>
       </section>

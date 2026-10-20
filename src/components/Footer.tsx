@@ -12,7 +12,7 @@ function Footer() {
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            An AI-powered software house engineering intelligent solutions, autonomous workflows, and modern web platforms.
+            An AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.
           </p>
           <div className="mt-6 flex gap-3">
             <a
@@ -39,10 +39,11 @@ function Footer() {
         <div>
           <div className="text-xs uppercase tracking-widest text-muted-foreground">Services</div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/services" className="hover:text-brand">AI & Machine Learning</Link></li>
-            <li><Link to="/services" className="hover:text-brand">Intelligent Automation</Link></li>
-            <li><Link to="/services" className="hover:text-brand">Web Development</Link></li>
-            <li><Link to="/services" className="hover:text-brand">Data Solutions</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Smart Business Automation</Link></li>
+            <li><Link to="/services" className="hover:text-brand">WhatsApp Automation</Link></li>
+            <li><Link to="/services" className="hover:text-brand">AI Chatbot Development</Link></li>
+            <li><Link to="/services" className="hover:text-brand">Custom Software</Link></li>
+            <li><Link to="/services" className="hover:text-brand">ERPNext Implementation</Link></li>
           </ul>
         </div>
 

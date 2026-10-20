@@ -14,8 +14,8 @@ import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
 export const Route = createFileRoute("/work")({
   head: () => ({
     meta: [
-      { title: "Our Work — Tech Agenz" },
-      { name: "description", content: "Explore the AI, automation, web, and healthcare platforms Tech Agenz has engineered for clients worldwide." },
+      { title: "Our Work — Tech Agenz | AI-Powered Software House" },
+      { name: "description", content: "Explore custom software, clinic appointment systems, legal portals, and business automation platforms engineered by Tech Agenz." },
     ],
   }),
   component: WorkPage,
@@ -156,7 +156,7 @@ function WorkPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-5 text-muted-foreground"
           >
-            A closer look at the AI, automation, web, and data systems we've shipped for clients across industries and continents.
+            Practical, custom solutions connecting people, processes, and systems — engineered for clinics, law firms, and growing businesses.
           </motion.p>
         </div>
       </section>

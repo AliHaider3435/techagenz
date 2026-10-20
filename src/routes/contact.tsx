@@ -21,11 +21,11 @@ import { TechCursor } from "@/components/TechCursor";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Tech Agenz | Start Your Project" },
+      { title: "Contact Us — Tech Agenz | AI-Powered Software House in Pakistan" },
       {
         name: "description",
         content:
-          "Get in touch with Tech Agenz to engineer AI systems, automation pipelines, and modern web platforms. Email info@techagenz.com or call 03394555004.",
+          "Contact Tech Agenz to discuss your business challenges and discover the right technology solution: AI automation, custom software, WhatsApp automation, and ERPNext.",
       },
     ],
   }),
@@ -138,8 +138,8 @@ function ContactPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-hero mt-5 text-4xl font-bold uppercase sm:text-6xl"
           >
-            Let's Build Something <br />
-            <span className="text-gradient-brand">Future-Ready</span>
+            Transform Your Business with <br />
+            <span className="text-gradient-brand">Smarter Technology</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -147,7 +147,7 @@ function ContactPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
           >
-            Tell us about your project, timeline, or technical challenges. We respond to every inquiry within 24 hours.
+            Ready to improve your workflows, simplify customer communication, or modernize your business systems? Contact Tech Agenz to discuss your business challenges and discover the right technology solution for your next stage of growth.
           </motion.p>
         </div>
       </section>

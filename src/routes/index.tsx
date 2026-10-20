@@ -10,13 +10,12 @@ import { ChevronRight } from "lucide-react";
 import {
   Brain, Cpu, Code2, Database, ArrowUpRight, Sparkles, Shield,
   Zap, Rocket, Mail, Phone, MapPin, Star, Instagram, Linkedin,
-  Github, Twitter, 
+  Github, Twitter, MessageSquare,
 } from "lucide-react";
 import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import heroAiPoster from "@/assets/hero-ai.webp";
 import secureAi from "@/assets/secure-ai.webp";
 import secureAiCard from "@/assets/secure-ai-card.webp";
 import workDev from "@/assets/work-dev.webp";
@@ -32,10 +31,18 @@ import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tech Agenz — AI-Powered Software House" },
-      { name: "description", content: "Tech Agenz engineers AI, automation, web, and data solutions for ambitious brands. 50+ projects across 7+ countries." },
-      { property: "og:title", content: "Tech Agenz — AI-Powered Software House" },
-      { property: "og:description", content: "AI, automation, web, and data solutions built for the future." },
+      { title: "Tech Agenz — AI-Powered Software House in Pakistan" },
+      {
+        name: "description",
+        content:
+          "Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences. Smart business automation, custom software, ERPNext, WhatsApp & AI chatbot development.",
+      },
+      { property: "og:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
+      {
+        property: "og:description",
+        content:
+          "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
+      },
     ],
   }),
   component: Index,
@@ -53,6 +60,9 @@ function Index() {
         <AIVision />
         <RevealSection>
           <Services />
+        </RevealSection>
+        <RevealSection>
+          <WhyChooseUs />
         </RevealSection>
         <RevealSection>
           <About />
@@ -87,7 +97,8 @@ function Hero() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const orbitRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const [show3D, setShow3D] = useState(false);
+  const splineAppRef = useRef<any>(null);
+  const [isRobotActive, setIsRobotActive] = useState(false);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -119,6 +130,28 @@ function Hero() {
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
+  const handleSplineLoad = (app: any) => {
+    splineAppRef.current = app;
+    if (!isRobotActive) {
+      try {
+        app.stop();
+      } catch (err) {
+        console.warn("Could not pause Spline app initially:", err);
+      }
+    }
+  };
+
+  const handleStartRobot = () => {
+    setIsRobotActive(true);
+    if (splineAppRef.current) {
+      try {
+        splineAppRef.current.play();
+      } catch (err) {
+        console.warn("Could not play Spline app:", err);
+      }
+    }
+  };
+
   return (
     <section id="home" ref={wrapRef} className="relative min-h-screen pt-32 pb-16">
       {/* animated grid backdrop */}
@@ -142,12 +175,12 @@ function Hero() {
         }}
       />
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-6 lg:grid-cols-[1.3fr_1fr] lg:px-16">
-        {/* Left: eyebrow + title + tag */}
-        <div className="min-w-0 space-y-8 lg:max-w-2xl lg:pl-16">
-          <div className="font-display inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-brand">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-[1.3fr_1fr] lg:px-16">
+        {/* Left: eyebrow + title + content */}
+        <div className="min-w-0 space-y-7 lg:max-w-2xl lg:pl-8">
+          <div className="font-display inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1 text-xs uppercase tracking-[0.25em] text-brand">
             <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-glow" />
-            AI-Powered Software House
+            AI-Powered Software House in Pakistan
           </div>
 
           <div className="relative inline-block">
@@ -155,34 +188,43 @@ function Hero() {
             <div className="absolute -right-3 -top-3 h-4 w-4 border-r-2 border-t-2 border-brand" />
             <div className="absolute -left-3 -bottom-3 h-4 w-4 border-b-2 border-l-2 border-brand" />
             <div className="absolute -right-3 -bottom-3 h-4 w-4 border-b-2 border-r-2 border-brand" />
-            <h1 className="font-hero max-w-xl px-4 py-2 text-3xl font-bold uppercase leading-[1.15] tracking-wide sm:text-4xl lg:text-5xl">
-              Engineering<br />the future with<br />
-              <span className="text-gradient-brand">artificial intelligence</span>
+            <h1 className="font-hero max-w-xl px-4 py-2 text-3xl font-bold uppercase leading-[1.18] tracking-wide sm:text-4xl lg:text-[2.65rem]">
+              Simplify Complex Operations.<br />
+              Automate Repetitive Tasks.<br />
+              <span className="text-gradient-brand">Build Smarter Digital Experiences.</span>
             </h1>
           </div>
 
-          <p className="font-display max-w-md text-sm leading-relaxed text-muted-foreground">
-            We design, build, and ship AI systems, automation, and web platforms for ambitious companies worldwide.
+          <p className="font-display max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences. As a technology partner for growing businesses, we deliver practical solutions that connect people, processes, and systems to improve operational efficiency and support long-term growth.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               to="/contact"
               className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
             >
-              Start a project
+              Start a project <ArrowUpRight className="h-4 w-4" />
             </Link>
-            <div className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2.5 text-xs text-muted-foreground">
+            <a
+              href="https://wa.me/923394555004"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-display inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-3 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+            >
+              WhatsApp Us
+            </a>
+            <div className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-              50+ projects shipped
+              Clinics &bull; Law Firms &bull; Growing Businesses
             </div>
           </div>
         </div>
 
-        {/* Right: AI head */}
+        {/* Right: AI Robot (Compressed & Interactive on click/tap) */}
         <div
           ref={sceneRef}
-          className="relative mx-auto w-full max-w-[620px] lg:max-w-[700px]"
+          className="relative mx-auto w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[460px]"
           style={{
             transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)",
             transition: "transform 0.15s ease-out",
@@ -190,46 +232,56 @@ function Hero() {
         >
           <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-brand/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-b from-brand/20 to-transparent blur-2xl" />
-          <div className="relative z-10 aspect-[4/5] w-full overflow-hidden rounded-3xl">
-            {show3D ? (
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="h-full w-full"
-              />
-            ) : (
-              <>
-                <img
-                  src={heroAiPoster}
-                  alt=""
-                  aria-hidden="true"
-                  width={900}
-                  height={1125}
-                  className="h-full w-full object-cover"
-                  fetchPriority="high"
-                />
+          
+          <div className="relative z-10 aspect-square w-full overflow-hidden rounded-3xl border border-brand/25 bg-slate-950/60 shadow-[0_0_50px_rgba(34,211,238,0.15)] backdrop-blur-sm">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="h-full w-full"
+              onLoad={handleSplineLoad}
+            />
+
+            {/* Click / Tap to Animate Trigger Overlay */}
+            {!isRobotActive && (
+              <div
+                onClick={handleStartRobot}
+                onTouchStart={handleStartRobot}
+                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-end pb-6 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent transition-opacity"
+              >
                 <button
                   type="button"
-                  onClick={() => setShow3D(true)}
-                  className="absolute bottom-4 right-4 rounded-full border border-brand/40 bg-background/80 px-4 py-2 text-xs font-medium text-foreground backdrop-blur transition-colors hover:bg-brand/20"
+                  className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-slate-950/90 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95"
                 >
-                  Load interactive 3D
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
+                  </span>
+                  <span>Click or tap to animate</span>
                 </button>
-              </>
+              </div>
+            )}
+
+            {/* Active Status Badge */}
+            {isRobotActive && (
+              <div className="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-slate-950/75 px-3 py-1 text-[11px] font-medium text-cyan-300 backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Robot Active</span>
+              </div>
             )}
           </div>
+
           {/* orbit rings */}
           <div
             ref={(element) => {
               orbitRefs.current[0] = element;
             }}
-            className="pointer-events-none absolute inset-0 z-0 -m-8 rounded-full border border-brand/30 animate-float-slow"
+            className="pointer-events-none absolute inset-0 z-0 -m-6 rounded-full border border-brand/30 animate-float-slow"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
           <div
             ref={(element) => {
               orbitRefs.current[1] = element;
             }}
-            className="pointer-events-none absolute inset-0 z-0 -m-16 rounded-full border border-dashed border-brand/15"
+            className="pointer-events-none absolute inset-0 z-0 -m-12 rounded-full border border-dashed border-brand/15"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
         </div>
@@ -239,7 +291,16 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = ["AI / ML", "Automation", "Web Development", "Data Solutions", "LLM Engineering", "Cloud Native", "MLOps", "RAG Systems"];
+  const items = [
+    "Smart Business Automation",
+    "AI Automation Services",
+    "WhatsApp Automation for Business",
+    "AI Chatbot Development",
+    "Custom Software Development in Pakistan",
+    "Web Development Company in Pakistan",
+    "ERPNext Implementation",
+    "Clinic & Law Firm Systems",
+  ];
   return (
     <div className="relative overflow-hidden border-y border-border/70 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 py-10 shadow-[0_0_60px_rgba(59,130,246,0.12)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_35%)] opacity-80" />
@@ -305,8 +366,8 @@ function AIVision() {
   }, []);
 
   const headline = [
-    "We", "make", "intelligent","practical", "systems", "reliable",
-    "and", "growth", "inevitable", "for", "teams", "who", "build", "the", "future.",
+    "Connecting", "people,", "processes,", "and", "systems", "to", "improve",
+    "operational", "efficiency", "and", "support", "sustainable", "long-term", "growth.",
   ];
 
   return (
@@ -321,7 +382,7 @@ function AIVision() {
         <div className="relative mx-auto flex h-full max-w-5xl flex-col justify-center px-6 lg:px-16">
           <div className="font-display inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-brand">
             <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-glow" />
-            AI &times; Engineering
+            AI Automation &amp; Solutions
           </div>
           <h2 className="font-hero mt-6 flex flex-wrap gap-x-3 gap-y-1 text-3xl font-bold uppercase leading-tight sm:text-4xl lg:text-5xl">
             {headline.map((word, i) => {
@@ -330,16 +391,22 @@ function AIVision() {
               return <RevealWord key={i} word={word} progress={progress} range={[start, end]} />;
             })}
           </h2>
-          <p className="font-display mt-8 max-w-lg text-sm text-muted-foreground sm:text-base">
-            One team, one vision: turning ambitious ideas into production-grade AI systems that scale with you, from first prototype to global rollout.
+          <p className="font-display mt-8 max-w-2xl text-sm text-muted-foreground sm:text-base leading-relaxed">
+            Whether you need AI automation services, custom business applications, or integrated software systems, our team focuses on understanding your challenges and developing technology that aligns with your business goals.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-wrap gap-4">
             <BouncyButton
               href="/work"
               className="font-display inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm text-foreground"
             >
               Explore Our Work <ArrowUpRight className="h-4 w-4" />
             </BouncyButton>
+            <Link
+              to="/contact"
+              className="font-display inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
+            >
+              Get In Touch
+            </Link>
           </div>
         </div>
       </div>
@@ -367,10 +434,60 @@ function RevealWord({
 }
 function Services() {
   const services = [
-    { icon: Brain, tag: "AI / ML Engineering", title: "Intelligent Systems", desc: "Custom models, LLM fine-tuning, RAG pipelines, and computer vision built for production.", img: secureAi, imgWidth: 600, cardImg: secureAiCard },
-    { icon: Cpu, tag: "Intelligent Automation", title: "Autonomous Workflows", desc: "Agents and workflow automation that replace repetitive work with reliable systems.", img: workSaas, imgWidth: 900, cardImg: workSaasCard },
-    { icon: Code2, tag: "Web Development", title: "High-Performance Apps", desc: "SEO-first web apps and platforms powered by modern JavaScript stacks.", img: workDev, imgWidth: 900, cardImg: workDevCard },
-    { icon: Database, tag: "Data Solutions", title: "Data Infrastructure", desc: "End-to-end pipelines, analytics, and warehousing that turn signals into decisions.", img: workData, imgWidth: 900, cardImg: workDataCard },
+    {
+      icon: Cpu,
+      tag: "Process Automation",
+      title: "Smart Business Automation & AI Solutions",
+      desc: "Streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications reducing manual workloads.",
+      img: workSaas,
+      imgWidth: 900,
+      cardImg: workSaasCard,
+    },
+    {
+      icon: MessageSquare,
+      tag: "Customer Communication",
+      title: "WhatsApp Automation for Business",
+      desc: "Automated messaging workflows for appointment reminders, customer inquiries, lead follow-ups, order updates, and FAQs with consistent service.",
+      img: secureAi,
+      imgWidth: 600,
+      cardImg: secureAiCard,
+    },
+    {
+      icon: Brain,
+      tag: "24/7 Intelligent Support",
+      title: "AI Chatbot Development",
+      desc: "Chatbots connected with business knowledge bases, customer support workflows, and applications to guide visitors and provide round-the-clock answers.",
+      img: workDev,
+      imgWidth: 900,
+      cardImg: workDevCard,
+    },
+    {
+      icon: Code2,
+      tag: "Tailored Platforms",
+      title: "Custom Software Development in Pakistan",
+      desc: "Applications tailored to your workflows, users, and scaling targets — from internal management portals to complete enterprise business platforms.",
+      img: workData,
+      imgWidth: 900,
+      cardImg: workDataCard,
+    },
+    {
+      icon: Rocket,
+      tag: "Modern Web Platforms",
+      title: "Web Development Company in Pakistan",
+      desc: "Modern, responsive, and functional web applications prioritizing usability, performance, security, and scalability for high conversion.",
+      img: workDev,
+      imgWidth: 900,
+      cardImg: workDevCard,
+    },
+    {
+      icon: Database,
+      tag: "Enterprise Integration",
+      title: "ERPNext Implementation",
+      desc: "Bring accounting, inventory, sales, purchasing, and operations into an integrated platform with complete visibility and consistent workflows.",
+      img: workSaas,
+      imgWidth: 900,
+      cardImg: workSaasCard,
+    },
   ];
   return (
     <section id="services" className="relative pt-16 pb-20">
@@ -384,11 +501,11 @@ function Services() {
             Systems We <span className="text-gradient-brand">Engineer</span>
           </h2>
           <p className="font-display mt-4 text-muted-foreground">
-            From intelligent agents to production-grade infrastructure, we design, build, and ship the systems modern companies run on.
+            From smart business automation and WhatsApp workflows to custom web apps and ERPNext, we build solutions that eliminate routine workloads and drive growth.
           </p>
         </div>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.map(({ icon: Icon, tag, title, desc, img, imgWidth, cardImg }) => (
             <div
               key={title}
@@ -415,31 +532,37 @@ function Services() {
                 />
               </div>
 
-              <div className="glass-card relative overflow-hidden rounded-2xl transition-transform duration-500 group-hover:-translate-y-1">
+              <div className="glass-card relative flex h-full flex-col justify-between overflow-hidden rounded-2xl transition-transform duration-500 group-hover:-translate-y-1">
                 {/* image block */}
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={img}
-                    srcSet={`${cardImg} 480w, ${img} ${imgWidth}w`}
-                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 19vw"
-                    alt={title}
-                    className="h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="glass-card flex h-11 w-11 items-center justify-center rounded-xl ring-1 ring-brand/30">
-                      <Icon className="h-5 w-5 text-brand" strokeWidth={1.75} />
+                <div>
+                  <div className="relative h-36 overflow-hidden">
+                    <img
+                      src={img}
+                      srcSet={`${cardImg} 480w, ${img} ${imgWidth}w`}
+                      sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 28vw"
+                      alt={title}
+                      className="h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="glass-card flex h-11 w-11 items-center justify-center rounded-xl ring-1 ring-brand/30">
+                        <Icon className="h-5 w-5 text-brand" strokeWidth={1.75} />
+                      </div>
                     </div>
+                  </div>
+
+                  {/* label block */}
+                  <div className="p-5">
+                    <div className="font-display text-[11px] uppercase tracking-widest text-brand">{tag}</div>
+                    <h3 className="font-cyber mt-1 text-base font-bold text-foreground">{title}</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{desc}</p>
                   </div>
                 </div>
 
-                {/* label block */}
-                <div className="p-5">
-                  <div className="font-display text-[11px] uppercase tracking-widest text-brand">{tag}</div>
-                  <h3 className="font-cyber mt-1 text-base font-bold">{title}</h3>
-                  <Link to="/services" className="font-display mt-3 inline-flex items-center gap-1 text-xs text-brand opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    Explore {tag} <ArrowUpRight className="h-3 w-3" />
+                <div className="px-5 pb-5">
+                  <Link to="/services" className="font-display inline-flex items-center gap-1 text-xs text-brand transition-colors hover:underline">
+                    Explore capability <ArrowUpRight className="h-3 w-3" />
                   </Link>
                 </div>
               </div>
@@ -460,11 +583,70 @@ function Services() {
   );
 }
 
+function WhyChooseUs() {
+  const points = [
+    {
+      icon: Shield,
+      title: "Practical Implementation",
+      desc: "We emphasize practical execution over hype, architecting systems that integrate smoothly into existing workflows and deliver reliable ROI.",
+    },
+    {
+      icon: Zap,
+      title: "Workflow Improvement",
+      desc: "Our approach starts with identifying high-friction manual tasks and turning them into efficient, error-free automated processes.",
+    },
+    {
+      icon: Database,
+      title: "System Integration",
+      desc: "Bridging the gap between disconnected software, CRMs, ERPs, and databases into a unified, transparent digital ecosystem.",
+    },
+    {
+      icon: Rocket,
+      title: "Scalable Digital Solutions",
+      desc: "Engineered with modern cloud foundations that adapt as your organization grows, supporting sustainable long-term business scale.",
+    },
+  ];
 
+  return (
+    <section className="relative py-20 border-y border-border/60 bg-gradient-to-b from-slate-950/40 via-background to-slate-950/40">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionPill>Why Partner With Us</SectionPill>
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
+            Why Choose <span className="text-gradient-brand">Tech Agenz?</span>
+          </h2>
+          <p className="mt-4 text-sm text-muted-foreground sm:text-base leading-relaxed">
+            Choosing the right technology partner means finding a team that understands both software and the business problems it needs to solve. Tech Agenz emphasizes practical implementation, workflow improvement, system integration, and scalable digital solutions.
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {points.map((p) => {
+            const Icon = p.icon;
+            return (
+              <div key={p.title} className="glass-card group relative rounded-2xl p-6 transition-all hover:border-brand/40 hover:-translate-y-1">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 ring-1 ring-brand/30 text-brand">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-display text-base font-bold text-foreground">{p.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{p.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function SectionPill({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1 text-xs uppercase tracking-[0.2em] text-brand">
+      {children}
+    </div>
+  );
 }
+
 function About() {
   return (
     <section id="about" className="relative py-20">
@@ -479,8 +661,8 @@ function About() {
                 <Rocket className="h-5 w-5 text-brand" />
               </div>
               <div>
-                <div className="text-sm font-semibold">Shipping since 2018</div>
-                <div className="text-xs text-muted-foreground">Trusted by teams worldwide</div>
+                <div className="text-sm font-semibold">Specialized Solutions</div>
+                <div className="text-xs text-muted-foreground">Clinics, Law Firms & Growing Businesses</div>
               </div>
             </div>
           </div>
@@ -488,17 +670,26 @@ function About() {
         <div>
           <SectionPill>About Tech Agenz</SectionPill>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
-            An AI-powered <span className="text-gradient-brand">software house</span> for the intelligent era
+            Smart Business Automation and <span className="text-gradient-brand">AI Solutions</span>
           </h2>
-          <p className="mt-5 text-muted-foreground">
-            Tech Agenz blends deep engineering with applied AI to help ambitious teams launch, scale, and modernize. We architect systems that think, automate, and grow — from first prototype to global production.
+          <p className="mt-5 text-muted-foreground leading-relaxed">
+            Modern businesses need more than traditional software to remain competitive. Tech Agenz helps organizations streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications. From automating customer communication to connecting business tools, we help reduce manual workloads and create more efficient processes.
           </p>
-          <div className="mt-8">
+          <p className="mt-3 text-muted-foreground leading-relaxed">
+            Our solutions support clinics managing patient appointments, law firms organizing client inquiries, and growing businesses looking to improve their internal workflows.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/about"
               className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
             >
               Learn more about Tech Agenz <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm font-medium hover:bg-card"
+            >
+              Contact our team
             </Link>
           </div>
         </div>
@@ -849,13 +1040,16 @@ function BlogsTeaser() {
           <div className="absolute -top-24 left-1/2 h-64 w-[700px] -translate-x-1/2 rounded-full bg-brand/30 blur-3xl" />
           <div className="relative grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <SectionPill><Zap className="h-3 w-3" /> Powered by Tech Agenz</SectionPill>
+              <SectionPill><Zap className="h-3 w-3" /> Get Started Today</SectionPill>
               <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
-                Let's build something<br />
-                <span className="text-gradient-brand">future-ready.</span>
+                Transform Your Business with <br />
+                <span className="text-gradient-brand">Smarter Technology.</span>
               </h2>
-              <p className="mt-4 max-w-lg text-muted-foreground">
-                Partner with Tech Agenz to design and engineer intelligent systems that grow with your business.
+              <p className="mt-4 max-w-lg text-sm text-muted-foreground sm:text-base leading-relaxed">
+                Ready to improve your workflows, simplify customer communication, or modernize your business systems? Tech Agenz can help you explore AI automation, custom software, intelligent chatbots, web applications, and ERPNext solutions aligned with your needs.
+              </p>
+              <p className="mt-2 text-xs text-brand font-medium">
+                Contact Tech Agenz to discuss your business challenges and discover the right technology solution for your next stage of growth.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href="mailto:info@techagenz.com" className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]">

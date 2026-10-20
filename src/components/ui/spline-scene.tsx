@@ -6,6 +6,7 @@ interface SplineSceneProps {
   scene: string;
   className?: string;
   style?: CSSProperties;
+  onLoad?: (app: any) => void;
 }
 
 function applyThemeToSpline(app: unknown) {
@@ -57,10 +58,13 @@ function applyThemeToSpline(app: unknown) {
   });
 }
 
-export function SplineScene({ scene, className, style }: SplineSceneProps) {
+export function SplineScene({ scene, className, style, onLoad }: SplineSceneProps) {
   const handleLoad = (app: unknown) => {
     applyThemeToSpline(app);
     window.setTimeout(() => applyThemeToSpline(app), 250);
+    if (onLoad) {
+      onLoad(app);
+    }
   };
 
   return (

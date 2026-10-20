@@ -23,11 +23,11 @@ import workDev from "@/assets/work-dev.webp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Tech Agenz | AI-Powered Software House" },
+      { title: "About Us — Tech Agenz | AI-Powered Software House in Pakistan" },
       {
         name: "description",
         content:
-          "Learn about Tech Agenz: our mission, values, engineering discipline, leadership team, and track record in delivering 50+ AI and software projects.",
+          "Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.",
       },
     ],
   }),
@@ -37,23 +37,23 @@ export const Route = createFileRoute("/about")({
 const values = [
   {
     icon: Target,
-    title: "Production-First AI",
-    desc: "We don't build toy prototypes. We design resilient, observable, cost-effective AI systems architected to withstand heavy real-world usage.",
+    title: "Practical Implementation",
+    desc: "We focus on understanding your challenges and developing technology that aligns directly with your business goals, ensuring measurable ROI.",
   },
   {
     icon: Shield,
-    title: "Engineering Rigor",
-    desc: "Strict type-safety, automated testing, defensive error boundaries, and cloud-native security are built into every single codebase from day one.",
+    title: "Workflow Improvement",
+    desc: "Identifying opportunities for automation, reducing manual workloads, and establishing consistent, deterministic workflows across teams.",
   },
   {
     icon: Zap,
-    title: "Velocity & Agility",
-    desc: "Modern tooling and iterative sprints allow us to prototype in days and ship battle-tested production platforms in weeks, not quarters.",
+    title: "System Integration",
+    desc: "Connecting disconnected software, CRMs, ERPs, and communications into a unified, integrated digital ecosystem.",
   },
   {
     icon: Users,
-    title: "Direct Partnership",
-    desc: "You collaborate directly with the engineers architecting and writing your systems. No bureaucratic layers or telephone games.",
+    title: "Direct Engineering Partnership",
+    desc: "You collaborate directly with the engineers architecting and implementing your systems, ensuring agility without bureaucracy.",
   },
 ];
 
@@ -61,17 +61,17 @@ const stats = [
   {
     value: "50+",
     label: "Projects Delivered",
-    desc: "Production AI systems, specialized healthcare portals, legal tech platforms, and high-load web applications.",
+    desc: "Smart business automation, custom software, ERPNext platforms, and clinical scheduling systems.",
   },
   {
     value: "6+",
     label: "Years Building",
-    desc: "Dedicated to crafting resilient software — scaling from early startup prototypes to mature institutional deployments.",
+    desc: "Years spent delivering practical solutions that connect people, processes, and systems for sustainable growth.",
   },
   {
     value: "98%",
     label: "Client Satisfaction",
-    desc: "A track record built on long-term client relationships and systems that perform reliably year after year.",
+    desc: "A track record built on long-term client partnerships, workflow improvements, and dependable support.",
   },
 ];
 
@@ -101,7 +101,7 @@ function AboutPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand"
           >
-            <Sparkles className="h-3.5 w-3.5" /> About Tech Agenz
+            <Sparkles className="h-3.5 w-3.5" /> AI-Powered Software House in Pakistan
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -109,8 +109,8 @@ function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-hero mt-5 text-4xl font-bold uppercase sm:text-6xl"
           >
-            Architecting the Future with <br />
-            <span className="text-gradient-brand">Intelligent Engineering</span>
+            Simplifying Operations with <br />
+            <span className="text-gradient-brand">Intelligent Technology</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -118,8 +118,7 @@ function AboutPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
           >
-            Tech Agenz is an AI-powered software house founded to bridge the gap between cutting-edge artificial intelligence
-            and dependable, mission-critical production systems.
+            Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.
           </motion.p>
         </div>
       </section>
@@ -166,13 +165,13 @@ function AboutPage() {
               className="space-y-6"
             >
               <h2 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">
-                We believe applied AI should be <span className="text-gradient-brand">reliable, fast, and practical</span>.
+                Smart Business Automation and <span className="text-gradient-brand">Practical AI</span>
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Too many AI projects remain stuck in research experiments or brittle demo prototypes that fail when presented with real-world edge cases. At Tech Agenz, we apply sound software engineering principles to AI development.
+                Modern businesses need more than traditional software to remain competitive. Tech Agenz helps organizations streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications. From automating customer communication to connecting business tools, we help reduce manual workloads and create more efficient processes.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Whether deploying autonomous clinic appointment scheduling systems, legal tech consultation portals, or high-throughput enterprise pipelines, we take end-to-end accountability for performance, data security, and long-term maintainability.
+                Our solutions support clinics managing patient appointments, law firms organizing client inquiries, and growing businesses looking to improve their internal workflows with custom software, WhatsApp automation, and ERPNext implementations.
               </p>
               <div className="pt-2">
                 <Link

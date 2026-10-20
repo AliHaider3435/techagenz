@@ -103,19 +103,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "google-adsense-account",
         content: "ca-pub-2324408013770466",
       },
-      { title: "Tech Agenz — AI-Powered Software House" },
+      { title: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
         name: "description",
         content:
-          "Tech Agenz builds intelligent AI, automation, and web solutions that scale. 50+ projects delivered across 7+ countries.",
+          "Tech Agenz is an AI-powered software house in Pakistan helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.",
       },
       { name: "author", content: "Tech Agenz" },
       { property: "og:site_name", content: "Tech Agenz" },
-      { property: "og:title", content: "Tech Agenz — AI-Powered Software House" },
+      { property: "og:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
         property: "og:description",
         content:
-          "Intelligent AI, automation, and web solutions built for ambitious teams. 50+ projects delivered worldwide.",
+          "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.techagenz.com/" },
