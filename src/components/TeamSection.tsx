@@ -2,11 +2,15 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import team1 from "@/assets/team1.webp";
-import team2 from "@/assets/null.png";
-import team3 from "@/assets/null.png";
-import team4 from "@/assets/null.png";
-import team5 from "@/assets/null.png";
 import team6 from "@/assets/team6.jpg";
+
+// Inline SVG placeholder for team members without a photo yet — zero file size
+const avatarPlaceholder =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='12' fill='%230d1b2a'/%3E%3Ccircle cx='60' cy='45' r='22' fill='%2322d3ee' opacity='.3'/%3E%3Cellipse cx='60' cy='100' rx='34' ry='22' fill='%2322d3ee' opacity='.2'/%3E%3C/svg%3E";
+const team2 = avatarPlaceholder;
+const team3 = avatarPlaceholder;
+const team4 = avatarPlaceholder;
+const team5 = avatarPlaceholder;
 
 gsap.registerPlugin(ScrollTrigger);
 

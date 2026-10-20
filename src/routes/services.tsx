@@ -21,14 +21,15 @@ import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import secureAi from "@/assets/secure-ai.webp";
-import secureAiCard from "@/assets/secure-ai-card.webp";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
 import workSaas from "@/assets/work-saas.webp";
 import workSaasCard from "@/assets/work-saas-card.webp";
 import workData from "@/assets/work-data.webp";
 import workDataCard from "@/assets/work-data-card.webp";
+// secureAi was removed — reuse workDev for WhatsApp automation service card
+const secureAi = workDev;
+const secureAiCard = workDevCard;
 
 export const Route = createFileRoute("/services")({
   head: () => ({

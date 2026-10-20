@@ -16,14 +16,15 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import secureAi from "@/assets/secure-ai.webp";
-import secureAiCard from "@/assets/secure-ai-card.webp";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
 import workSaas from "@/assets/work-saas.webp";
 import workSaasCard from "@/assets/work-saas-card.webp";
 import workData from "@/assets/work-data.webp";
 import workDataCard from "@/assets/work-data-card.webp";
+// secure-ai.webp was removed — alias to workDev for the WhatsApp automation card
+const secureAi = workDev;
+const secureAiCard = workDevCard;
 import garwanLawChamber from "@/assets/garwan-law-chamber.webp";
 import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
 import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
