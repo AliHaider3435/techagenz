@@ -303,7 +303,7 @@ function BlogsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-all duration-300 hover:border-brand/40 hover:-translate-y-1"
+                  className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1"
                 >
                   <div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">

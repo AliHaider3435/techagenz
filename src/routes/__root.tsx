@@ -132,7 +132,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "canonical", href: "https://www.techagenz.com/" },
       { rel: "stylesheet", href: appCss },
-      // Preload hero font — font-display: optional means no layout shift
+      // Preload hero font
       {
         rel: "preload",
         href: heroFont,
@@ -141,10 +141,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         crossOrigin: "anonymous",
       },
       { rel: "icon", href: logo, type: "image/webp" },
-      // Preconnect so Spline CDN connection is ready when user clicks the robot
-      { rel: "preconnect", href: "https://prod.spline.design" },
-      { rel: "preconnect", href: "https://unpkg.com" },
-      // DNS-prefetch for AdSense (loaded deferred after window load)
+      // DNS-prefetch for AdSense (loaded deferred)
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       // DNS-prefetch for Vercel Analytics
       { rel: "dns-prefetch", href: "https://vitals.vercel-insights.com" },
@@ -168,13 +165,26 @@ function RootShell({ children }: { children: ReactNode }) {
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              window.addEventListener('load', function() {
+              function loadAdSense() {
+                if (window.__adsenseLoaded) return;
+                window.__adsenseLoaded = true;
                 var s = document.createElement('script');
                 s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466";
                 s.async = true;
                 s.crossOrigin = "anonymous";
                 document.head.appendChild(s);
-              });
+              }
+              var events = ['scroll', 'mousemove', 'touchstart', 'keydown'];
+              function onUserInteract() {
+                loadAdSense();
+                events.forEach(function(e) { window.removeEventListener(e, onUserInteract); });
+              }
+              events.forEach(function(e) { window.addEventListener(e, onUserInteract, { once: true, passive: true }); });
+              if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(function() { setTimeout(loadAdSense, 3500); });
+              } else {
+                setTimeout(loadAdSense, 3500);
+              }
             `,
           }}
         />

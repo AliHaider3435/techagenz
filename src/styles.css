@@ -2,32 +2,6 @@
 @source "../src";
 @import "tw-animate-css";
 
-/*
- * Override font-display for all variable fonts loaded via @fontsource-variable.
- * "optional" = browser uses cached font or falls back immediately — no invisible text,
- * no layout shift. This fixes Lighthouse "Font display" warning.
- */
-@font-face {
-  font-family: "Inter Variable";
-  src: local("Inter Variable");
-  font-display: optional;
-}
-@font-face {
-  font-family: "Space Grotesk Variable";
-  src: local("Space Grotesk Variable");
-  font-display: optional;
-}
-@font-face {
-  font-family: "Orbitron Variable";
-  src: local("Orbitron Variable");
-  font-display: optional;
-}
-@font-face {
-  font-family: "Sora Variable";
-  src: local("Sora Variable");
-  font-display: optional;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 /*

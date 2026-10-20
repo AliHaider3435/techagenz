@@ -22,6 +22,7 @@ import workSaas from "@/assets/work-saas.webp";
 import workSaasCard from "@/assets/work-saas-card.webp";
 import workData from "@/assets/work-data.webp";
 import workDataCard from "@/assets/work-data-card.webp";
+import robotOriginal from "@/assets/robot-original.png";
 // secure-ai.webp was removed — alias to workDev for the WhatsApp automation card
 const secureAi = workDev;
 const secureAiCard = workDevCard;
@@ -230,60 +231,38 @@ function Hero() {
                   onLoad={handleSplineLoad}
                 />
             ) : (
-              /* Static CSS-only robot placeholder — zero JS weight, renders instantly */
+              /* Original 3D Robot preview — pristine image, instant load, transparent background */
               <div
                 onClick={handleStartRobot}
                 onTouchStart={handleStartRobot}
-                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-4"
-                aria-label="Click to load the interactive robot animation"
+                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center select-none"
+                aria-label="Click to start interactive 3D robot animation"
               >
-                {/* Animated robot icon placeholder */}
+                {/* 3D Robot Image floating gently */}
                 <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full bg-brand/10 blur-2xl scale-150" />
-                  <svg
-                    viewBox="0 0 120 160"
-                    className="relative z-10 h-40 w-32 text-brand animate-float-slow"
-                    fill="none"
-                    aria-hidden
-                  >
-                    {/* Head */}
-                    <rect x="30" y="10" width="60" height="50" rx="12" stroke="currentColor" strokeWidth="3" fill="oklch(0.7 0.19 240 / 0.08)" />
-                    {/* Eyes */}
-                    <circle cx="46" cy="33" r="7" fill="currentColor" opacity="0.9" />
-                    <circle cx="74" cy="33" r="7" fill="currentColor" opacity="0.9" />
-                    <circle cx="48" cy="31" r="2.5" fill="oklch(0.09 0.015 250)" />
-                    <circle cx="76" cy="31" r="2.5" fill="oklch(0.09 0.015 250)" />
-                    {/* Mouth */}
-                    <rect x="44" y="48" width="32" height="4" rx="2" fill="currentColor" opacity="0.6" />
-                    {/* Antenna */}
-                    <line x1="60" y1="10" x2="60" y2="2" stroke="currentColor" strokeWidth="2.5" />
-                    <circle cx="60" cy="1" r="3" fill="currentColor" className="animate-pulse-glow" />
-                    {/* Neck */}
-                    <rect x="52" y="60" width="16" height="8" rx="2" fill="currentColor" opacity="0.5" />
-                    {/* Body */}
-                    <rect x="20" y="68" width="80" height="60" rx="12" stroke="currentColor" strokeWidth="3" fill="oklch(0.7 0.19 240 / 0.08)" />
-                    {/* Chest panel */}
-                    <rect x="36" y="82" width="48" height="30" rx="6" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-                    <circle cx="52" cy="97" r="6" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-                    <circle cx="68" cy="97" r="6" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
-                    {/* Arms */}
-                    <rect x="4" y="72" width="16" height="40" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
-                    <rect x="100" y="72" width="16" height="40" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
-                    {/* Legs */}
-                    <rect x="34" y="128" width="20" height="28" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
-                    <rect x="66" y="128" width="20" height="28" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
-                  </svg>
+                  <div className="absolute inset-0 rounded-full bg-cyan-500/15 blur-2xl scale-125 pointer-events-none" />
+                  <img
+                    src={robotOriginal}
+                    alt="Tech Agenz AI Robot"
+                    width={326}
+                    height={392}
+                    className="relative z-10 max-h-[290px] w-auto sm:max-h-[340px] lg:max-h-[380px] object-contain drop-shadow-[0_12px_30px_rgba(34,211,238,0.22)] animate-float-slow pointer-events-none"
+                  />
                 </div>
-                <button
-                  type="button"
-                  className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-slate-950/90 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95"
-                >
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-                  </span>
-                  <span>Click to load 3D Robot</span>
-                </button>
+
+                {/* Click / Tap to Animate Trigger Overlay */}
+                <div className="mt-1">
+                  <button
+                    type="button"
+                    className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-slate-950/90 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95"
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
+                    </span>
+                    <span>Click or tap to animate</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -600,7 +579,7 @@ function Services() {
         <div className="mt-12 text-center">
           <Link
             to="/services"
-            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-brand/20 hover:scale-105"
+            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-transform hover:bg-brand/20 hover:scale-105"
           >
             Explore all capabilities & services <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -651,7 +630,7 @@ function WhyChooseUs() {
           {points.map((p) => {
             const Icon = p.icon;
             return (
-              <div key={p.title} className="glass-card group relative rounded-2xl p-6 transition-all hover:border-brand/40 hover:-translate-y-1">
+              <div key={p.title} className="glass-card group relative rounded-2xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 ring-1 ring-brand/30 text-brand">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -811,7 +790,7 @@ function StatCard({
       style={{ marginTop: `${offset * 56}px` }}
     >
       <div
-        className="relative flex h-full flex-col justify-between gap-6 border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.01] p-5 pb-9 backdrop-blur-sm transition-all duration-300 group-hover:border-brand/50 group-hover:shadow-[0_0_40px_-8px_rgba(59,130,246,0.5)]"
+        className="relative flex h-full flex-col justify-between gap-6 border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.01] p-5 pb-9 backdrop-blur-sm transition-colors duration-300 group-hover:border-brand/50"
         style={{
           clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%)",
         }}
@@ -820,7 +799,7 @@ function StatCard({
           <div className="font-display text-3xl font-bold text-white sm:text-4xl">{value}</div>
           <div className="mt-1 text-sm text-slate-300">{label}</div>
         </div>
-        <p className="text-xs leading-relaxed text-slate-500">{desc}</p>
+        <p className="text-xs leading-relaxed text-slate-400">{desc}</p>
 
         <div
           className="pointer-events-none absolute bottom-0 right-0 h-7 w-7 bg-brand/0 transition-colors duration-300 group-hover:bg-brand/60"
@@ -886,7 +865,7 @@ function Work() {
         <div className="mt-12 text-center">
           <Link
             to="/work"
-            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-brand/20 hover:scale-105"
+            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-transform hover:bg-brand/20 hover:scale-105"
           >
             Explore all projects & case studies <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -959,7 +938,7 @@ function BlogsTeaser() {
             <Link
               key={p.title}
               to="/blogs"
-              className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-all duration-300 hover:border-brand/40 hover:-translate-y-1"
+              className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1"
             >
               <div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">

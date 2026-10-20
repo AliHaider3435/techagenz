@@ -208,7 +208,7 @@ function AboutPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="glass-card flex flex-col justify-between rounded-2xl p-6 transition-all duration-300 hover:border-brand/40"
+                  className="glass-card flex flex-col justify-between rounded-2xl p-6 transition-colors duration-300 hover:border-brand/40"
                 >
                   <div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 ring-1 ring-brand/30">
