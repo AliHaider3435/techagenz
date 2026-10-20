@@ -22,7 +22,7 @@ import workSaas from "@/assets/work-saas.webp";
 import workSaasCard from "@/assets/work-saas-card.webp";
 import workData from "@/assets/work-data.webp";
 import workDataCard from "@/assets/work-data-card.webp";
-import robotOriginal from "@/assets/robot-original.png";
+import robotHero from "@/assets/robot-hero.png";
 // secure-ai.webp was removed — alias to workDev for the WhatsApp automation card
 const secureAi = workDev;
 const secureAiCard = workDevCard;
@@ -211,56 +211,56 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right: AI Robot - Deferred until user interaction */}
+        {/* Right: AI Robot - Framed strictly inside circular portal */}
         <div
           ref={sceneRef}
-          className="relative mx-auto flex items-center justify-center w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[460px]"
+          className="relative mx-auto flex items-center justify-center w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[440px]"
           style={{
             transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)",
             transition: "transform 0.15s ease-out",
           }}
         >
-          {/* Robot Canvas */}
-          <div className="relative z-10 aspect-square w-full bg-transparent">
+          {/* Main Circular Portal framing the robot: rounded-full overflow-hidden ensures it NEVER overrides or goes outside the circle */}
+          <div className="relative z-10 aspect-square w-full rounded-full border border-cyan-400/40 bg-gradient-to-b from-cyan-950/20 via-background/40 to-slate-950/70 p-4 shadow-[0_0_40px_-10px_rgba(34,211,238,0.25)] backdrop-blur-[2px] overflow-hidden flex items-center justify-center">
             {isRobotActive ? (
               /* Only mount Spline AFTER user click — defers the ~2MB bundle from initial load */
               <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="h-full w-full"
-                  style={{ background: "transparent" }}
-                  onLoad={handleSplineLoad}
-                />
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="h-full w-full"
+                style={{ background: "transparent" }}
+                onLoad={handleSplineLoad}
+              />
             ) : (
-              /* Original 3D Robot preview — pristine image, instant load, transparent background */
+              /* Original 3D Robot preview — kept strictly inside the circle */
               <div
                 onClick={handleStartRobot}
                 onTouchStart={handleStartRobot}
-                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center select-none"
+                className="group absolute inset-0 flex cursor-pointer flex-col items-center justify-center select-none p-3"
                 aria-label="Click to start interactive 3D robot animation"
               >
-                {/* 3D Robot Image floating gently */}
-                <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full bg-cyan-500/15 blur-2xl scale-125 pointer-events-none" />
+                {/* 3D Robot Image centered and scaled safely inside circle */}
+                <div className="relative flex h-full w-full items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-cyan-500/10 blur-2xl pointer-events-none" />
                   <img
-                    src={robotOriginal}
+                    src={robotHero}
                     alt="Tech Agenz AI Robot"
-                    width={326}
-                    height={392}
-                    className="relative z-10 max-h-[290px] w-auto sm:max-h-[340px] lg:max-h-[380px] object-contain drop-shadow-[0_12px_30px_rgba(34,211,238,0.22)] animate-float-slow pointer-events-none"
+                    width={351}
+                    height={327}
+                    className="relative z-10 max-h-[82%] max-w-[88%] object-contain drop-shadow-[0_8px_24px_rgba(34,211,238,0.22)] animate-float-slow pointer-events-none"
                   />
                 </div>
 
                 {/* Click / Tap to Animate Trigger Overlay */}
-                <div className="mt-1">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
                   <button
                     type="button"
-                    className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-slate-950/90 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95"
+                    className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/60 bg-slate-950/90 px-3.5 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
                   >
                     <span className="relative flex h-2 w-2">
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
                     </span>
-                    <span>Click or tap to animate</span>
+                    <span>Click to animate</span>
                   </button>
                 </div>
               </div>
@@ -268,26 +268,29 @@ function Hero() {
 
             {/* Active Status Badge */}
             {isRobotActive && (
-              <div className="pointer-events-none absolute bottom-2 right-2 z-20 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-slate-950/75 px-3 py-1 text-[11px] font-medium text-cyan-300 backdrop-blur-md">
+              <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-slate-950/80 px-3 py-1 text-[11px] font-medium text-cyan-300 backdrop-blur-md whitespace-nowrap">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Robot Active</span>
               </div>
             )}
+
+            {/* Crisp outer border ring overlay to ensure clean boundary */}
+            <div className="pointer-events-none absolute inset-0 rounded-full border border-cyan-400/30 z-30 ring-1 ring-inset ring-cyan-400/20" />
           </div>
 
-          {/* orbit rings */}
+          {/* Outer floating orbit rings */}
           <div
             ref={(element) => {
               orbitRefs.current[0] = element;
             }}
-            className="pointer-events-none absolute inset-0 z-0 -m-6 rounded-full border border-brand/30 animate-float-slow"
+            className="pointer-events-none absolute inset-0 z-0 -m-5 rounded-full border border-brand/25 animate-float-slow"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
           <div
             ref={(element) => {
               orbitRefs.current[1] = element;
             }}
-            className="pointer-events-none absolute inset-0 z-0 -m-12 rounded-full border border-dashed border-brand/15"
+            className="pointer-events-none absolute inset-0 z-0 -m-11 rounded-full border border-dashed border-brand/15"
             style={{ transform: "translate3d(0, 0, 0)" }}
           />
         </div>
