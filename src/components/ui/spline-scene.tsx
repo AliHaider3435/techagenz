@@ -58,10 +58,53 @@ function applyThemeToSpline(app: unknown) {
   });
 }
 
+function ensureSplineTransparent(app: unknown) {
+  if (!app || typeof app !== "object") return;
+  const splineApp = app as {
+    canvas?: HTMLCanvasElement;
+    _renderer?: {
+      setClearColor?: (color: number, alpha?: number) => void;
+      setClearAlpha?: (alpha: number) => void;
+    };
+    setBackgroundColor?: (color: string) => void;
+    _scene?: {
+      activePage?: {
+        background?: unknown;
+        setBackgroundColor?: (color: unknown) => void;
+      };
+    };
+  };
+
+  try {
+    if (splineApp.canvas) {
+      splineApp.canvas.style.background = "transparent";
+      splineApp.canvas.style.backgroundColor = "transparent";
+    }
+    if (splineApp._renderer?.setClearColor) {
+      splineApp._renderer.setClearColor(0x000000, 0);
+    }
+    if (splineApp._renderer?.setClearAlpha) {
+      splineApp._renderer.setClearAlpha(0);
+    }
+    if (typeof splineApp.setBackgroundColor === "function") {
+      splineApp.setBackgroundColor("transparent");
+    }
+    if (splineApp._scene?.activePage) {
+      splineApp._scene.activePage.background = null;
+    }
+  } catch {
+    // safe fallback
+  }
+}
+
 export function SplineScene({ scene, className, style, onLoad }: SplineSceneProps) {
   const handleLoad = (app: unknown) => {
+    ensureSplineTransparent(app);
     applyThemeToSpline(app);
-    window.setTimeout(() => applyThemeToSpline(app), 250);
+    window.setTimeout(() => {
+      ensureSplineTransparent(app);
+      applyThemeToSpline(app);
+    }, 250);
     if (onLoad) {
       onLoad(app);
     }

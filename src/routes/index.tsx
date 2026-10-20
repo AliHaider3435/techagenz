@@ -221,31 +221,30 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right: AI Robot (Compressed & Interactive on click/tap) */}
+        {/* Right: AI Robot (Floating transparently over the orbit circles) */}
         <div
           ref={sceneRef}
-          className="relative mx-auto w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[460px]"
+          className="relative mx-auto flex items-center justify-center w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[460px]"
           style={{
             transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)",
             transition: "transform 0.15s ease-out",
           }}
         >
-          <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-brand/10 blur-3xl" />
-          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-b from-brand/20 to-transparent blur-2xl" />
-          
-          <div className="relative z-10 aspect-square w-full overflow-hidden rounded-3xl border border-brand/25 bg-slate-950/60 shadow-[0_0_50px_rgba(34,211,238,0.15)] backdrop-blur-sm">
+          {/* Transparent Robot Canvas - No box, no background, directly over background circles */}
+          <div className="relative z-10 aspect-square w-full bg-transparent">
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="h-full w-full"
+              className="h-full w-full bg-transparent"
+              style={{ background: "transparent" }}
               onLoad={handleSplineLoad}
             />
 
-            {/* Click / Tap to Animate Trigger Overlay */}
+            {/* Click / Tap to Animate Trigger Overlay (Transparent) */}
             {!isRobotActive && (
               <div
                 onClick={handleStartRobot}
                 onTouchStart={handleStartRobot}
-                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-end pb-6 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent transition-opacity"
+                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-end pb-4 transition-opacity"
               >
                 <button
                   type="button"
@@ -262,7 +261,7 @@ function Hero() {
 
             {/* Active Status Badge */}
             {isRobotActive && (
-              <div className="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-slate-950/75 px-3 py-1 text-[11px] font-medium text-cyan-300 backdrop-blur-md">
+              <div className="pointer-events-none absolute bottom-2 right-2 z-20 flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-slate-950/75 px-3 py-1 text-[11px] font-medium text-cyan-300 backdrop-blur-md">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Robot Active</span>
               </div>
