@@ -1,124 +1,116 @@
-import { Suspense, lazy, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
-const Spline = lazy(() => import("@splinetool/react-spline"));
+// Use @splinetool/runtime directly (NOT react-spline) so Spline's WebGL
+// animation loop runs outside React's reconciler — no deep Hu/Vu call stacks.
+type SplineApp = import("@splinetool/runtime").Application;
 
 interface SplineSceneProps {
   scene: string;
   className?: string;
   style?: CSSProperties;
-  onLoad?: (app: any) => void;
+  onLoad?: (app: SplineApp) => void;
 }
 
-function applyThemeToSpline(app: unknown) {
-  const splineApp = app as {
-    scene?: {
-      traverse?: (callback: (node: unknown) => void) => void;
-    };
-  };
-
-  const scene = splineApp.scene;
-  if (!scene || typeof scene.traverse !== "function") return;
+function applyThemeToSpline(app: SplineApp) {
+  // @ts-ignore — traverse is on the internal THREE scene
+  const threeScene = (app as any).scene;
+  if (!threeScene || typeof threeScene.traverse !== "function") return;
 
   const accentColor = "#22d3ee";
   const accentGlow = "#4f46e5";
 
-  const applyMaterialTheme = (material: unknown) => {
-    if (!material || typeof material !== "object") return;
-
-    const materialLike = material as {
-      color?: { set?: (value: string) => void };
-      emissive?: { set?: (value: string) => void };
-      emissiveIntensity?: number;
-      metalness?: number;
-      roughness?: number;
+  threeScene.traverse((node: any) => {
+    if (!node?.isMesh) return;
+    const applyMat = (mat: any) => {
+      if (!mat) return;
+      mat.color?.set?.(accentColor);
+      mat.emissive?.set?.(accentGlow);
+      if (typeof mat.emissiveIntensity === "number") mat.emissiveIntensity = 0.35;
+      if (typeof mat.metalness === "number") mat.metalness = 0.8;
+      if (typeof mat.roughness === "number") mat.roughness = 0.2;
     };
-
-    if (materialLike.color?.set) materialLike.color.set(accentColor);
-    if (materialLike.emissive?.set) materialLike.emissive.set(accentGlow);
-    if (typeof materialLike.emissiveIntensity === "number") materialLike.emissiveIntensity = 0.35;
-    if (typeof materialLike.metalness === "number") materialLike.metalness = 0.8;
-    if (typeof materialLike.roughness === "number") materialLike.roughness = 0.2;
-  };
-
-  scene.traverse((node) => {
-    if (!node || typeof node !== "object") return;
-    const nodeLike = node as {
-      isMesh?: boolean;
-      material?: unknown;
-    };
-
-    if (!nodeLike.isMesh) return;
-
-    if (Array.isArray(nodeLike.material)) {
-      nodeLike.material.forEach((entry) => applyMaterialTheme(entry));
-      return;
-    }
-
-    applyMaterialTheme(nodeLike.material);
+    Array.isArray(node.material)
+      ? node.material.forEach(applyMat)
+      : applyMat(node.material);
   });
 }
 
-function ensureSplineTransparent(app: unknown) {
-  if (!app || typeof app !== "object") return;
-  const splineApp = app as {
-    canvas?: HTMLCanvasElement;
-    _renderer?: {
-      setClearColor?: (color: number, alpha?: number) => void;
-      setClearAlpha?: (alpha: number) => void;
-    };
-    setBackgroundColor?: (color: string) => void;
-    _scene?: {
-      activePage?: {
-        background?: unknown;
-        setBackgroundColor?: (color: unknown) => void;
-      };
-    };
-  };
-
+function makeTransparent(app: SplineApp) {
   try {
-    if (splineApp.canvas) {
-      splineApp.canvas.style.background = "transparent";
-      splineApp.canvas.style.backgroundColor = "transparent";
+    const a = app as any;
+    if (a.canvas) {
+      a.canvas.style.background = "transparent";
+      a.canvas.style.backgroundColor = "transparent";
     }
-    if (splineApp._renderer?.setClearColor) {
-      splineApp._renderer.setClearColor(0x000000, 0);
-    }
-    if (splineApp._renderer?.setClearAlpha) {
-      splineApp._renderer.setClearAlpha(0);
-    }
-    if (typeof splineApp.setBackgroundColor === "function") {
-      splineApp.setBackgroundColor("transparent");
-    }
-    if (splineApp._scene?.activePage) {
-      splineApp._scene.activePage.background = null;
-    }
+    a._renderer?.setClearColor?.(0x000000, 0);
+    a._renderer?.setClearAlpha?.(0);
+    if (typeof a.setBackgroundColor === "function") a.setBackgroundColor("transparent");
+    if (a._scene?.activePage) a._scene.activePage.background = null;
   } catch {
-    // safe fallback
+    // safe – internal Spline API may change
   }
 }
 
 export function SplineScene({ scene, className, style, onLoad }: SplineSceneProps) {
-  const handleLoad = (app: unknown) => {
-    ensureSplineTransparent(app);
-    applyThemeToSpline(app);
-    window.setTimeout(() => {
-      ensureSplineTransparent(app);
-      applyThemeToSpline(app);
-    }, 250);
-    if (onLoad) {
-      onLoad(app);
-    }
-  };
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const appRef = useRef<SplineApp | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let cancelled = false;
+
+    // Dynamically import the runtime — keeps it out of the initial bundle
+    import("@splinetool/runtime").then(({ Application }) => {
+      if (cancelled) return;
+
+      const app = new Application(canvas, {
+        // Transparent WebGL context so site's background shows through
+        renderOnDemand: false,
+      });
+
+      appRef.current = app;
+
+      app
+        .load(scene)
+        .then(() => {
+          if (cancelled) return;
+          makeTransparent(app);
+          applyThemeToSpline(app);
+          // Second pass after a tick in case Spline re-applies its own background
+          window.setTimeout(() => {
+            if (!cancelled) {
+              makeTransparent(app);
+            }
+          }, 250);
+          onLoad?.(app);
+        })
+        .catch((err: unknown) => {
+          // Suppress non-critical load errors (e.g. network abort on unmount)
+          if (!cancelled) console.warn("[SplineScene] load error:", err);
+        });
+    });
+
+    return () => {
+      cancelled = true;
+      try {
+        appRef.current?.dispose?.();
+      } catch {
+        // ignore dispose errors
+      }
+      appRef.current = null;
+    };
+    // scene URL is intentionally a stable string — no need to re-run on re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene]);
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-full w-full items-center justify-center">
-          <span className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-        </div>
-      }
-    >
-      <Spline scene={scene} className={className} style={style} onLoad={handleLoad} />
-    </Suspense>
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={{ display: "block", width: "100%", height: "100%", background: "transparent", ...style }}
+      aria-label="Interactive 3D robot animation"
+    />
   );
 }

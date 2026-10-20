@@ -3,7 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
-import { useEffect, useRef, useState, lazy, Suspense } from "react";
+import { useEffect, useRef, useState } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useTransform, useMotionValue, useInView, animate, MotionValue, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
@@ -15,9 +15,7 @@ import {
 import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
-const SplineScene = lazy(() =>
-  import("@/components/ui/spline-scene").then((m) => ({ default: m.SplineScene }))
-);
+import { SplineScene } from "@/components/ui/spline-scene";
 import secureAi from "@/assets/secure-ai.webp";
 import secureAiCard from "@/assets/secure-ai-card.webp";
 import workDev from "@/assets/work-dev.webp";
@@ -224,20 +222,12 @@ function Hero() {
           <div className="relative z-10 aspect-square w-full bg-transparent">
             {isRobotActive ? (
               /* Only mount Spline AFTER user click — defers the ~2MB bundle from initial load */
-              <Suspense
-                fallback={
-                  <div className="flex h-full w-full items-center justify-center">
-                    <span className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                  </div>
-                }
-              >
-                <SplineScene
+              <SplineScene
                   scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="h-full w-full bg-transparent"
+                  className="h-full w-full"
                   style={{ background: "transparent" }}
                   onLoad={handleSplineLoad}
                 />
-              </Suspense>
             ) : (
               /* Static CSS-only robot placeholder — zero JS weight, renders instantly */
               <div
