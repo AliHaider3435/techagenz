@@ -3,7 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useTransform, useMotionValue, useInView, animate, MotionValue, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
@@ -15,7 +15,9 @@ import {
 import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
-import { SplineScene } from "@/components/ui/spline-scene";
+const SplineScene = lazy(() =>
+  import("@/components/ui/spline-scene").then((m) => ({ default: m.SplineScene }))
+);
 import secureAi from "@/assets/secure-ai.webp";
 import secureAiCard from "@/assets/secure-ai-card.webp";
 import workDev from "@/assets/work-dev.webp";
@@ -132,24 +134,12 @@ function Hero() {
 
   const handleSplineLoad = (app: any) => {
     splineAppRef.current = app;
-    if (!isRobotActive) {
-      try {
-        app.stop();
-      } catch (err) {
-        console.warn("Could not pause Spline app initially:", err);
-      }
-    }
+    // SplineScene is only mounted after user clicks — let animation play immediately
   };
 
   const handleStartRobot = () => {
     setIsRobotActive(true);
-    if (splineAppRef.current) {
-      try {
-        splineAppRef.current.play();
-      } catch (err) {
-        console.warn("Could not play Spline app:", err);
-      }
-    }
+    // splineAppRef will be set via handleSplineLoad after the lazy component loads
   };
 
   return (
@@ -221,7 +211,7 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right: AI Robot (Floating transparently over the orbit circles) */}
+        {/* Right: AI Robot - Deferred until user interaction */}
         <div
           ref={sceneRef}
           className="relative mx-auto flex items-center justify-center w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[460px]"
@@ -230,22 +220,69 @@ function Hero() {
             transition: "transform 0.15s ease-out",
           }}
         >
-          {/* Transparent Robot Canvas - No box, no background, directly over background circles */}
+          {/* Robot Canvas */}
           <div className="relative z-10 aspect-square w-full bg-transparent">
-            <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="h-full w-full bg-transparent"
-              style={{ background: "transparent" }}
-              onLoad={handleSplineLoad}
-            />
-
-            {/* Click / Tap to Animate Trigger Overlay (Transparent) */}
-            {!isRobotActive && (
+            {isRobotActive ? (
+              /* Only mount Spline AFTER user click — defers the ~2MB bundle from initial load */
+              <Suspense
+                fallback={
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+                  </div>
+                }
+              >
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="h-full w-full bg-transparent"
+                  style={{ background: "transparent" }}
+                  onLoad={handleSplineLoad}
+                />
+              </Suspense>
+            ) : (
+              /* Static CSS-only robot placeholder — zero JS weight, renders instantly */
               <div
                 onClick={handleStartRobot}
                 onTouchStart={handleStartRobot}
-                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-end pb-4 transition-opacity"
+                className="group absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-4"
+                aria-label="Click to load the interactive robot animation"
               >
+                {/* Animated robot icon placeholder */}
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full bg-brand/10 blur-2xl scale-150" />
+                  <svg
+                    viewBox="0 0 120 160"
+                    className="relative z-10 h-40 w-32 text-brand animate-float-slow"
+                    fill="none"
+                    aria-hidden
+                  >
+                    {/* Head */}
+                    <rect x="30" y="10" width="60" height="50" rx="12" stroke="currentColor" strokeWidth="3" fill="oklch(0.7 0.19 240 / 0.08)" />
+                    {/* Eyes */}
+                    <circle cx="46" cy="33" r="7" fill="currentColor" opacity="0.9" />
+                    <circle cx="74" cy="33" r="7" fill="currentColor" opacity="0.9" />
+                    <circle cx="48" cy="31" r="2.5" fill="oklch(0.09 0.015 250)" />
+                    <circle cx="76" cy="31" r="2.5" fill="oklch(0.09 0.015 250)" />
+                    {/* Mouth */}
+                    <rect x="44" y="48" width="32" height="4" rx="2" fill="currentColor" opacity="0.6" />
+                    {/* Antenna */}
+                    <line x1="60" y1="10" x2="60" y2="2" stroke="currentColor" strokeWidth="2.5" />
+                    <circle cx="60" cy="1" r="3" fill="currentColor" className="animate-pulse-glow" />
+                    {/* Neck */}
+                    <rect x="52" y="60" width="16" height="8" rx="2" fill="currentColor" opacity="0.5" />
+                    {/* Body */}
+                    <rect x="20" y="68" width="80" height="60" rx="12" stroke="currentColor" strokeWidth="3" fill="oklch(0.7 0.19 240 / 0.08)" />
+                    {/* Chest panel */}
+                    <rect x="36" y="82" width="48" height="30" rx="6" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+                    <circle cx="52" cy="97" r="6" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
+                    <circle cx="68" cy="97" r="6" stroke="currentColor" strokeWidth="1.5" opacity="0.7" />
+                    {/* Arms */}
+                    <rect x="4" y="72" width="16" height="40" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
+                    <rect x="100" y="72" width="16" height="40" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
+                    {/* Legs */}
+                    <rect x="34" y="128" width="20" height="28" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
+                    <rect x="66" y="128" width="20" height="28" rx="8" stroke="currentColor" strokeWidth="2.5" fill="oklch(0.7 0.19 240 / 0.08)" />
+                  </svg>
+                </div>
                 <button
                   type="button"
                   className="glow-brand inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-slate-950/90 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-300 shadow-xl backdrop-blur-md transition-transform hover:scale-105 active:scale-95"
@@ -254,7 +291,7 @@ function Hero() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
                   </span>
-                  <span>Click or tap to animate</span>
+                  <span>Click to load 3D Robot</span>
                 </button>
               </div>
             )}

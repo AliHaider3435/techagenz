@@ -131,10 +131,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "canonical", href: "https://www.techagenz.com/" },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      // Preload hero font — font-display: optional means no layout shift
       {
         rel: "preload",
         href: heroFont,
@@ -143,6 +141,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         crossOrigin: "anonymous",
       },
       { rel: "icon", href: logo, type: "image/webp" },
+      // Preconnect so Spline CDN connection is ready when user clicks the robot
+      { rel: "preconnect", href: "https://prod.spline.design" },
+      { rel: "preconnect", href: "https://unpkg.com" },
+      // DNS-prefetch for AdSense (loaded deferred after window load)
+      { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
+      // DNS-prefetch for Vercel Analytics
+      { rel: "dns-prefetch", href: "https://vitals.vercel-insights.com" },
     ],
   }),
   shellComponent: RootShell,
@@ -161,9 +166,17 @@ function RootShell({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: organizationSchema }}
         />
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466"
-          crossOrigin="anonymous"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('load', function() {
+                var s = document.createElement('script');
+                s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466";
+                s.async = true;
+                s.crossOrigin = "anonymous";
+                document.head.appendChild(s);
+              });
+            `,
+          }}
         />
       </head>
       <body>
