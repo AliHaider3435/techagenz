@@ -899,22 +899,28 @@ function Testimonials() {
 function BlogsTeaser() {
   const posts = [
     {
-      title: "Architecting Production RAG: Eliminating Hallucinations at Enterprise Scale",
+      title: "Why AI-Powered Software Houses in Pakistan Are Dominating Global Tech Delivery",
       category: "AI & ML",
       readTime: "6 min read",
       date: "Oct 2026",
+      image:
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
     },
     {
-      title: "Digitizing Healthcare Scheduling: Lessons from High-Throughput Clinic Systems",
-      category: "Case Studies",
+      title: "Custom Software Development vs Off-The-Shelf SaaS: The 2026 Decision Blueprint",
+      category: "Custom Software",
+      readTime: "7 min read",
+      date: "Oct 2026",
+      image:
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries",
+      category: "Automation",
       readTime: "5 min read",
       date: "Oct 2026",
-    },
-    {
-      title: "From Brittle Scripts to Self-Healing Autonomous Agentic Workflows",
-      category: "Automation",
-      readTime: "7 min read",
-      date: "Sep 2026",
+      image:
+        "https://images.unsplash.com/photo-1611746872915-64382b5c76da?auto=format&fit=crop&w=800&q=80",
     },
   ];
 
@@ -941,23 +947,40 @@ function BlogsTeaser() {
             <Link
               key={p.title}
               to="/blogs"
-              className="glass-card group flex flex-col justify-between rounded-3xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1"
+              className="glass-card group flex flex-col justify-between overflow-hidden rounded-3xl p-5 sm:p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1 shadow-lg"
             >
               <div>
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-4 bg-slate-950">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    width={600}
+                    height={340}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />
+                  <div className="absolute top-2.5 left-2.5 z-10">
+                    <span className="rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[11px] font-medium text-cyan-300 border border-cyan-500/20 backdrop-blur-sm">
+                      {p.category}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="rounded-full bg-brand/10 px-3 py-1 font-medium text-brand">
-                    {p.category}
-                  </span>
+                  <span>{p.date}</span>
                   <span>{p.readTime}</span>
                 </div>
-                <h3 className="mt-4 font-display text-base font-semibold transition-colors group-hover:text-brand">
+
+                <h3 className="mt-3 font-display text-base font-semibold leading-snug transition-colors group-hover:text-brand line-clamp-2">
                   {p.title}
                 </h3>
               </div>
-              <div className="mt-6 flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground">
-                <span>{p.date}</span>
+
+              <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-3.5 text-xs text-muted-foreground">
+                <span className="text-brand font-medium">Read article</span>
                 <span className="inline-flex items-center gap-1 font-medium text-brand">
-                  Read article <ArrowUpRight className="h-3.5 w-3.5" />
+                  <ArrowUpRight className="h-3.5 w-3.5" />
                 </span>
               </div>
             </Link>
