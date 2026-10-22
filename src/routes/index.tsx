@@ -45,6 +45,10 @@ export const Route = createFileRoute("/")({
         content:
           "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
       },
+      { property: "og:url", content: "https://www.techagenz.com/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/" },
     ],
   }),
   component: Index,

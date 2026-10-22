@@ -40,6 +40,16 @@ export const Route = createFileRoute("/services")({
         content:
           "Explore Tech Agenz services: Smart Business Automation, WhatsApp Automation for Business, AI Chatbot Development, Custom Software Development, Web Development, and ERPNext Implementation.",
       },
+      { property: "og:title", content: "Services — Tech Agenz | AI-Powered Software House in Pakistan" },
+      {
+        property: "og:description",
+        content:
+          "Explore Tech Agenz services: Smart Business Automation, WhatsApp Automation for Business, AI Chatbot Development, Custom Software Development, Web Development, and ERPNext Implementation.",
+      },
+      { property: "og:url", content: "https://www.techagenz.com/services" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/services" },
     ],
   }),
   component: ServicesPage,

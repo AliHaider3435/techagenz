@@ -118,7 +118,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.techagenz.com/" },
       { property: "og:image", content: `https://www.techagenz.com${logo}` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House" },
@@ -130,7 +129,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: `https://www.techagenz.com${logo}` },
     ],
     links: [
-      { rel: "canonical", href: "https://www.techagenz.com/" },
       { rel: "stylesheet", href: appCss },
       // Preload hero font
       {

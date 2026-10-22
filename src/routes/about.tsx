@@ -29,6 +29,16 @@ export const Route = createFileRoute("/about")({
         content:
           "Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.",
       },
+      { property: "og:title", content: "About Us — Tech Agenz | AI-Powered Software House in Pakistan" },
+      {
+        property: "og:description",
+        content:
+          "Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.",
+      },
+      { property: "og:url", content: "https://www.techagenz.com/about" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/about" },
     ],
   }),
   component: AboutPage,

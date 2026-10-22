@@ -27,6 +27,16 @@ export const Route = createFileRoute("/contact")({
         content:
           "Contact Tech Agenz to discuss your business challenges and discover the right technology solution: AI automation, custom software, WhatsApp automation, and ERPNext.",
       },
+      { property: "og:title", content: "Contact Us — Tech Agenz | AI-Powered Software House in Pakistan" },
+      {
+        property: "og:description",
+        content:
+          "Contact Tech Agenz to discuss your business challenges and discover the right technology solution: AI automation, custom software, WhatsApp automation, and ERPNext.",
+      },
+      { property: "og:url", content: "https://www.techagenz.com/contact" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/contact" },
     ],
   }),
   component: ContactPage,

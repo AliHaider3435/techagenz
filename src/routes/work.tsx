@@ -16,6 +16,16 @@ export const Route = createFileRoute("/work")({
     meta: [
       { title: "Our Work — Tech Agenz | AI-Powered Software House" },
       { name: "description", content: "Explore custom software, clinic appointment systems, legal portals, and business automation platforms engineered by Tech Agenz." },
+      { property: "og:title", content: "Our Work — Tech Agenz | AI-Powered Software House" },
+      {
+        property: "og:description",
+        content:
+          "Explore custom software, clinic appointment systems, legal portals, and business automation platforms engineered by Tech Agenz.",
+      },
+      { property: "og:url", content: "https://www.techagenz.com/work" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/work" },
     ],
   }),
   component: WorkPage,

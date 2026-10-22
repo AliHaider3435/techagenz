@@ -47,6 +47,10 @@ export const Route = createFileRoute("/blogs")({
         content:
           "Practical blueprints, architectural deep dives, and production case studies for businesses scaling with modern AI, custom software, and ERPNext.",
       },
+      { property: "og:url", content: "https://www.techagenz.com/blogs" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.techagenz.com/blogs" },
     ],
   }),
   component: BlogsPage,
