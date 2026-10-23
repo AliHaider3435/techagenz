@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
@@ -38,12 +39,19 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
     console.error("[root error boundary]", error);
   }, [error]);
+
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : typeof error === "object" && error !== null && "message" in error
+        ? String((error as { message: unknown }).message)
+        : "An unexpected error occurred while loading this view. Please try again or return home.";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 py-20 text-center">
@@ -52,10 +60,7 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
           <span className="text-2xl">!</span>
         </div>
         <h2 className="font-display text-2xl font-bold text-foreground">Something went wrong</h2>
-        <p className="mt-3 text-sm text-muted-foreground">
-          {error?.message ||
-            "An unexpected error occurred while loading this view. Please try again or return home."}
-        </p>
+        <p className="mt-3 text-sm text-muted-foreground">{errorMessage}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
