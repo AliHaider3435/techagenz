@@ -11,9 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/space-grotesk";
-import "@fontsource-variable/orbitron";
-import "@fontsource-variable/sora";
-import heroFont from "@fontsource-variable/orbitron/files/orbitron-latin-wght-normal.woff2?url";
+import heroFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import logo from "@/assets/logo.webp?no-inline";
 
 import appCss from "../styles.css?url";
@@ -40,7 +38,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -55,7 +53,8 @@ function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
         </div>
         <h2 className="font-display text-2xl font-bold text-foreground">Something went wrong</h2>
         <p className="mt-3 text-sm text-muted-foreground">
-          {error?.message || "An unexpected error occurred while loading this view. Please try again or return home."}
+          {error?.message ||
+            "An unexpected error occurred while loading this view. Please try again or return home."}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
@@ -79,19 +78,45 @@ function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   );
 }
 
-const organizationSchema = JSON.stringify({
+const localBusinessSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["ProfessionalService", "LocalBusiness"],
   name: "Tech Agenz",
-  url: "https://www.techagenz.com",
-  logo: `https://www.techagenz.com${logo}`,
+  url: "https://techagenz.com",
+  logo: `https://techagenz.com${logo}`,
+  image: "https://techagenz.com/og-image.jpg",
   description:
-    "AI-powered software house engineering intelligent solutions, automation pipelines, and modern web platforms.",
+    "Tech Agenz is an AI automation and custom software house in Pakistan specializing in WhatsApp automation, ERPNext implementation, AI chatbot development, and bespoke web platforms.",
   telephone: "+923394555004",
-  sameAs: [
-    "https://www.linkedin.com/in/haider5617/",
-    "https://github.com/AliHaider3435",
+  email: "info@techagenz.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Lahore",
+    addressRegion: "Punjab",
+    addressCountry: "PK",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "31.5204",
+    longitude: "74.3587",
+  },
+  areaServed: [
+    { "@type": "Country", name: "Pakistan" },
+    { "@type": "Country", name: "United States" },
+    { "@type": "Country", name: "United Kingdom" },
+    { "@type": "Country", name: "United Arab Emirates" },
+    { "@type": "Country", name: "Saudi Arabia" },
   ],
+  priceRange: "$$",
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:00",
+      closes: "19:00",
+    },
+  ],
+  sameAs: ["https://www.linkedin.com/in/haider5617/", "https://github.com/AliHaider3435"],
 });
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -107,7 +132,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Tech Agenz is an AI-powered software house in Pakistan helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences.",
+          "Tech Agenz is an AI automation and custom software house in Pakistan helping businesses simplify operations, automate workflows, and build smarter digital experiences with WhatsApp Automation & ERPNext.",
       },
       { name: "author", content: "Tech Agenz" },
       { property: "og:site_name", content: "Tech Agenz" },
@@ -115,18 +140,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
+          "AI automation and custom software development in Pakistan: WhatsApp automation, ERPNext implementation, and bespoke enterprise platforms.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: `https://www.techagenz.com${logo}` },
+      { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House" },
+      { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
         name: "twitter:description",
         content:
-          "Intelligent AI, automation, and web solutions built for ambitious teams. 50+ projects delivered worldwide.",
+          "AI automation, WhatsApp business solutions, ERPNext systems, and custom software engineered for ambitious teams worldwide.",
       },
-      { name: "twitter:image", content: `https://www.techagenz.com${logo}` },
+      { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -158,7 +185,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: organizationSchema }}
+          dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
         />
         <script
           dangerouslySetInnerHTML={{

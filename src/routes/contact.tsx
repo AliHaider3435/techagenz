@@ -12,31 +12,84 @@ import {
   CheckCircle2,
   Linkedin,
   Github,
+  MapPin,
+  Building2,
+  Globe,
+  Briefcase,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 
+const contactPageSchema = {
+  "@context": "https://schema.org",
+  "@type": ["ContactPage", "ProfessionalService"],
+  name: "Tech Agenz Contact & Discovery",
+  url: "https://techagenz.com/contact",
+  telephone: "+923394555004",
+  email: "info@techagenz.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Lahore",
+    addressRegion: "Punjab",
+    addressCountry: "PK",
+  },
+  areaServed: [
+    "Pakistan",
+    "United States",
+    "United Kingdom",
+    "United Arab Emirates",
+    "Saudi Arabia",
+  ],
+};
+
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Tech Agenz | AI-Powered Software House in Pakistan" },
+      { title: "Contact Us — Tech Agenz | AI & Software House in Lahore, Pakistan" },
       {
         name: "description",
         content:
-          "Contact Tech Agenz to discuss your business challenges and discover the right technology solution: AI automation, custom software, WhatsApp automation, and ERPNext.",
+          "Contact Tech Agenz to discuss your engineering needs: AI automation, custom software development in Pakistan, clinic appointment systems, WhatsApp automation, and ERPNext.",
       },
-      { property: "og:title", content: "Contact Us — Tech Agenz | AI-Powered Software House in Pakistan" },
+      {
+        name: "keywords",
+        content:
+          "Contact Software House Pakistan, Hire Developers Lahore, AI Automation Consultation, ERPNext Implementation Pakistan, Custom Software Inquiry",
+      },
+      {
+        property: "og:title",
+        content: "Contact Us — Tech Agenz | AI & Software House in Pakistan",
+      },
       {
         property: "og:description",
         content:
-          "Contact Tech Agenz to discuss your business challenges and discover the right technology solution: AI automation, custom software, WhatsApp automation, and ERPNext.",
+          "Contact Tech Agenz to discuss your engineering needs: AI automation, custom software, WhatsApp automation, and ERPNext.",
       },
-      { property: "og:url", content: "https://www.techagenz.com/contact" },
+      { property: "og:url", content: "https://techagenz.com/contact" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Contact Us — Tech Agenz | AI & Software House in Pakistan",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Discuss your next software project with our lead engineers in Lahore, Pakistan. Confidential discovery & transparent proposals.",
+      },
+      { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
-    links: [
-      { rel: "canonical", href: "https://www.techagenz.com/contact" },
+    links: [{ rel: "canonical", href: "https://techagenz.com/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(contactPageSchema),
+      },
     ],
   }),
   component: ContactPage,
@@ -86,7 +139,7 @@ function ContactPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
+            Accept: "application/json",
           },
           body: JSON.stringify({
             name: formData.name,
@@ -111,7 +164,9 @@ function ContactPage() {
       setFormData({ name: "", email: "", company: "", message: "" });
     } else {
       setStatus("error");
-      setErrorMessage("Something went wrong — please try again or email info@techagenz.com directly.");
+      setErrorMessage(
+        "Something went wrong — please try again or email info@techagenz.com directly.",
+      );
     }
   };
 
@@ -157,7 +212,9 @@ function ContactPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
           >
-            Ready to improve your workflows, simplify customer communication, or modernize your business systems? Contact Tech Agenz to discuss your business challenges and discover the right technology solution for your next stage of growth.
+            Ready to improve your workflows, simplify customer communication, or modernize your
+            business systems? Contact Tech Agenz to discuss your business challenges and discover
+            the right technology solution for your next stage of growth.
           </motion.p>
         </div>
       </section>
@@ -176,7 +233,8 @@ function ContactPage() {
                     Get in touch directly
                   </h2>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Whether you have an immediate RFP, an architecture query, or want an expert evaluation, our lead engineers are here to assist.
+                    Whether you have an immediate RFP, an architecture query, or want an expert
+                    evaluation, our lead engineers are here to assist.
                   </p>
                 </div>
 
@@ -205,9 +263,45 @@ function ContactPage() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">WhatsApp & Phone</div>
-                      <div className="font-medium text-foreground">03394555004</div>
+                      <div className="font-medium text-foreground">
+                        03394555004 (+92 339 4555004)
+                      </div>
                     </div>
                   </a>
+
+                  <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card/60 p-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Engineering Headquarters</div>
+                      <div className="font-medium text-foreground">Lahore, Punjab, Pakistan</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card/60 p-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                      <Globe className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Areas Served</div>
+                      <div className="font-medium text-foreground">
+                        Pakistan, USA, UK, UAE & Saudi Arabia
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card/60 p-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">Working Hours</div>
+                      <div className="font-medium text-foreground">
+                        Mon - Sat: 9:00 AM - 7:00 PM PKT
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="border-t border-border/60 pt-6">
@@ -241,7 +335,8 @@ function ContactPage() {
                     <Clock className="h-4 w-4" /> Response Guarantee
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    We review all messages within 24 hours. Your information and project details are kept strictly confidential under NDA standards.
+                    We review all messages within 24 hours. Your information and project details are
+                    kept strictly confidential under NDA standards.
                   </p>
                 </div>
               </div>
@@ -256,7 +351,6 @@ function ContactPage() {
                   <p className="text-xs text-muted-foreground">
                     Fill in your project details below and we'll reply directly to your email inbox.
                   </p>
-
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="text-sm text-muted-foreground">
@@ -326,7 +420,8 @@ function ContactPage() {
                       animate={{ opacity: 1, y: 0 }}
                       className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-400"
                     >
-                      ✓ Thank you — your enquiry has been received. Our team will review your project and email you back within 24 hours.
+                      ✓ Thank you — your enquiry has been received. Our team will review your
+                      project and email you back within 24 hours.
                     </motion.div>
                   )}
 
@@ -336,7 +431,9 @@ function ContactPage() {
                       animate={{ opacity: 1, y: 0 }}
                       className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400"
                     >
-                      ✕ {errorMessage || "Something went wrong — please try again or email info@techagenz.com directly."}
+                      ✕{" "}
+                      {errorMessage ||
+                        "Something went wrong — please try again or email info@techagenz.com directly."}
                     </motion.div>
                   )}
                 </form>
@@ -352,7 +449,8 @@ function ContactPage() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="font-display text-2xl font-bold sm:text-3xl">What happens next?</h2>
             <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
-              Our straightforward onboarding sequence takes you from initial conversation to active engineering.
+              Our straightforward onboarding sequence takes you from initial conversation to active
+              engineering.
             </p>
           </div>
 
@@ -380,11 +478,128 @@ function ContactPage() {
               },
             ].map((item, idx) => (
               <div key={item.step} className="glass-card rounded-2xl p-6">
-                <span className="font-display text-2xl font-extrabold text-brand/80">{item.step}</span>
+                <span className="font-display text-2xl font-extrabold text-brand/80">
+                  {item.step}
+                </span>
                 <h3 className="mt-3 font-display text-base font-semibold">{item.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Flexible Engagement Models Section */}
+      <section className="relative pb-24 border-t border-border/60 pt-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1 text-xs uppercase tracking-widest text-brand">
+              <Briefcase className="h-3.5 w-3.5" /> Flexible Collaboration
+            </div>
+            <h2 className="mt-4 font-display text-2xl font-bold sm:text-4xl">
+              Engagement Models Tailored to Your Growth
+            </h2>
+            <p className="mt-3 text-xs text-muted-foreground sm:text-base leading-relaxed">
+              Whether you need a full turnkey application or dedicated senior engineers to augment
+              your team, Tech Agenz offers flexible, transparent collaboration models.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <div className="glass-card rounded-3xl p-8 border border-border/70 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+                  Turnkey Fixed-Price
+                </span>
+                <h3 className="font-display text-xl font-bold mt-2 text-foreground">
+                  Bespoke Project Delivery
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Ideal for clinics needing an appointment system, law firms wanting a secure client
+                  portal, or businesses implementing ERPNext. Fixed timeline, defined milestones,
+                  and guaranteed delivery.
+                </p>
+                <ul className="mt-5 space-y-2 text-xs text-foreground/90">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Fixed budget & clear deliverables</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Weekly interactive sprint demos</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Complimentary post-launch warranty</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-3xl p-8 border border-brand/40 shadow-xl flex flex-col justify-between relative">
+              <div className="absolute top-4 right-4">
+                <span className="rounded-full bg-brand/20 border border-brand/40 px-2.5 py-0.5 text-[10px] font-semibold text-brand">
+                  Most Popular
+                </span>
+              </div>
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+                  Offshore Squads
+                </span>
+                <h3 className="font-display text-xl font-bold mt-2 text-foreground">
+                  Dedicated Engineering Squads
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Hire senior full-stack AI, React, Python, or ERPNext engineers working exclusively
+                  as an extension of your internal product team. High English fluency and
+                  overlapping timezones.
+                </p>
+                <ul className="mt-5 space-y-2 text-xs text-foreground/90">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Daily synchronous agile standups</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Direct Slack / Teams communication</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Flexible monthly retainers</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-3xl p-8 border border-border/70 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+                  Advisory & Review
+                </span>
+                <h3 className="font-display text-xl font-bold mt-2 text-foreground">
+                  Architecture & Code Audit
+                </h3>
+                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Bring in Tech Agenz lead architects to review your legacy codebase, optimize
+                  database query latency, eliminate AI hallucination risks, or plan an ERP
+                  migration.
+                </p>
+                <ul className="mt-5 space-y-2 text-xs text-foreground/90">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Comprehensive architectural report</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Security & performance benchmarks</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
+                    <span>Actionable step-by-step roadmap</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>

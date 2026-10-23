@@ -11,7 +11,15 @@ interface BouncyButtonProps {
   rel?: string;
 }
 
-function BouncyButton({ children, className = "", href, onClick, type = "button", target, rel }: BouncyButtonProps) {
+function BouncyButton({
+  children,
+  className = "",
+  href,
+  onClick,
+  type = "button",
+  target,
+  rel,
+}: BouncyButtonProps) {
   const motionProps = {
     whileHover: { scale: 1.05 },
     whileTap: { scale: 0.92 },

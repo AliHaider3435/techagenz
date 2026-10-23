@@ -18,14 +18,19 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-async function sendViaFormSubmit(data: { name: string; email: string; company?: string; message: string }) {
+async function sendViaFormSubmit(data: {
+  name: string;
+  email: string;
+  company?: string;
+  message: string;
+}) {
   const response = await fetch("https://formsubmit.co/ajax/info@techagenz.com", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Origin": "https://www.techagenz.com",
-      "Referer": "https://www.techagenz.com/",
+      Accept: "application/json",
+      Origin: "https://www.techagenz.com",
+      Referer: "https://www.techagenz.com/",
     },
     body: JSON.stringify({
       name: data.name,
@@ -95,9 +100,12 @@ export default defineEventHandler(async (event) => {
     } else {
       const fsData = await fsRes.json().catch(() => ({}));
       console.error("[send-enquiry] FormSubmit rejected submission:", fsData);
-      return { error: "Form delivery service rejected the request. Please email info@techagenz.com directly." };
+      return {
+        error:
+          "Form delivery service rejected the request. Please email info@techagenz.com directly.",
+      };
     }
-  } catch (err: any) {
+  } catch (err) {
     console.error("[send-enquiry] Delivery failed:", err);
     return { error: "Unable to deliver enquiry. Please contact info@techagenz.com directly." };
   }

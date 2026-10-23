@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain,
   Cpu,
@@ -15,6 +16,8 @@ import {
   Terminal,
   MessageSquare,
   Rocket,
+  ChevronDown,
+  HelpCircle,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -31,25 +34,174 @@ import workDataCard from "@/assets/work-data-card.webp";
 const secureAi = workDev;
 const secureAiCard = workDevCard;
 
+const servicesFaqSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      name: "WhatsApp Automation for Business",
+      provider: {
+        "@type": "LocalBusiness",
+        name: "Tech Agenz",
+        url: "https://techagenz.com",
+      },
+      serviceType: "Business Process Automation",
+      description:
+        "Automated WhatsApp appointment booking, patient confirmations, order updates, and 24/7 lead qualification pipelines powered by official Meta Cloud API.",
+      areaServed: [
+        "Pakistan",
+        "United States",
+        "United Kingdom",
+        "United Arab Emirates",
+        "Saudi Arabia",
+      ],
+    },
+    {
+      "@type": "Service",
+      name: "ERPNext Implementation & Customization",
+      provider: {
+        "@type": "LocalBusiness",
+        name: "Tech Agenz",
+        url: "https://techagenz.com",
+      },
+      serviceType: "Enterprise Resource Planning",
+      description:
+        "Complete open-source ERPNext implementation in Pakistan covering general ledger, inventory, supply chain, and custom Frappe doctypes with zero licensing fees.",
+      areaServed: [
+        "Pakistan",
+        "United States",
+        "United Kingdom",
+        "United Arab Emirates",
+        "Saudi Arabia",
+      ],
+    },
+    {
+      "@type": "Service",
+      name: "Custom Software Development in Pakistan",
+      provider: {
+        "@type": "LocalBusiness",
+        name: "Tech Agenz",
+        url: "https://techagenz.com",
+      },
+      serviceType: "Custom Software Engineering",
+      description:
+        "Bespoke web platforms, clinic management systems, legal portals, and executive management dashboards built on React 19, TypeScript, and modern backend architectures.",
+      areaServed: [
+        "Pakistan",
+        "United States",
+        "United Kingdom",
+        "United Arab Emirates",
+        "Saudi Arabia",
+      ],
+    },
+    {
+      "@type": "Service",
+      name: "AI Chatbot Development & RAG Architecture",
+      provider: {
+        "@type": "LocalBusiness",
+        name: "Tech Agenz",
+        url: "https://techagenz.com",
+      },
+      serviceType: "Artificial Intelligence Development",
+      description:
+        "Enterprise conversational agents, knowledge-base retrieval-augmented generation (RAG), and autonomous agentic workflows designed with zero hallucination guardrails.",
+      areaServed: [
+        "Pakistan",
+        "United States",
+        "United Kingdom",
+        "United Arab Emirates",
+        "Saudi Arabia",
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "How does WhatsApp Automation work for clinics and businesses in Pakistan?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Tech Agenz connects your business directly to the official Meta WhatsApp Cloud API. We configure intelligent backend webhooks that handle appointment reservations, send calendar confirmation alerts, manage patient queue positions, and provide 24/7 automated replies to common inquiries.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Why should companies choose ERPNext over proprietary systems like SAP or Oracle?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "ERPNext is 100% open-source with no per-user license fees. It unifies accounting, multi-warehouse inventory, procurement, and HR payroll into a modern web platform. Tech Agenz customizes ERPNext to your exact workflow and delivers full source code ownership.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How long does a custom software development project take?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Specialized platforms and MVPs (such as clinic scheduling portals or law chamber websites) are delivered within 3 to 6 weeks. Larger enterprise architectures follow an agile sprint structure with weekly reviews and transparent milestone deliverables.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Can Tech Agenz build AI chatbots that strictly use our private business documents?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. We engineer production-grade Retrieval-Augmented Generation (RAG) systems that vector-index your private manuals, catalogs, and documentation. The AI adheres strictly to your verified knowledge base with zero hallucinations.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does Tech Agenz provide ongoing maintenance and dedicated engineering support?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. Every project includes comprehensive post-launch warranty support, automated uptime monitoring, security patching, and optional dedicated monthly retainers for feature expansion.",
+          },
+        },
+      ],
+    },
+  ],
+};
+
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services — Tech Agenz | AI-Powered Software House in Pakistan" },
+      { title: "Services — Tech Agenz | AI Automation & Custom Software House in Pakistan" },
       {
         name: "description",
         content:
-          "Explore Tech Agenz services: Smart Business Automation, WhatsApp Automation for Business, AI Chatbot Development, Custom Software Development, Web Development, and ERPNext Implementation.",
+          "Explore Tech Agenz services: WhatsApp Automation for Business, ERPNext Implementation, Custom Software Development in Pakistan, AI Chatbot Development, and High-Performance Web Apps.",
       },
-      { property: "og:title", content: "Services — Tech Agenz | AI-Powered Software House in Pakistan" },
+      {
+        property: "og:title",
+        content: "Services — Tech Agenz | AI Automation & Custom Software House",
+      },
       {
         property: "og:description",
         content:
-          "Explore Tech Agenz services: Smart Business Automation, WhatsApp Automation for Business, AI Chatbot Development, Custom Software Development, Web Development, and ERPNext Implementation.",
+          "Explore Tech Agenz services: WhatsApp Automation for Business, ERPNext Implementation, Custom Software Development in Pakistan, AI Chatbot Development, and High-Performance Web Apps.",
       },
-      { property: "og:url", content: "https://www.techagenz.com/services" },
+      { property: "og:url", content: "https://techagenz.com/services" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Services — Tech Agenz | AI Automation & Custom Software House",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "WhatsApp Automation, ERPNext Implementation, Custom Software Development & AI Chatbots engineered for businesses worldwide.",
+      },
+      { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
-    links: [
-      { rel: "canonical", href: "https://www.techagenz.com/services" },
+    links: [{ rel: "canonical", href: "https://techagenz.com/services" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(servicesFaqSchema),
+      },
     ],
   }),
   component: ServicesPage,
@@ -183,7 +335,32 @@ const processSteps = [
   },
 ];
 
+const faqs = [
+  {
+    q: "How does WhatsApp Automation work for clinics and businesses in Pakistan?",
+    a: "Tech Agenz connects your business directly to the official Meta WhatsApp Cloud API. We configure intelligent backend webhooks that handle appointment reservations, send calendar confirmation alerts, manage patient queue positions, and provide 24/7 automated replies to common inquiries.",
+  },
+  {
+    q: "Why should companies choose ERPNext over proprietary systems like SAP or Oracle?",
+    a: "ERPNext is 100% open-source with no per-user license fees. It unifies accounting, multi-warehouse inventory, procurement, and HR payroll into a modern web platform. Tech Agenz customizes ERPNext to your exact workflow and delivers full source code ownership.",
+  },
+  {
+    q: "How long does a custom software development project take?",
+    a: "Specialized platforms and MVPs (such as clinic scheduling portals or law chamber websites) are delivered within 3 to 6 weeks. Larger enterprise architectures follow an agile sprint structure with weekly reviews and transparent milestone deliverables.",
+  },
+  {
+    q: "Can Tech Agenz build AI chatbots that strictly use our private business documents?",
+    a: "Yes. We engineer production-grade Retrieval-Augmented Generation (RAG) systems that vector-index your private manuals, catalogs, and documentation. The AI adheres strictly to your verified knowledge base with zero hallucinations.",
+  },
+  {
+    q: "Does Tech Agenz provide ongoing maintenance and dedicated engineering support?",
+    a: "Yes. Every project includes comprehensive post-launch warranty support, automated uptime monitoring, security patching, and optional dedicated monthly retainers for feature expansion.",
+  },
+];
+
 function ServicesPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <TechCursor />
@@ -226,7 +403,9 @@ function ServicesPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
           >
-            Tech Agenz helps businesses streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications that connect people, processes, and systems to support long-term growth.
+            Tech Agenz helps businesses streamline everyday operations through business process
+            automation, intelligent workflows, and AI-powered applications that connect people,
+            processes, and systems to support long-term growth.
           </motion.p>
         </div>
       </section>
@@ -242,11 +421,12 @@ function ServicesPage() {
               return (
                 <motion.div
                   key={service.id}
+                  id={service.id}
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.6 }}
-                  className={`grid items-center gap-10 rounded-3xl border border-border/60 bg-card/40 p-8 backdrop-blur-xl lg:grid-cols-2 lg:p-12 ${
+                  className={`scroll-mt-28 grid items-center gap-10 rounded-3xl border border-border/60 bg-card/40 p-8 backdrop-blur-xl lg:grid-cols-2 lg:p-12 ${
                     isEven ? "" : "lg:grid-flow-dense"
                   }`}
                 >
@@ -328,7 +508,8 @@ function ServicesPage() {
               From Concept to <span className="text-gradient-brand">Production</span>
             </h2>
             <p className="mt-4 text-muted-foreground">
-              A disciplined, transparent engineering methodology designed for high-velocity execution and zero regressions.
+              A disciplined, transparent engineering methodology designed for high-velocity
+              execution and zero regressions.
             </p>
           </div>
 
@@ -343,12 +524,72 @@ function ServicesPage() {
                 className="glass-card relative flex flex-col justify-between rounded-2xl p-6"
               >
                 <div>
-                  <span className="font-display text-3xl font-extrabold text-brand/80">{step.step}</span>
+                  <span className="font-display text-3xl font-extrabold text-brand/80">
+                    {step.step}
+                  </span>
                   <h3 className="mt-3 font-display text-lg font-semibold">{step.title}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Frequently Asked Questions (FAQ) */}
+      <section className="relative py-20 border-t border-border/60">
+        <div className="mx-auto max-w-4xl px-6">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand">
+              <HelpCircle className="h-3.5 w-3.5" /> Common Questions
+            </div>
+            <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">
+              Frequently Asked Questions
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Clear answers on WhatsApp automation, ERPNext pricing and implementation, custom
+              software delivery, and enterprise AI engineering.
+            </p>
+          </div>
+
+          <div className="mt-12 space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className="glass-card overflow-hidden rounded-2xl border border-border/70 transition-colors hover:border-brand/40"
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between p-6 text-left"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="font-display text-base sm:text-lg font-semibold text-foreground pr-4">
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      className={`h-5 w-5 shrink-0 text-brand transition-transform duration-300 ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-6 pb-6 text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-4"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -361,7 +602,8 @@ function ServicesPage() {
               Have a technical challenge in mind?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Schedule a technical discovery session with our lead engineers to assess feasibility, architecture, and timeline.
+              Schedule a technical discovery session with our lead engineers to assess feasibility,
+              architecture, and timeline.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <BouncyButton

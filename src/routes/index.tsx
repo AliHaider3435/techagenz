@@ -5,17 +5,40 @@ import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
 import { useEffect, useRef, useState } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { useTransform, useMotionValue, useInView, animate, MotionValue, motion } from "framer-motion";
+import {
+  useTransform,
+  useMotionValue,
+  useInView,
+  animate,
+  MotionValue,
+  motion,
+} from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import {
-  Brain, Cpu, Code2, Database, ArrowUpRight, Sparkles, Shield,
-  Zap, Rocket, Mail, Phone, MapPin, Star, Instagram, Linkedin,
-  Github, Twitter, MessageSquare,
+  Brain,
+  Cpu,
+  Code2,
+  Database,
+  ArrowUpRight,
+  Sparkles,
+  Shield,
+  Zap,
+  Rocket,
+  Mail,
+  Phone,
+  MapPin,
+  Star,
+  Instagram,
+  Linkedin,
+  Github,
+  Twitter,
+  MessageSquare,
 } from "lucide-react";
 import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
+import { blogPosts } from "@/lib/blogs-data";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
 import workSaas from "@/assets/work-saas.webp";
@@ -45,11 +68,21 @@ export const Route = createFileRoute("/")({
         content:
           "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz.",
       },
-      { property: "og:url", content: "https://www.techagenz.com/" },
+      { property: "og:url", content: "https://techagenz.com/" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
+      {
+        name: "twitter:description",
+        content:
+          "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz. AI Automation, WhatsApp Automation, ERPNext & Custom Software.",
+      },
+      { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
-    links: [
-      { rel: "canonical", href: "https://www.techagenz.com/" },
-    ],
+    links: [{ rel: "canonical", href: "https://techagenz.com/" }],
   }),
   component: Index,
 });
@@ -103,7 +136,7 @@ function Hero() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const orbitRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const splineAppRef = useRef<any>(null);
+  const splineAppRef = useRef<unknown>(null);
   const [isRobotActive, setIsRobotActive] = useState(false);
 
   useEffect(() => {
@@ -113,7 +146,8 @@ function Hero() {
     if (
       window.matchMedia("(pointer: coarse)").matches ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
+    )
+      return;
 
     const onMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
@@ -136,7 +170,7 @@ function Hero() {
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
-  const handleSplineLoad = (app: any) => {
+  const handleSplineLoad = (app: unknown) => {
     splineAppRef.current = app;
     // SplineScene is only mounted after user clicks — let animation play immediately
   };
@@ -183,14 +217,24 @@ function Hero() {
             <div className="absolute -left-3 -bottom-3 h-4 w-4 border-b-2 border-l-2 border-brand" />
             <div className="absolute -right-3 -bottom-3 h-4 w-4 border-b-2 border-r-2 border-brand" />
             <h1 className="font-hero max-w-xl px-4 py-2 text-3xl font-bold uppercase leading-[1.18] tracking-wide sm:text-4xl lg:text-[2.65rem]">
-              Simplify Complex Operations.<br />
-              Automate Repetitive Tasks.<br />
+              Simplify Complex Operations.
+              <br />
+              Automate Repetitive Tasks.
+              <br />
               <span className="text-gradient-brand">Build Smarter Digital Experiences.</span>
+              <span className="mt-3.5 block text-xs sm:text-sm font-semibold tracking-normal text-cyan-300 font-display normal-case">
+                AI Automation &amp; Software House in Pakistan &bull; WhatsApp Automation &bull;
+                ERPNext &bull; Custom Software
+              </span>
             </h1>
           </div>
 
           <p className="font-display max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences. As a technology partner for growing businesses, we deliver practical solutions that connect people, processes, and systems to improve operational efficiency and support long-term growth.
+            Tech Agenz is an AI-powered software house helping businesses simplify complex
+            operations, automate repetitive tasks, and build smarter digital experiences. As a
+            technology partner for growing businesses, we deliver practical solutions that connect
+            people, processes, and systems to improve operational efficiency and support long-term
+            growth.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -319,7 +363,10 @@ function Marquee() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_35%)] opacity-80" />
       <div className="relative flex animate-marquee gap-14 whitespace-nowrap text-xl font-semibold text-slate-50 sm:text-2xl">
         {[...items, ...items, ...items].map((item, i) => (
-          <div key={i} className="flex items-center gap-3 rounded-full bg-white/5 px-4 py-2 text-slate-100 shadow-sm shadow-brand/10 transition-colors duration-300 hover:bg-white/10">
+          <div
+            key={i}
+            className="flex items-center gap-3 rounded-full bg-white/5 px-4 py-2 text-slate-100 shadow-sm shadow-brand/10 transition-colors duration-300 hover:bg-white/10"
+          >
             <Sparkles className="h-5 w-5 text-brand" />
             {item}
           </div>
@@ -379,8 +426,20 @@ function AIVision() {
   }, []);
 
   const headline = [
-    "Connecting", "people,", "processes,", "and", "systems", "to", "improve",
-    "operational", "efficiency", "and", "support", "sustainable", "long-term", "growth.",
+    "Connecting",
+    "people,",
+    "processes,",
+    "and",
+    "systems",
+    "to",
+    "improve",
+    "operational",
+    "efficiency",
+    "and",
+    "support",
+    "sustainable",
+    "long-term",
+    "growth.",
   ];
 
   return (
@@ -390,7 +449,10 @@ function AIVision() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/30 to-background/65" />
         <div
           className="pointer-events-none absolute inset-0 opacity-20"
-          style={{ background: "radial-gradient(ellipse 60% 50% at 50% 40%, oklch(0.7 0.19 240 / 0.3), transparent 70%)" }}
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 50% 40%, oklch(0.7 0.19 240 / 0.3), transparent 70%)",
+          }}
         />
         <div className="relative mx-auto flex h-full max-w-5xl flex-col justify-center px-6 lg:px-16">
           <div className="font-display inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-brand">
@@ -405,7 +467,9 @@ function AIVision() {
             })}
           </h2>
           <p className="font-display mt-8 max-w-2xl text-sm text-muted-foreground sm:text-base leading-relaxed">
-            Whether you need AI automation services, custom business applications, or integrated software systems, our team focuses on understanding your challenges and developing technology that aligns with your business goals.
+            Whether you need AI automation services, custom business applications, or integrated
+            software systems, our team focuses on understanding your challenges and developing
+            technology that aligns with your business goals.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <BouncyButton
@@ -514,7 +578,8 @@ function Services() {
             Systems We <span className="text-gradient-brand">Engineer</span>
           </h2>
           <p className="font-display mt-4 text-muted-foreground">
-            From smart business automation and WhatsApp workflows to custom web apps and ERPNext, we build solutions that eliminate routine workloads and drive growth.
+            From smart business automation and WhatsApp workflows to custom web apps and ERPNext, we
+            build solutions that eliminate routine workloads and drive growth.
           </p>
         </div>
 
@@ -567,14 +632,19 @@ function Services() {
 
                   {/* label block */}
                   <div className="p-5">
-                    <div className="font-display text-[11px] uppercase tracking-widest text-brand">{tag}</div>
+                    <div className="font-display text-[11px] uppercase tracking-widest text-brand">
+                      {tag}
+                    </div>
                     <h3 className="font-cyber mt-1 text-base font-bold text-foreground">{title}</h3>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{desc}</p>
                   </div>
                 </div>
 
                 <div className="px-5 pb-5">
-                  <Link to="/services" className="font-display inline-flex items-center gap-1 text-xs text-brand transition-colors hover:underline">
+                  <Link
+                    to="/services"
+                    className="font-display inline-flex items-center gap-1 text-xs text-brand transition-colors hover:underline"
+                  >
                     Explore capability <ArrowUpRight className="h-3 w-3" />
                   </Link>
                 </div>
@@ -629,7 +699,10 @@ function WhyChooseUs() {
             Why Choose <span className="text-gradient-brand">Tech Agenz?</span>
           </h2>
           <p className="mt-4 text-sm text-muted-foreground sm:text-base leading-relaxed">
-            Choosing the right technology partner means finding a team that understands both software and the business problems it needs to solve. Tech Agenz emphasizes practical implementation, workflow improvement, system integration, and scalable digital solutions.
+            Choosing the right technology partner means finding a team that understands both
+            software and the business problems it needs to solve. Tech Agenz emphasizes practical
+            implementation, workflow improvement, system integration, and scalable digital
+            solutions.
           </p>
         </div>
 
@@ -637,7 +710,10 @@ function WhyChooseUs() {
           {points.map((p) => {
             const Icon = p.icon;
             return (
-              <div key={p.title} className="glass-card group relative rounded-2xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1">
+              <div
+                key={p.title}
+                className="glass-card group relative rounded-2xl p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1"
+              >
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 ring-1 ring-brand/30 text-brand">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -666,7 +742,14 @@ function About() {
       <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
         <div className="relative">
           <div className="glass-card overflow-hidden rounded-3xl p-2">
-            <img src={workDev} alt="Tech Agenz engineering team at work" width={900} height={700} className="rounded-2xl" loading="lazy" />
+            <img
+              src={workDev}
+              alt="Tech Agenz engineering team at work"
+              width={900}
+              height={700}
+              className="rounded-2xl"
+              loading="lazy"
+            />
           </div>
           <div className="glass-card absolute -bottom-6 -right-6 hidden rounded-2xl px-5 py-4 sm:block">
             <div className="flex items-center gap-3">
@@ -675,7 +758,9 @@ function About() {
               </div>
               <div>
                 <div className="text-sm font-semibold">Specialized Solutions</div>
-                <div className="text-xs text-muted-foreground">Clinics, Law Firms & Growing Businesses</div>
+                <div className="text-xs text-muted-foreground">
+                  Clinics, Law Firms & Growing Businesses
+                </div>
               </div>
             </div>
           </div>
@@ -686,10 +771,15 @@ function About() {
             Smart Business Automation and <span className="text-gradient-brand">AI Solutions</span>
           </h2>
           <p className="mt-5 text-muted-foreground leading-relaxed">
-            Modern businesses need more than traditional software to remain competitive. Tech Agenz helps organizations streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications. From automating customer communication to connecting business tools, we help reduce manual workloads and create more efficient processes.
+            Modern businesses need more than traditional software to remain competitive. Tech Agenz
+            helps organizations streamline everyday operations through business process automation,
+            intelligent workflows, and AI-powered applications. From automating customer
+            communication to connecting business tools, we help reduce manual workloads and create
+            more efficient processes.
           </p>
           <p className="mt-3 text-muted-foreground leading-relaxed">
-            Our solutions support clinics managing patient appointments, law firms organizing client inquiries, and growing businesses looking to improve their internal workflows.
+            Our solutions support clinics managing patient appointments, law firms organizing client
+            inquiries, and growing businesses looking to improve their internal workflows.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
@@ -752,7 +842,8 @@ function Impact() {
                   Numbers that reflect <span className="text-gradient-brand">how we build</span>
                 </h2>
                 <p className="mt-5 max-w-md text-sm text-slate-400 sm:text-base">
-                  Every metric here is earned across real production systems — not vanity figures. It's what happens when engineering discipline meets applied AI.
+                  Every metric here is earned across real production systems — not vanity figures.
+                  It's what happens when engineering discipline meets applied AI.
                 </p>
                 <Link
                   to="/about"
@@ -851,9 +942,20 @@ function Work() {
         </div>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <div key={p.title} className="glass-card group overflow-hidden rounded-3xl" data-cursor="hover">
+            <div
+              key={p.title}
+              className="glass-card group overflow-hidden rounded-3xl"
+              data-cursor="hover"
+            >
               <div className="relative aspect-[4/3] overflow-hidden">
-                <img src={p.img} alt={p.title} width={900} height={700} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img
+                  src={p.img}
+                  alt={p.title}
+                  width={900}
+                  height={700}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
                 <div className="absolute left-4 top-4 rounded-full bg-background/70 px-3 py-1 text-xs uppercase tracking-widest text-brand backdrop-blur">
                   {p.tag}
                 </div>
@@ -861,7 +963,10 @@ function Work() {
               <div className="p-6">
                 <h3 className="font-display text-lg font-semibold">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-                <Link to="/work" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline">
+                <Link
+                  to="/work"
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline"
+                >
                   View case study <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -901,32 +1006,7 @@ function Testimonials() {
 }
 
 function BlogsTeaser() {
-  const posts = [
-    {
-      title: "Why AI-Powered Software Houses in Pakistan Are Dominating Global Tech Delivery",
-      category: "AI & ML",
-      readTime: "6 min read",
-      date: "Oct 2026",
-      image:
-        "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Custom Software Development vs Off-The-Shelf SaaS: The 2026 Decision Blueprint",
-      category: "Custom Software",
-      readTime: "7 min read",
-      date: "Oct 2026",
-      image:
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries",
-      category: "Automation",
-      readTime: "5 min read",
-      date: "Oct 2026",
-      image:
-        "https://images.unsplash.com/photo-1611746872915-64382b5c76da?auto=format&fit=crop&w=800&q=80",
-    },
-  ];
+  const posts = blogPosts.slice(0, 3);
 
   return (
     <section id="blogs" className="relative py-20">
@@ -949,8 +1029,9 @@ function BlogsTeaser() {
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {posts.map((p) => (
             <Link
-              key={p.title}
-              to="/blogs"
+              key={p.id}
+              to="/blogs/$slug"
+              params={{ slug: p.id }}
               className="glass-card group flex flex-col justify-between overflow-hidden rounded-3xl p-5 sm:p-6 transition-transform duration-300 hover:border-brand/40 hover:-translate-y-1 shadow-lg"
             >
               <div>
@@ -995,8 +1076,7 @@ function BlogsTeaser() {
   );
 }
 
-
-  function CTA() {
+function CTA() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -1040,7 +1120,7 @@ function BlogsTeaser() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
+            Accept: "application/json",
           },
           body: JSON.stringify({
             name: formData.name,
@@ -1065,7 +1145,9 @@ function BlogsTeaser() {
       setFormData({ name: "", email: "", company: "", message: "" });
     } else {
       setStatus("error");
-      setErrorMessage("Something went wrong — please try again or email info@techagenz.com directly.");
+      setErrorMessage(
+        "Something went wrong — please try again or email info@techagenz.com directly.",
+      );
     }
   };
 
@@ -1076,30 +1158,44 @@ function BlogsTeaser() {
           <div className="absolute -top-24 left-1/2 h-64 w-[700px] -translate-x-1/2 rounded-full bg-brand/30 blur-3xl" />
           <div className="relative grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <SectionPill><Zap className="h-3 w-3" /> Get Started Today</SectionPill>
+              <SectionPill>
+                <Zap className="h-3 w-3" /> Get Started Today
+              </SectionPill>
               <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
                 Transform Your Business with <br />
                 <span className="text-gradient-brand">Smarter Technology.</span>
               </h2>
               <p className="mt-4 max-w-lg text-sm text-muted-foreground sm:text-base leading-relaxed">
-                Ready to improve your workflows, simplify customer communication, or modernize your business systems? Tech Agenz can help you explore AI automation, custom software, intelligent chatbots, web applications, and ERPNext solutions aligned with your needs.
+                Ready to improve your workflows, simplify customer communication, or modernize your
+                business systems? Tech Agenz can help you explore AI automation, custom software,
+                intelligent chatbots, web applications, and ERPNext solutions aligned with your
+                needs.
               </p>
               <p className="mt-2 text-xs text-brand font-medium">
-                Contact Tech Agenz to discuss your business challenges and discover the right technology solution for your next stage of growth.
+                Contact Tech Agenz to discuss your business challenges and discover the right
+                technology solution for your next stage of growth.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="mailto:info@techagenz.com" className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]">
+                <a
+                  href="mailto:info@techagenz.com"
+                  className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
+                >
                   Email us <ArrowUpRight className="h-4 w-4" />
                 </a>
-                <a href="tel:03394555004" className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card">
+                <a
+                  href="tel:03394555004"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card"
+                >
                   Schedule a call
                 </a>
               </div>
             </div>
 
             <div className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 sm:p-5">
-
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 sm:p-5"
+              >
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="text-sm text-muted-foreground">
                     <span className="mb-1 block">Name</span>
@@ -1153,7 +1249,8 @@ function BlogsTeaser() {
                     disabled={status === "sending"}
                     className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                   >
-                    {status === "sending" ? "Sending..." : "Send enquiry"} <ArrowUpRight className="h-4 w-4" />
+                    {status === "sending" ? "Sending..." : "Send enquiry"}{" "}
+                    <ArrowUpRight className="h-4 w-4" />
                   </button>
                 </div>
 
@@ -1164,7 +1261,9 @@ function BlogsTeaser() {
                 )}
                 {status === "error" && (
                   <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-                    ✕ {errorMessage || "Something went wrong — please try again or email info@techagenz.com directly."}
+                    ✕{" "}
+                    {errorMessage ||
+                      "Something went wrong — please try again or email info@techagenz.com directly."}
                   </p>
                 )}
               </form>

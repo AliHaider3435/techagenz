@@ -64,7 +64,9 @@ export function AnimatedTestimonials({
 
           <div className="mt-8 flex items-center gap-4">
             <img
-              src={activeTestimonial.src || createPlaceholderAvatar(activeTestimonial.name, "#38BDF8")}
+              src={
+                activeTestimonial.src || createPlaceholderAvatar(activeTestimonial.name, "#38BDF8")
+              }
               alt={activeTestimonial.name}
               className="h-14 w-14 rounded-full object-cover ring-2 ring-brand/30"
               loading="lazy"
@@ -98,7 +100,9 @@ export function AnimatedTestimonials({
                 />
                 <div className="min-w-0">
                   <div className="truncate font-medium text-foreground">{testimonial.name}</div>
-                  <div className="truncate text-sm text-muted-foreground">{testimonial.designation}</div>
+                  <div className="truncate text-sm text-muted-foreground">
+                    {testimonial.designation}
+                  </div>
                 </div>
               </button>
             );

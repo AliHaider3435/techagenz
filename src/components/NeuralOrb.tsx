@@ -128,8 +128,7 @@ export function NeuralOrb({ className }: { className?: string }) {
     });
     ro.observe(canvas);
 
-    const shouldAnimate = () =>
-      isIntersecting && !document.hidden && !isReducedMotion;
+    const shouldAnimate = () => isIntersecting && !document.hidden && !isReducedMotion;
 
     const tick = (now: number) => {
       raf = undefined;

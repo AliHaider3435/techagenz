@@ -83,12 +83,7 @@ const TEAM: TeamMember[] = [
   },
 ];
 
-export const ChromaGrid = ({
-  items,
-  className = "",
-  columns = 3,
-  rows = 2,
-}: ChromaGridProps) => {
+export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: ChromaGridProps) => {
   const gridRef = useRef<HTMLDivElement | null>(null);
 
   const data = items?.length ? items : TEAM;
@@ -116,7 +111,9 @@ export const ChromaGrid = ({
               scale: 1.03,
               duration: 0.85,
               ease: "power2.out",
-            }).to(image, {
+            }).to(
+              image,
+              {
                 opacity: 0,
                 scale: 1,
                 duration: 0.55,
@@ -177,15 +174,23 @@ export const ChromaGrid = ({
           onMouseEnter={handleCardEnter}
           onMouseLeave={handleCardLeave}
           onClick={() => handleCardClick(c.url)}
-          style={{
-            "--card-border": c.borderColor || "transparent",
-            "--card-gradient": c.gradient,
-            cursor: c.url ? "pointer" : "default",
-          } as React.CSSProperties}
+          style={
+            {
+              "--card-border": c.borderColor || "transparent",
+              "--card-gradient": c.gradient,
+              cursor: c.url ? "pointer" : "default",
+            } as React.CSSProperties
+          }
         >
           <div className="chroma-img-wrapper">
             <img className="chroma-img-base" src={c.image} alt={c.title} loading="lazy" />
-            <img className="chroma-img-color" src={c.image} alt="" aria-hidden="true" loading="lazy" />
+            <img
+              className="chroma-img-color"
+              src={c.image}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+            />
           </div>
           <footer className="chroma-info">
             <h3 className="name">{c.title}</h3>
@@ -351,8 +356,8 @@ export default function TeamSection() {
           The Minds <span>Engineering the Future</span>
         </h2>
         <p className="team-sub">
-          Engineers, designers, and researchers building the intelligent
-          systems behind every Tech Agenz deployment.
+          Engineers, designers, and researchers building the intelligent systems behind every Tech
+          Agenz deployment.
         </p>
       </div>
 

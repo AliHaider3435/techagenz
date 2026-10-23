@@ -29,9 +29,7 @@ function applyThemeToSpline(app: SplineApp) {
       if (typeof mat.metalness === "number") mat.metalness = 0.8;
       if (typeof mat.roughness === "number") mat.roughness = 0.2;
     };
-    Array.isArray(node.material)
-      ? node.material.forEach(applyMat)
-      : applyMat(node.material);
+    Array.isArray(node.material) ? node.material.forEach(applyMat) : applyMat(node.material);
   });
 }
 
@@ -109,7 +107,13 @@ export function SplineScene({ scene, className, style, onLoad }: SplineSceneProp
     <canvas
       ref={canvasRef}
       className={className}
-      style={{ display: "block", width: "100%", height: "100%", background: "transparent", ...style }}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        background: "transparent",
+        ...style,
+      }}
       aria-label="Interactive 3D robot animation"
     />
   );

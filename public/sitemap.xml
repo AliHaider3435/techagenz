@@ -3,39 +3,114 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- Core Site Pages -->
   <url>
-    <loc>https://www.techagenz.com/</loc>
-    <lastmod>2026-10-22</lastmod>
+    <loc>https://techagenz.com/</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.techagenz.com/services</loc>
-    <lastmod>2026-10-22</lastmod>
+    <loc>https://techagenz.com/services</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.techagenz.com/about</loc>
-    <lastmod>2026-10-22</lastmod>
+    <loc>https://techagenz.com/work</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/about</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.techagenz.com/work</loc>
-    <lastmod>2026-10-22</lastmod>
+    <loc>https://techagenz.com/blogs</loc>
+    <lastmod>2026-10-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.techagenz.com/blogs</loc>
-    <lastmod>2026-10-22</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://techagenz.com/contact</loc>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 12 Production Engineering Blog Posts -->
+  <url>
+    <loc>https://techagenz.com/blogs/ai-software-house-pakistan</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.techagenz.com/contact</loc>
-    <lastmod>2026-10-22</lastmod>
+    <loc>https://techagenz.com/blogs/custom-software-development-pakistan</loc>
+    <lastmod>2026-10-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/whatsapp-automation-for-business</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/erpnext-implementation-pakistan</loc>
+    <lastmod>2026-10-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/ai-chatbot-development-rag</loc>
+    <lastmod>2026-10-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/healthcare-clinic-management-software</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/legal-tech-law-chamber-portals</loc>
+    <lastmod>2026-09-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/react-19-web-development-pakistan</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/autonomous-agentic-workflows-temporal</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/offshore-software-development-pakistan</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/saas-architecture-multi-tenancy</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://techagenz.com/blogs/software-house-cybersecurity-best-practices</loc>
+    <lastmod>2026-08-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
