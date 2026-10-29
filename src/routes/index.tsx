@@ -1054,6 +1054,9 @@ function BlogsTeaser() {
                     width={600}
                     height={340}
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src = "/blog-images/ai-software-house-pakistan.webp";
+                    }}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card/80 via-transparent to-transparent" />

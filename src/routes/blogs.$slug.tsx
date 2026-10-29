@@ -282,6 +282,9 @@ function BlogPostDetail() {
               width={1200}
               height={675}
               fetchPriority="high"
+              onError={(e) => {
+                e.currentTarget.src = "/blog-images/ai-software-house-pakistan.webp";
+              }}
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />

@@ -220,6 +220,9 @@ function BlogsIndexPage() {
                     alt={featuredPost.title}
                     width={1200}
                     height={800}
+                    onError={(e) => {
+                      e.currentTarget.src = "/blog-images/ai-software-house-pakistan.webp";
+                    }}
                     className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-background/10 lg:to-background" />
@@ -316,6 +319,9 @@ function BlogsIndexPage() {
                         width={800}
                         height={500}
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src = "/blog-images/ai-software-house-pakistan.webp";
+                        }}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent" />
