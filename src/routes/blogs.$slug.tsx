@@ -23,8 +23,19 @@ import { TechCursor } from "@/components/TechCursor";
 import { getBlogPost, getRelatedBlogPosts } from "@/lib/blogs-data";
 
 export const Route = createFileRoute("/blogs/$slug")({
-  loader: ({ params }) => {
-    const post = getBlogPost(params.slug);
+  loader: async ({ params }) => {
+    let post = getBlogPost(params.slug);
+    if (!post && typeof window !== "undefined") {
+      try {
+        const res = await fetch("/api/cms");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data?.blogs)) {
+            post = json.data.blogs.find((b: { id: string }) => b.id === params.slug);
+          }
+        }
+      } catch {}
+    }
     if (!post) {
       throw notFound();
     }

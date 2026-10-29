@@ -38,7 +38,7 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import { getBlogs, CMS_UPDATE_EVENT } from "@/lib/cms-store";
+import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT } from "@/lib/cms-store";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
 import workSaas from "@/assets/work-saas.webp";
@@ -1010,6 +1010,7 @@ function BlogsTeaser() {
 
   useEffect(() => {
     setPosts(getBlogs().slice(0, 3));
+    fetchLiveCmsData();
     const handler = () => setPosts(getBlogs().slice(0, 3));
     window.addEventListener(CMS_UPDATE_EVENT, handler);
     window.addEventListener("storage", handler);

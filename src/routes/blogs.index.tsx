@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import { blogCategories } from "@/lib/blogs-data";
-import { getBlogs, CMS_UPDATE_EVENT, type BlogPost } from "@/lib/cms-store";
+import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT, type BlogPost } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/blogs/")({
   head: () => ({
@@ -65,6 +65,7 @@ function BlogsIndexPage() {
 
   useEffect(() => {
     setPosts(getBlogs());
+    fetchLiveCmsData();
     const handler = () => setPosts(getBlogs());
     window.addEventListener(CMS_UPDATE_EVENT, handler);
     window.addEventListener("storage", handler);

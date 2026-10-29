@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { getTeamMembers, CMS_UPDATE_EVENT, type TeamMember } from "@/lib/cms-store";
+import { getTeamMembers, fetchLiveCmsData, CMS_UPDATE_EVENT, type TeamMember } from "@/lib/cms-store";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,8 +14,28 @@ type ChromaGridProps = {
 
 export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: ChromaGridProps) => {
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const [data, setData] = useState<TeamMember[]>(() => (items?.length ? items : getTeamMembers()));
 
-  const data = items?.length ? items : getTeamMembers();
+  useEffect(() => {
+    if (items?.length) {
+      setData(items);
+      return;
+    }
+
+    setData(getTeamMembers());
+    fetchLiveCmsData();
+
+    const handler = () => {
+      setData(getTeamMembers());
+    };
+
+    window.addEventListener(CMS_UPDATE_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(CMS_UPDATE_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, [items]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

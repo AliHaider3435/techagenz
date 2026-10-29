@@ -25,6 +25,10 @@ import {
   Lock,
   Mail,
   Camera,
+  GitBranch,
+  Github,
+  Key,
+  EyeOff,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -50,6 +54,12 @@ import {
   updateAuthConfig,
   exportCmsData,
   importCmsData,
+  getGitHubConfig,
+  saveGitHubConfig,
+  testGitHubConnection,
+  syncCmsToGitHub,
+  CMS_SYNC_STATUS_EVENT,
+  type GitHubConfig,
   AVATAR_PLACEHOLDER,
   type TeamMember,
 } from "@/lib/cms-store";
@@ -125,11 +135,23 @@ function AdminDashboardPage() {
   });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // GitHub Auto-Sync State
+  const [gitHubConfig, setGitHubConfig] = useState<GitHubConfig>(getGitHubConfig);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isTestingGitHub, setIsTestingGitHub] = useState(false);
+  const [gitTestResult, setGitTestResult] = useState<{
+    success?: boolean;
+    message?: string;
+    error?: string;
+    warning?: string;
+  } | null>(null);
+  const [showToken, setShowToken] = useState(false);
+
   const importFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
+    setTimeout(() => setToastMessage(null), 4500);
   };
 
   // Auth Protection
@@ -146,6 +168,7 @@ function AdminDashboardPage() {
     // Load initial data
     setTeamMembers(getTeamMembers());
     setBlogs(getBlogs());
+    setGitHubConfig(getGitHubConfig());
 
     const authConfig = getAuthConfig();
     setSettingsForm({ email: authConfig.email, password: authConfig.passwordHash });
@@ -154,15 +177,83 @@ function AdminDashboardPage() {
     const handler = () => {
       setTeamMembers(getTeamMembers());
       setBlogs(getBlogs());
+      setGitHubConfig(getGitHubConfig());
     };
     window.addEventListener("techagenz_cms_update", handler);
-    return () => window.removeEventListener("techagenz_cms_update", handler);
+
+    // Listen to GitHub sync status events
+    const syncStatusHandler = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      const detail = customEvt.detail;
+      if (!detail) return;
+      if (detail.state === "syncing") {
+        setIsSyncing(true);
+      } else if (detail.state === "success") {
+        setIsSyncing(false);
+        setGitHubConfig(getGitHubConfig());
+        showToast(detail.message || `✓ Synced with GitHub (${detail.commitSha})! Vercel is deploying.`);
+      } else if (detail.state === "error") {
+        setIsSyncing(false);
+        setGitHubConfig(getGitHubConfig());
+        if (detail.error) {
+          showToast(`⚠️ Sync notice: ${detail.error.slice(0, 90)}`);
+        }
+      }
+    };
+    window.addEventListener(CMS_SYNC_STATUS_EVENT, syncStatusHandler);
+
+    return () => {
+      window.removeEventListener("techagenz_cms_update", handler);
+      window.removeEventListener(CMS_SYNC_STATUS_EVENT, syncStatusHandler);
+    };
   }, [navigate]);
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to sign out of the portal?")) {
       logoutUser();
       navigate({ to: "/login" });
+    }
+  };
+
+  // ==================== GITHUB AUTO-SYNC HANDLERS ====================
+
+  const handleTestGitHubConnection = async () => {
+    setIsTestingGitHub(true);
+    setGitTestResult(null);
+    try {
+      const res = await testGitHubConnection(gitHubConfig.token);
+      setGitTestResult(res);
+      if (res.success) {
+        showToast(res.message || "✓ GitHub connection verified!");
+      } else {
+        showToast(`Connection failed: ${res.error || res.warning || "Check token"}`);
+      }
+    } finally {
+      setIsTestingGitHub(false);
+    }
+  };
+
+  const handleSaveGitHubSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    const updated = saveGitHubConfig(gitHubConfig);
+    setGitHubConfig(updated);
+    showToast("GitHub Auto-Sync configuration saved!");
+  };
+
+  const handleManualGitHubSync = async () => {
+    if (isSyncing) return;
+    setIsSyncing(true);
+    showToast("Syncing all blogs and team members to GitHub repository...");
+    try {
+      const res = await syncCmsToGitHub("Manual sync from Tech Agenz CMS Console");
+      if (res.success) {
+        setGitHubConfig(getGitHubConfig());
+        showToast(`✓ Synced to GitHub (${res.commitSha})! Vercel is deploying.`);
+      } else {
+        showToast(`Sync failed: ${res.error || "Unknown error"}`);
+      }
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -479,13 +570,55 @@ function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* GitHub Sync Status Badge */}
+            {isSyncing ? (
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300">
+                <RefreshCw className="h-3.5 w-3.5 animate-spin text-cyan-400" />
+                <span>Syncing to GitHub...</span>
+              </span>
+            ) : gitHubConfig.token ? (
+              <a
+                href={gitHubConfig.lastCommitUrl || `https://github.com/${gitHubConfig.repoOwner}/${gitHubConfig.repoName}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition cursor-pointer"
+                title={`Connected to ${gitHubConfig.repoOwner}/${gitHubConfig.repoName} (${gitHubConfig.branch}). Click to view on GitHub.`}
+              >
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <Github className="h-3.5 w-3.5" />
+                <span>GitHub Synced {gitHubConfig.lastCommitSha ? `(${gitHubConfig.lastCommitSha})` : ""}</span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveTab("settings")}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
+                title="Click to set up GitHub Auto-Sync token"
+              >
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
+                <span>Setup GitHub Sync</span>
+              </button>
+            )}
+
+            {/* Quick Sync Button */}
+            <button
+              type="button"
+              onClick={handleManualGitHubSync}
+              disabled={isSyncing}
+              className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/40 bg-cyan-500/20 px-3.5 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/30 transition disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(34,211,238,0.15)]"
+              title="Push current state to GitHub main branch and trigger Vercel deployment"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-cyan-400" : ""}`} />
+              <span>{isSyncing ? "Syncing..." : "Sync to GitHub"}</span>
+            </button>
+
             <Link
               to="/"
               target="_blank"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-300 hover:border-cyan-500/40 hover:text-white transition"
             >
-              <span>View Live Website</span>
+              <span>View Site</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
             <button
@@ -803,9 +936,264 @@ function AdminDashboardPage() {
         {/* TAB 3: SETTINGS & BACKUP */}
         {/* ======================================================== */}
         {activeTab === "settings" && (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Credentials Card */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6 sm:p-8 backdrop-blur-sm">
+          <div className="mt-8 space-y-8">
+            {/* GitHub Auto-Sync & Deployment Card */}
+            <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-b from-slate-950/90 to-slate-900/90 p-6 sm:p-8 backdrop-blur-sm shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
+                    <Github className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-white">GitHub Auto-Sync & Global Deployment</h2>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-400">
+                        <GitBranch className="h-3 w-3" />
+                        <span>{gitHubConfig.branch}</span>
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
+                      Automatically commits changes to your repository (<strong className="text-white">{gitHubConfig.repoOwner}/{gitHubConfig.repoName}</strong>).
+                      When committed, Vercel automatically deploys your updates so they are immediately live for every visitor across all browsers.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleManualGitHubSync}
+                    disabled={isSyncing}
+                    className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 transition cursor-pointer shadow-[0_0_15px_rgba(34,211,238,0.3)] disabled:opacity-50"
+                  >
+                    <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+                    <span>{isSyncing ? "Syncing..." : "Sync to GitHub Now"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Status Banner */}
+              <div className="mt-6">
+                {gitHubConfig.token ? (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs text-emerald-300 flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-2.5">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                      <div>
+                        <div className="font-semibold text-white">
+                          Connected to GitHub ({gitHubConfig.repoOwner}/{gitHubConfig.repoName})
+                        </div>
+                        <div className="text-slate-300 mt-0.5">
+                          Auto-Sync is <strong className="text-emerald-300">{gitHubConfig.autoSync ? "ENABLED" : "PAUSED"}</strong>.
+                          Every blog or team change commits directly to branch <code className="text-cyan-300 bg-black/40 px-1 py-0.5 rounded">{gitHubConfig.branch}</code>.
+                        </div>
+                        {gitHubConfig.lastSyncTime && (
+                          <div className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-2">
+                            <span>Last synced: {new Date(gitHubConfig.lastSyncTime).toLocaleString()}</span>
+                            {gitHubConfig.lastCommitSha && (
+                              <a
+                                href={gitHubConfig.lastCommitUrl || `https://github.com/${gitHubConfig.repoOwner}/${gitHubConfig.repoName}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-cyan-400 hover:underline flex items-center gap-1 font-mono"
+                              >
+                                <span>Commit {gitHubConfig.lastCommitSha}</span>
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-200">
+                    <div className="flex items-start gap-2.5">
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                      <div>
+                        <div className="font-semibold text-white">
+                          GitHub Token Needed for Cloud Auto-Sync
+                        </div>
+                        <div className="text-slate-300 mt-0.5">
+                          To have your changes automatically update the live website on all devices and preserve data in Git, enter your GitHub Personal Access Token below.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Form Settings */}
+              <form onSubmit={handleSaveGitHubSettings} className="mt-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Token Field */}
+                  <div className="md:col-span-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                        GitHub Personal Access Token (PAT)
+                      </label>
+                      <a
+                        href="https://github.com/settings/tokens/new?scopes=repo&description=TechAgenz+CMS+Sync"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+                      >
+                        <span>Generate Token on GitHub</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showToken ? "text" : "password"}
+                        placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={gitHubConfig.token}
+                        onChange={(e) =>
+                          setGitHubConfig({ ...gitHubConfig, token: e.target.value.trim() })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 pl-3.5 pr-20 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowToken(!showToken)}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-slate-400 hover:text-white text-xs flex items-center gap-1 cursor-pointer"
+                      >
+                        {showToken ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                        <span className="text-[10px]">{showToken ? "Hide" : "Show"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Branch */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Target Branch
+                    </label>
+                    <input
+                      type="text"
+                      value={gitHubConfig.branch}
+                      onChange={(e) =>
+                        setGitHubConfig({ ...gitHubConfig, branch: e.target.value.trim() })
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      GitHub Repository Owner
+                    </label>
+                    <input
+                      type="text"
+                      value={gitHubConfig.repoOwner}
+                      onChange={(e) =>
+                        setGitHubConfig({ ...gitHubConfig, repoOwner: e.target.value.trim() })
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Repository Name
+                    </label>
+                    <input
+                      type="text"
+                      value={gitHubConfig.repoName}
+                      onChange={(e) =>
+                        setGitHubConfig({ ...gitHubConfig, repoName: e.target.value.trim() })
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* AutoSync Checkbox & Actions */}
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={gitHubConfig.autoSync}
+                      onChange={(e) =>
+                        setGitHubConfig({ ...gitHubConfig, autoSync: e.target.checked })
+                      }
+                      className="h-4 w-4 rounded border-white/20 bg-slate-900 text-cyan-500 accent-cyan-400"
+                    />
+                    <span className="text-xs text-slate-300">
+                      Enable Auto-Sync (Automatically push changes on every save, add, or delete)
+                    </span>
+                  </label>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleTestGitHubConnection}
+                      disabled={isTestingGitHub}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white hover:border-cyan-500/40 transition cursor-pointer disabled:opacity-50"
+                    >
+                      {isTestingGitHub ? (
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Key className="h-3.5 w-3.5 text-cyan-400" />
+                      )}
+                      <span>{isTestingGitHub ? "Testing..." : "Test Connection"}</span>
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 py-2.5 px-5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 transition cursor-pointer"
+                    >
+                      <Check className="h-4 w-4" />
+                      <span>Save GitHub Settings</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Test Result Message */}
+                {gitTestResult && (
+                  <div
+                    className={`rounded-xl p-3 text-xs flex items-center gap-2 ${
+                      gitTestResult.success
+                        ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+                        : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
+                    }`}
+                  >
+                    {gitTestResult.success ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+                    )}
+                    <span>{gitTestResult.message || gitTestResult.error || gitTestResult.warning}</span>
+                  </div>
+                )}
+              </form>
+
+              {/* Instructions Guide */}
+              <div className="mt-6 rounded-xl border border-white/5 bg-slate-900/60 p-4 text-xs text-slate-400">
+                <div className="font-semibold text-white mb-1.5 flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+                  <span>How GitHub Auto-Sync keeps your data permanently safe everywhere:</span>
+                </div>
+                <ol className="list-decimal list-inside space-y-1 text-slate-400 text-[11px] leading-relaxed">
+                  <li>
+                    When you post or update a blog or team member, Tech Agenz CMS commits the updated <code className="text-cyan-300">src/data/cms-data.json</code> directly to your GitHub repository.
+                  </li>
+                  <li>
+                    GitHub receives the commit and immediately notifies Vercel to rebuild.
+                  </li>
+                  <li>
+                    Vercel builds and publishes the new version worldwide. Every browser, mobile device, or visitor opening <strong className="text-white">techagenz.com</strong> sees the updated content.
+                  </li>
+                  <li>
+                    Your data is never lost because it is permanently saved in your GitHub Git commit history!
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            {/* Grid of Credentials & Backup */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Credentials Card */}
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6 sm:p-8 backdrop-blur-sm">
               <div className="flex items-center gap-2.5 mb-2">
                 <Lock className="h-5 w-5 text-cyan-400" />
                 <h2 className="text-lg font-bold text-white">Admin Credentials</h2>
@@ -901,6 +1289,7 @@ function AdminDashboardPage() {
               </div>
             </div>
           </div>
+        </div>
         )}
 
         {/* ======================================================== */}
