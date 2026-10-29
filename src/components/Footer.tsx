@@ -16,12 +16,12 @@ function Footer() {
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground leading-relaxed">
-            AI-powered software house in Lahore, Pakistan engineering intelligent solutions,
+            AI-powered software house based in Pakistan engineering intelligent solutions,
             WhatsApp business automation, ERPNext systems, and custom web platforms for ambitious
             teams worldwide.
           </p>
           <div className="mt-3 text-xs text-brand font-medium">
-            Lahore, Punjab, Pakistan • Serving Clients Globally
+            Based in Pakistan • Serving Clients Globally
           </div>
           <div className="mt-6 flex gap-3">
             <a
@@ -138,7 +138,7 @@ function Footer() {
 
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-start justify-between gap-3 border-t border-border/50 px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
         <div>
-          © {new Date().getFullYear()} Tech Agenz. All rights reserved. • Lahore, Pakistan •{" "}
+          © {new Date().getFullYear()} Tech Agenz. All rights reserved. • Pakistan •{" "}
           <Link to="/login" className="text-cyan-400 hover:underline">
             Team Portal
           </Link>

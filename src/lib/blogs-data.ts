@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
       "The global software development landscape has reached an inflection point. Organizations in North America, Europe, and the Middle East no longer seek conventional code factories; they need strategic AI engineering partners who understand model integration, data isolation, and modern operational ergonomics.",
       "In Pakistan, a new generation of software houses like Tech Agenz is leading this transformation. By combining state-of-the-art frameworks like PyTorch, vLLM, and LangGraph with robust full-stack web architectures, we deliver customized intelligent solutions that directly integrate into business operations.",
       "Whether you are building bespoke generative workflows, intelligent legal portals, or clinical automation systems, partnering with a dedicated Pakistani AI software house yields tier-1 engineering quality at a fraction of Western agency cost structures.",
-      "From Lahore to Islamabad and Karachi, engineering teams are proving that high-velocity agile delivery combined with deep AI specialization creates tangible, long-term business value for international enterprises.",
+      "Across Pakistan, engineering teams are proving that high-velocity agile delivery combined with deep AI specialization creates tangible, long-term business value for international enterprises.",
     ],
     featured: true,
   },

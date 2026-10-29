@@ -31,8 +31,7 @@ const contactPageSchema = {
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Lahore",
-    addressRegion: "Punjab",
+    addressLocality: "Pakistan",
     addressCountry: "PK",
   },
   areaServed: [
@@ -47,7 +46,7 @@ const contactPageSchema = {
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Tech Agenz | AI & Software House in Lahore, Pakistan" },
+      { title: "Contact Us — Tech Agenz | AI & Software House in Pakistan" },
       {
         name: "description",
         content:
@@ -56,7 +55,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "keywords",
         content:
-          "Contact Software House Pakistan, Hire Developers Lahore, AI Automation Consultation, ERPNext Implementation Pakistan, Custom Software Inquiry",
+          "Contact Software House Pakistan, Hire Developers Pakistan, AI Automation Consultation, ERPNext Implementation Pakistan, Custom Software Inquiry",
       },
       {
         property: "og:title",
@@ -80,7 +79,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "twitter:description",
         content:
-          "Discuss your next software project with our lead engineers in Lahore, Pakistan. Confidential discovery & transparent proposals.",
+          "Discuss your next software project with our lead engineers in Pakistan. Confidential discovery & transparent proposals.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
@@ -275,7 +274,7 @@ function ContactPage() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">Engineering Headquarters</div>
-                      <div className="font-medium text-foreground">Lahore, Punjab, Pakistan</div>
+                      <div className="font-medium text-foreground">Based in Pakistan</div>
                     </div>
                   </div>
 

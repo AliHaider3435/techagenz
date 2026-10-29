@@ -96,8 +96,7 @@ const localBusinessSchema = JSON.stringify({
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Lahore",
-    addressRegion: "Punjab",
+    addressLocality: "Pakistan",
     addressCountry: "PK",
   },
   geo: {

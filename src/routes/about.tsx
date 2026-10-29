@@ -30,12 +30,12 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Tech Agenz is an AI automation and custom software house based in Lahore, Pakistan. We engineer bespoke business platforms, clinic booking systems, and ERPNext solutions for clients worldwide.",
+          "Tech Agenz is an AI automation and custom software house based in Pakistan. We engineer bespoke business platforms, clinic booking systems, and ERPNext solutions for clients worldwide.",
       },
       {
         name: "keywords",
         content:
-          "Software House in Pakistan, AI Software House, Lahore Software Company, Custom Software Development Pakistan, Offshore Development Pakistan, ERPNext Partner, WhatsApp Automation",
+          "Software House in Pakistan, AI Software House, Pakistan Software Company, Custom Software Development Pakistan, Offshore Development Pakistan, ERPNext Partner, WhatsApp Automation",
       },
       { property: "og:title", content: "About Us — Tech Agenz | AI & Software House in Pakistan" },
       {
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "twitter:description",
         content:
-          "AI Automation, custom software development, and ERPNext systems engineered by Tech Agenz in Lahore, Pakistan.",
+          "AI Automation, custom software development, and ERPNext systems engineered by Tech Agenz in Pakistan.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
     ],
@@ -146,7 +146,7 @@ function AboutPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg leading-relaxed"
           >
-            Tech Agenz is an AI-powered software house based in Lahore, Pakistan helping ambitious
+            Tech Agenz is an AI-powered software house based in Pakistan helping ambitious
             businesses simplify complex operations, automate repetitive tasks, and build smarter
             digital experiences.
           </motion.p>
@@ -180,9 +180,9 @@ function AboutPage() {
                     <Rocket className="h-5 w-5 text-brand" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold">Headquartered in Lahore</div>
+                    <div className="text-sm font-semibold">Headquartered in Pakistan</div>
                     <div className="text-xs text-muted-foreground">
-                      Serving Pakistan & Worldwide
+                      Serving Clients Worldwide
                     </div>
                   </div>
                 </div>
@@ -208,7 +208,7 @@ function AboutPage() {
                 workflows, with full source code ownership.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                From our engineering center in Lahore, Pakistan, we combine cutting-edge web
+                From our engineering center in Pakistan, we combine cutting-edge web
                 frameworks (React 19, TypeScript, TanStack Start) with robust backend orchestrations
                 (Python, FastAPI, Temporal, ERPNext, and the official Meta WhatsApp Cloud API).
                 Whether deploying atomic doctor scheduling portals, law chamber client intake
@@ -237,7 +237,7 @@ function AboutPage() {
                 <MapPin className="h-3.5 w-3.5" /> Pakistani Roots, Global Delivery
               </div>
               <h2 className="font-display text-3xl font-bold sm:text-4xl mt-4">
-                Engineering Hub in Lahore, Serving Clients Worldwide
+                Engineering Hub in Pakistan, Serving Clients Worldwide
               </h2>
               <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
                 Pakistan has emerged as one of the fastest-growing technology ecosystems in the
@@ -250,7 +250,7 @@ function AboutPage() {
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
                     <strong>Domestic Presence:</strong> Healthcare clinics, medical centers, and law
-                    chambers across Lahore, Karachi, and Islamabad.
+                    chambers across Pakistan.
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
