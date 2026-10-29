@@ -147,8 +147,8 @@ function Footer() {
           <a href="mailto:info@techagenz.com" className="hover:text-brand">
             info@techagenz.com
           </a>
-          <a href="tel:03394555004" className="hover:text-brand">
-            03394555004 (+92 339 4555004)
+          <a href="tel:+923394555004" className="hover:text-brand">
+            +92 339 4555004
           </a>
         </div>
       </div>

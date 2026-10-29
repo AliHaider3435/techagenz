@@ -263,7 +263,7 @@ function ContactPage() {
                     <div>
                       <div className="text-xs text-muted-foreground">WhatsApp & Phone</div>
                       <div className="font-medium text-foreground">
-                        03394555004 (+92 339 4555004)
+                        +92 339 4555004
                       </div>
                     </div>
                   </a>
