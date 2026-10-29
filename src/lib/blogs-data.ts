@@ -389,14 +389,29 @@ export const blogPosts: BlogPost[] = [
   },
 ];
 
+export function getAllBlogs(): BlogPost[] {
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem("techagenz_cms_blogs_v1");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+  }
+  return blogPosts;
+}
+
 export function getBlogPost(id: string): BlogPost | undefined {
-  return blogPosts.find((p) => p.id === id);
+  const all = getAllBlogs();
+  return all.find((p) => p.id === id);
 }
 
 export function getRelatedBlogPosts(id: string, limit = 3): BlogPost[] {
+  const all = getAllBlogs();
   const current = getBlogPost(id);
-  if (!current) return blogPosts.slice(0, limit);
-  return blogPosts
+  if (!current) return all.slice(0, limit);
+  return all
     .filter(
       (p) =>
         p.id !== id &&

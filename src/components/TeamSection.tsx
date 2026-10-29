@@ -1,29 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import team1 from "@/assets/team1.webp";
-import team6 from "@/assets/team6.jpg";
-
-// Inline SVG placeholder for team members without a photo yet — zero file size
-const avatarPlaceholder =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='12' fill='%230d1b2a'/%3E%3Ccircle cx='60' cy='45' r='22' fill='%2322d3ee' opacity='.3'/%3E%3Cellipse cx='60' cy='100' rx='34' ry='22' fill='%2322d3ee' opacity='.2'/%3E%3C/svg%3E";
-const team2 = avatarPlaceholder;
-const team3 = avatarPlaceholder;
-const team4 = avatarPlaceholder;
-const team5 = avatarPlaceholder;
+import { getTeamMembers, CMS_UPDATE_EVENT, type TeamMember } from "@/lib/cms-store";
 
 gsap.registerPlugin(ScrollTrigger);
-
-type TeamMember = {
-  image: string;
-  title: string;
-  subtitle: string;
-  handle?: string;
-  borderColor?: string;
-  gradient?: string;
-  url?: string;
-  location?: string;
-};
 
 type ChromaGridProps = {
   items?: TeamMember[];
@@ -32,61 +12,10 @@ type ChromaGridProps = {
   rows?: number;
 };
 
-const TEAM: TeamMember[] = [
-  {
-    image: team1,
-    title: "Ali Haider",
-    subtitle: "Founder & AI Engineer",
-    borderColor: "#38BDF8",
-    gradient: "linear-gradient(145deg, #38BDF8, #050B14)",
-    url: "",
-  },
-  {
-    image: team2,
-    title: "Irfan Ul Haq",
-    subtitle: "UI/UX Designer",
-    borderColor: "#0EA5E9",
-    gradient: "linear-gradient(210deg, #0EA5E9, #050B14)",
-    url: "",
-  },
-  {
-    image: team3,
-    title: "Muhammad Faizan",
-    subtitle: "Automation Engineer",
-    borderColor: "#22D3EE",
-    gradient: "linear-gradient(165deg, #22D3EE, #050B14)",
-    url: "",
-  },
-  {
-    image: team4,
-    title: "Saad Arif",
-    subtitle: "Product Designer",
-    borderColor: "#60A5FA",
-    gradient: "linear-gradient(195deg, #60A5FA, #050B14)",
-    url: "",
-  },
-  {
-    image: team5,
-    title: "Laraib",
-    subtitle: "Full-Stack Developer",
-    borderColor: "#2563EB",
-    gradient: "linear-gradient(225deg, #2563EB, #050B14)",
-    url: "",
-  },
-  {
-    image: team6,
-    title: "Muhammad Rizwan",
-    subtitle: "Data Scientist",
-    borderColor: "#0891B2",
-    gradient: "linear-gradient(135deg, #0891B2, #050B14)",
-    url: "",
-  },
-];
-
 export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: ChromaGridProps) => {
   const gridRef = useRef<HTMLDivElement | null>(null);
 
-  const data = items?.length ? items : TEAM;
+  const data = items?.length ? items : getTeamMembers();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -204,6 +133,23 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
 };
 
 export default function TeamSection() {
+  const [members, setMembers] = useState<TeamMember[]>(getTeamMembers);
+
+  useEffect(() => {
+    setMembers(getTeamMembers());
+
+    const updateHandler = () => {
+      setMembers(getTeamMembers());
+    };
+
+    window.addEventListener(CMS_UPDATE_EVENT, updateHandler);
+    window.addEventListener("storage", updateHandler);
+    return () => {
+      window.removeEventListener(CMS_UPDATE_EVENT, updateHandler);
+      window.removeEventListener("storage", updateHandler);
+    };
+  }, []);
+
   return (
     <section className="team-section">
       <style>{`
@@ -361,7 +307,7 @@ export default function TeamSection() {
         </p>
       </div>
 
-      <ChromaGrid items={TEAM} columns={3} rows={2} />
+      <ChromaGrid items={members} columns={3} rows={Math.max(2, Math.ceil(members.length / 3))} />
     </section>
   );
 }

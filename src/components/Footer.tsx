@@ -127,12 +127,22 @@ function Footer() {
                 Contact & Discovery
               </Link>
             </li>
+            <li className="pt-2 border-t border-border/30">
+              <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium flex items-center gap-1.5">
+                <span>🔐 Team Portal Login</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
 
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-start justify-between gap-3 border-t border-border/50 px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
-        <div>© {new Date().getFullYear()} Tech Agenz. All rights reserved. • Lahore, Pakistan</div>
+        <div>
+          © {new Date().getFullYear()} Tech Agenz. All rights reserved. • Lahore, Pakistan •{" "}
+          <Link to="/login" className="text-cyan-400 hover:underline">
+            Team Portal
+          </Link>
+        </div>
         <div className="flex gap-6">
           <a href="mailto:info@techagenz.com" className="hover:text-brand">
             info@techagenz.com

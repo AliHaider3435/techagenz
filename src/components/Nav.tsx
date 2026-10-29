@@ -84,6 +84,13 @@ function Nav() {
               >
                 Contact Us <ArrowUpRight className="h-4 w-4" />
               </Link>
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition"
+              >
+                <span>🔐 Team Portal Login</span>
+              </Link>
             </div>
           </div>
         )}

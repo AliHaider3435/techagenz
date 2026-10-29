@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, ArrowUpRight, Search, Sparkles, Tag, CheckCircle } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import { blogPosts, blogCategories } from "@/lib/blogs-data";
+import { blogCategories } from "@/lib/blogs-data";
+import { getBlogs, CMS_UPDATE_EVENT, type BlogPost } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/blogs/")({
   head: () => ({
@@ -60,9 +61,21 @@ function BlogsIndexPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>(getBlogs);
+
+  useEffect(() => {
+    setPosts(getBlogs());
+    const handler = () => setPosts(getBlogs());
+    window.addEventListener(CMS_UPDATE_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(CMS_UPDATE_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
 
   const filteredPosts = useMemo(() => {
-    return blogPosts.filter((post) => {
+    return posts.filter((post) => {
       const matchesCategory = activeCategory === "All" || post.category === activeCategory;
       const q = searchQuery.toLowerCase().trim();
       if (!q) return matchesCategory;
@@ -75,11 +88,11 @@ function BlogsIndexPage() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [posts, activeCategory, searchQuery]);
 
   const featuredPost = useMemo(() => {
-    return blogPosts.find((p) => p.featured) || blogPosts[0];
-  }, []);
+    return posts.find((p) => p.featured) || posts[0];
+  }, [posts]);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
