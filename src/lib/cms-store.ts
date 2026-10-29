@@ -96,6 +96,154 @@ export function saveGitHubConfig(config: Partial<GitHubConfig>): GitHubConfig {
 }
 
 /**
+ * Helper to encode utf-8 string to base64 in browser or node
+ */
+function utf8ToBase64(str: string): string {
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    return window.btoa(unescape(encodeURIComponent(str)));
+  }
+  return Buffer.from(str, "utf-8").toString("base64");
+}
+
+/**
+ * Direct client-side GitHub connection test (bypasses any serverless 404s)
+ */
+async function directGitHubTest(token: string, owner: string, repo: string): Promise<{
+  success: boolean;
+  message?: string;
+  error?: string;
+  warning?: string;
+  repo?: string;
+}> {
+  try {
+    const ghRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+
+    if (!ghRes.ok) {
+      if (ghRes.status === 401) {
+        return { success: false, error: "Invalid GitHub token. Please verify token permissions." };
+      }
+      if (ghRes.status === 404) {
+        return {
+          success: false,
+          error: `Repository ${owner}/${repo} not found, or token lacks access to private repositories. Ensure 'repo' scope is selected.`,
+        };
+      }
+      const errData = await ghRes.json().catch(() => ({}));
+      return { success: false, error: errData.message || `GitHub error (${ghRes.status})` };
+    }
+
+    const repoData = await ghRes.json();
+    const permissions = repoData.permissions || {};
+
+    if (permissions.push === false) {
+      return {
+        success: false,
+        warning: `Connected to ${repoData.full_name}, but token only has READ permission. Create a token with 'repo' (write) scope.`,
+        repo: repoData.full_name,
+      };
+    }
+
+    return {
+      success: true,
+      message: `Connected to GitHub repository ${repoData.full_name} (${repoData.private ? "Private" : "Public"})!`,
+      repo: repoData.full_name,
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Network error contacting GitHub directly";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Direct client-side GitHub commit (bypasses any serverless 404s)
+ */
+async function directGitHubSync(
+  token: string,
+  owner: string,
+  repo: string,
+  branch: string,
+  commitMessage: string,
+  payloadData: unknown,
+): Promise<{
+  success: boolean;
+  message?: string;
+  commitSha?: string;
+  commitUrl?: string;
+  error?: string;
+}> {
+  const targetPath = "src/data/cms-data.json";
+
+  try {
+    // 1. Get current SHA if file exists
+    let existingSha: string | undefined;
+    try {
+      const checkRes = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${targetPath}?ref=${branch}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        },
+      );
+      if (checkRes.ok) {
+        const existingData = await checkRes.json();
+        existingSha = existingData.sha;
+      }
+    } catch {}
+
+    // 2. Put file to GitHub
+    const jsonString = JSON.stringify(payloadData, null, 2);
+    const base64Content = utf8ToBase64(jsonString);
+
+    const putRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/contents/${targetPath}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+        body: JSON.stringify({
+          message: commitMessage,
+          content: base64Content,
+          branch,
+          ...(existingSha ? { sha: existingSha } : {}),
+        }),
+      },
+    );
+
+    if (!putRes.ok) {
+      const errPayload = await putRes.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errPayload.message || `GitHub commit error (${putRes.status})`,
+      };
+    }
+
+    const commitData = await putRes.json();
+    return {
+      success: true,
+      commitSha: commitData.commit?.sha?.slice(0, 7) || "latest",
+      commitUrl: commitData.commit?.html_url,
+      message: `Pushed to ${owner}/${repo} (${branch})! Vercel auto-deploy is running.`,
+    };
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Network error syncing directly to GitHub";
+    return { success: false, error: msg };
+  }
+}
+
+/**
  * Tests connection to GitHub repository using specified or saved token
  */
 export async function testGitHubConnection(customToken?: string): Promise<{
@@ -108,6 +256,10 @@ export async function testGitHubConnection(customToken?: string): Promise<{
   const config = getGitHubConfig();
   const token = (customToken ?? config.token).trim();
 
+  if (!token) {
+    return { success: false, error: "Please enter your GitHub Personal Access Token." };
+  }
+
   try {
     const res = await fetch("/api/github-test", {
       method: "POST",
@@ -119,11 +271,17 @@ export async function testGitHubConnection(customToken?: string): Promise<{
       }),
     });
 
-    const data = await res.json();
-    return data;
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Failed to test GitHub connection";
-    return { success: false, error: msg };
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const data = await res.json();
+      return data;
+    }
+
+    // If serverless endpoint returned HTML 404 or non-JSON, fallback directly to GitHub API
+    return await directGitHubTest(token, config.repoOwner, config.repoName);
+  } catch {
+    // Fallback directly to GitHub API
+    return await directGitHubTest(token, config.repoOwner, config.repoName);
   }
 }
 
@@ -140,25 +298,64 @@ export async function syncCmsToGitHub(commitMessage?: string): Promise<{
   const config = getGitHubConfig();
   const team = getTeamMembers();
   const blogs = getBlogs();
+  const token = config.token.trim();
+
+  if (!token) {
+    const errMsg = "GitHub token required. Please enter your Personal Access Token in Settings.";
+    saveGitHubConfig({ lastSyncStatus: "error", lastError: errMsg });
+    notifySyncStatus({ state: "error", error: errMsg });
+    return { success: false, error: errMsg };
+  }
 
   notifySyncStatus({ state: "syncing", message: "Pushing changes to GitHub repository..." });
+
+  const finalCommitMsg =
+    commitMessage || `CMS update: sync blogs & team (${new Date().toLocaleString()})`;
+
+  const payloadData = {
+    version: 1,
+    lastSyncedAt: new Date().toISOString(),
+    team,
+    blogs,
+  };
 
   try {
     const res = await fetch("/api/github-sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token: config.token.trim(),
+        token,
         repoOwner: config.repoOwner,
         repoName: config.repoName,
         branch: config.branch,
-        commitMessage: commitMessage || `CMS update: sync blogs & team (${new Date().toLocaleString()})`,
+        commitMessage: finalCommitMsg,
         team,
         blogs,
       }),
     });
 
-    const data = await res.json();
+    const contentType = res.headers.get("content-type") || "";
+    let data: {
+      success: boolean;
+      message?: string;
+      commitSha?: string;
+      commitUrl?: string;
+      error?: string;
+    };
+
+    if (res.ok && contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      // Fallback directly to GitHub REST API
+      data = await directGitHubSync(
+        token,
+        config.repoOwner,
+        config.repoName,
+        config.branch,
+        finalCommitMsg,
+        payloadData,
+      );
+    }
 
     if (data.success) {
       saveGitHubConfig({
@@ -190,19 +387,45 @@ export async function syncCmsToGitHub(commitMessage?: string): Promise<{
 
       return data;
     }
-  } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : "Network error syncing with GitHub";
-    saveGitHubConfig({
-      lastSyncStatus: "error",
-      lastError: errorMsg,
-    });
+  } catch {
+    // Final direct fallback to GitHub API
+    const fallbackRes = await directGitHubSync(
+      token,
+      config.repoOwner,
+      config.repoName,
+      config.branch,
+      finalCommitMsg,
+      payloadData,
+    );
 
-    notifySyncStatus({
-      state: "error",
-      error: errorMsg,
-    });
+    if (fallbackRes.success) {
+      saveGitHubConfig({
+        lastSyncStatus: "success",
+        lastSyncTime: new Date().toISOString(),
+        lastCommitSha: fallbackRes.commitSha,
+        lastCommitUrl: fallbackRes.commitUrl,
+        lastError: undefined,
+      });
 
-    return { success: false, error: errorMsg };
+      notifySyncStatus({
+        state: "success",
+        message: fallbackRes.message,
+        commitSha: fallbackRes.commitSha,
+        commitUrl: fallbackRes.commitUrl,
+      });
+    } else {
+      saveGitHubConfig({
+        lastSyncStatus: "error",
+        lastError: fallbackRes.error,
+      });
+
+      notifySyncStatus({
+        state: "error",
+        error: fallbackRes.error,
+      });
+    }
+
+    return fallbackRes;
   }
 }
 
