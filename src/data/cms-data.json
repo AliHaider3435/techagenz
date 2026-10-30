@@ -9,7 +9,9 @@
       "subtitle": "Founder & AI Engineer",
       "borderColor": "#38BDF8",
       "gradient": "linear-gradient(145deg, #38BDF8, #050B14)",
-      "url": ""
+      "url": "https://www.linkedin.com/in/haider5617/",
+      "location": "Lahore, Pakistan",
+      "bio": "6+ years architecting applied AI systems, LLM orchestration pipelines, and high-concurrency cloud software platforms."
     },
     {
       "id": "irfan-ul-haq",
@@ -18,7 +20,9 @@
       "subtitle": "UI/UX Designer",
       "borderColor": "#0EA5E9",
       "gradient": "linear-gradient(210deg, #0EA5E9, #050B14)",
-      "url": ""
+      "url": "https://www.linkedin.com/in/haider5617/",
+      "location": "Lahore, Pakistan",
+      "bio": "Specialist in enterprise design systems, human-centered SaaS interfaces, and clinical workflow accessibility."
     },
     {
       "id": "muhammad-faizan",
@@ -27,7 +31,9 @@
       "subtitle": "Automation Engineer",
       "borderColor": "#22D3EE",
       "gradient": "linear-gradient(165deg, #22D3EE, #050B14)",
-      "url": ""
+      "url": "https://www.linkedin.com/in/haider5617/",
+      "location": "Lahore, Pakistan",
+      "bio": "Lead engineer for WhatsApp Cloud API webhooks, state machine orchestrations, and doctor scheduling bots."
     },
     {
       "id": "saad-arif",
@@ -36,7 +42,9 @@
       "subtitle": "Product Designer",
       "borderColor": "#60A5FA",
       "gradient": "linear-gradient(195deg, #60A5FA, #050B14)",
-      "url": ""
+      "url": "https://www.linkedin.com/in/haider5617/",
+      "location": "Lahore, Pakistan",
+      "bio": "Translating complex ERP business rules and legal practice workflows into clean, frictionless software products."
     },
     {
       "id": "laraib",
@@ -45,7 +53,9 @@
       "subtitle": "Full-Stack Developer",
       "borderColor": "#2563EB",
       "gradient": "linear-gradient(225deg, #2563EB, #050B14)",
-      "url": ""
+      "url": "https://github.com/AliHaider3435",
+      "location": "Lahore, Pakistan",
+      "bio": "Full-stack engineer focusing on React 19, TypeScript, PostgreSQL database atomicity, and REST API design."
     },
     {
       "id": "muhammad-rizwan",
@@ -54,7 +64,9 @@
       "subtitle": "Data Scientist",
       "borderColor": "#0891B2",
       "gradient": "linear-gradient(135deg, #0891B2, #050B14)",
-      "url": ""
+      "url": "https://www.linkedin.com/in/haider5617/",
+      "location": "Lahore, Pakistan",
+      "bio": "Data intelligence specialist building ERPNext financial models, automated forecasting, and inventory analytics."
     }
   ],
   "blogs": [

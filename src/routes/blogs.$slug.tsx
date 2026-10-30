@@ -317,13 +317,36 @@ function BlogPostDetail() {
             {post.excerpt}
           </div>
 
-          {/* Body Paragraphs with Keyword Links */}
+          {/* Body Paragraphs with Headings Support */}
           <div className="space-y-6 text-base leading-relaxed text-muted-foreground font-normal">
-            {post.content.map((paragraph, idx) => (
-              <p key={idx} className="leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
+            {post.content.map((paragraph, idx) => {
+              if (paragraph.startsWith("## ")) {
+                return (
+                  <h2 key={idx} className="font-display text-2xl sm:text-3xl font-bold text-foreground pt-4 pb-1 text-slate-100">
+                    {paragraph.replace(/^##\s+/, "")}
+                  </h2>
+                );
+              }
+              if (paragraph.startsWith("### ")) {
+                return (
+                  <h3 key={idx} className="font-display text-lg sm:text-xl font-semibold text-foreground pt-2 text-cyan-300">
+                    {paragraph.replace(/^###\s+/, "")}
+                  </h3>
+                );
+              }
+              if (paragraph.startsWith("- ")) {
+                return (
+                  <li key={idx} className="ml-5 list-disc text-foreground/90 pl-1 leading-relaxed">
+                    {paragraph.replace(/^-\s+/, "")}
+                  </li>
+                );
+              }
+              return (
+                <p key={idx} className="leading-relaxed text-foreground/90 text-sm sm:text-base">
+                  {paragraph}
+                </p>
+              );
+            })}
           </div>
 
           {/* Internal Linking Relevant Service Card */}

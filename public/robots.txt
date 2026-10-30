@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /login
 
 # Sitemap
 Sitemap: https://techagenz.com/sitemap.xml

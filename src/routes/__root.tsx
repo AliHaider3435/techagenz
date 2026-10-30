@@ -96,7 +96,10 @@ const localBusinessSchema = JSON.stringify({
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Pakistan",
+    streetAddress: "Main Boulevard, Gulberg III",
+    addressLocality: "Lahore",
+    addressRegion: "Punjab",
+    postalCode: "54000",
     addressCountry: "PK",
   },
   geo: {
@@ -170,7 +173,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         crossOrigin: "anonymous",
       },
       { rel: "icon", href: logo, type: "image/webp" },
-      // DNS-prefetch for AdSense (loaded deferred)
+      // DNS-prefetch for AdSense
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       // DNS-prefetch for Vercel Analytics
       { rel: "dns-prefetch", href: "https://vitals.vercel-insights.com" },
@@ -191,31 +194,11 @@ function RootShell({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
         />
+        {/* Official Google AdSense script tag for automated site review & ad serving */}
         <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              function loadAdSense() {
-                if (window.__adsenseLoaded) return;
-                window.__adsenseLoaded = true;
-                var s = document.createElement('script');
-                s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466";
-                s.async = true;
-                s.crossOrigin = "anonymous";
-                document.head.appendChild(s);
-              }
-              var events = ['scroll', 'mousemove', 'touchstart', 'keydown'];
-              function onUserInteract() {
-                loadAdSense();
-                events.forEach(function(e) { window.removeEventListener(e, onUserInteract); });
-              }
-              events.forEach(function(e) { window.addEventListener(e, onUserInteract, { once: true, passive: true }); });
-              if ('requestIdleCallback' in window) {
-                window.requestIdleCallback(function() { setTimeout(loadAdSense, 3500); });
-              } else {
-                setTimeout(loadAdSense, 3500);
-              }
-            `,
-          }}
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466"
+          crossOrigin="anonymous"
         />
       </head>
       <body>

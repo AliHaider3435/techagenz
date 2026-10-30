@@ -128,6 +128,16 @@ function Footer() {
               </Link>
             </li>
             <li className="pt-2 border-t border-border/30">
+              <Link to="/privacy" className="hover:text-brand transition-colors">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className="hover:text-brand transition-colors">
+                Terms of Service
+              </Link>
+            </li>
+            <li className="pt-2 border-t border-border/30">
               <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium flex items-center gap-1.5">
                 <span>🔐 Team Portal Login</span>
               </Link>
@@ -139,6 +149,14 @@ function Footer() {
       <div className="mx-auto mt-10 flex max-w-7xl flex-col items-start justify-between gap-3 border-t border-border/50 px-6 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
         <div>
           © {new Date().getFullYear()} Tech Agenz. All rights reserved. • Pakistan •{" "}
+          <Link to="/privacy" className="hover:text-brand transition-colors">
+            Privacy Policy
+          </Link>{" "}
+          •{" "}
+          <Link to="/terms" className="hover:text-brand transition-colors">
+            Terms of Service
+          </Link>{" "}
+          •{" "}
           <Link to="/login" className="text-cyan-400 hover:underline">
             Team Portal
           </Link>

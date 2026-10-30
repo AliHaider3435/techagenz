@@ -145,6 +145,7 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
             <h3 className="name">{c.title}</h3>
             <p className="role">{c.subtitle}</p>
             {c.location && <span className="location">{c.location}</span>}
+            {c.bio && <p className="bio">{c.bio}</p>}
           </footer>
         </article>
       ))}
@@ -313,6 +314,13 @@ export default function TeamSection() {
         }
         .chroma-info .role {
           color: #a9c2d6;
+        }
+        .chroma-info .bio {
+          grid-column: 1 / -1;
+          margin-top: 4px;
+          font-size: 11px;
+          line-height: 1.45;
+          color: #8a9bb0;
         }
       `}</style>
 

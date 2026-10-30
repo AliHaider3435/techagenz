@@ -39,6 +39,9 @@ import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
 import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT } from "@/lib/cms-store";
+import { getFeaturedProjects } from "@/lib/projects-data";
+import ProjectCard from "@/components/ProjectCard";
+import WorkSocialProof from "@/components/WorkSocialProof";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
 import workSaas from "@/assets/work-saas.webp";
@@ -911,77 +914,45 @@ function StatCard({
 export { About, StatCard };
 
 function Work() {
-  const projects = [
-    {
-      img: garwanLawChamber,
-      tag: "Legal Tech",
-      title: "Garwan Law Chamber",
-      desc: "Full-scale digital legal practice portal with client consultations, attorney profiles, and appointment bookings.",
-    },
-    {
-      img: drIqbalKharal,
-      tag: "Booking System",
-      title: "Dr Iqbal Ahmad Kharal Appointment Booking System",
-      desc: "Clinical appointment scheduling platform with patient queue management and real-time consultation tracking.",
-    },
-    {
-      img: drSajidSohail,
-      tag: "Healthcare",
-      title: "Dr Sajid Sohail Appointment Booking System",
-      desc: "Clinical appointment booking and patient consultation workflow system for Rahmania Medical Center.",
-    },
-  ];
+  const featuredProjects = getFeaturedProjects();
+
   return (
-    <section id="work" className="relative py-20">
+    <section id="work" className="relative py-24">
       <div className="mx-auto max-w-7xl px-6">
+        {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <SectionPill>Our Work</SectionPill>
+          <SectionPill>Selected Work & Deployments</SectionPill>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
-            Products & platforms we've <span className="text-gradient-brand">engineered</span>
+            Real Systems with <span className="text-gradient-brand">Verifiable Numbers</span>
           </h2>
+          <p className="mt-4 text-base text-muted-foreground leading-relaxed">
+            Only our highest-impact work. Each card features real production metrics, live architecture, and tangible operational outcomes.
+          </p>
         </div>
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((p) => (
-            <div
-              key={p.title}
-              className="glass-card group overflow-hidden rounded-3xl"
-              data-cursor="hover"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img
-                  src={p.img}
-                  alt={p.title}
-                  width={900}
-                  height={700}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute left-4 top-4 rounded-full bg-background/70 px-3 py-1 text-xs uppercase tracking-widest text-brand backdrop-blur">
-                  {p.tag}
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-display text-lg font-semibold">{p.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-                <Link
-                  to="/work"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand transition-colors hover:underline"
-                >
-                  View case study <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
+
+        {/* 1. Homepage Teaser: 4 Projects Grid */}
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+          {featuredProjects.map((project, idx) => (
+            <ProjectCard key={project.slug} project={project} priority={idx < 2} />
           ))}
         </div>
 
+        {/* View All Projects Button */}
         <div className="mt-12 text-center">
           <Link
             to="/work"
-            className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm font-medium text-foreground transition-transform hover:bg-brand/20 hover:scale-105"
+            className="glow-brand inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-brand/90 shadow-lg shadow-brand/20"
           >
-            Explore all projects & case studies <ArrowUpRight className="h-4 w-4" />
+            <span>View All Projects & Case Studies</span>
+            <ArrowUpRight className="h-4 w-4" />
           </Link>
+          <p className="mt-2.5 text-xs text-muted-foreground">
+            Explore deep dives into architecture, database atomicity, and process workflows.
+          </p>
         </div>
+
+        {/* Social Proof Strip & Counter Around Grid */}
+        <WorkSocialProof />
       </div>
     </section>
   );

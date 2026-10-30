@@ -215,16 +215,14 @@ function LoginPage() {
               </button>
             </form>
 
-            {/* Quick credentials helper banner */}
-            <div className="mt-7 rounded-xl border border-cyan-500/20 bg-cyan-950/20 p-3.5 text-xs text-slate-300">
-              <div className="flex items-center gap-2 font-medium text-cyan-400 mb-1">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Default Team Access</span>
+            {/* Security Notice */}
+            <div className="mt-7 rounded-xl border border-white/10 bg-slate-900/60 p-3.5 text-xs text-slate-300">
+              <div className="flex items-center gap-2 font-medium text-slate-300 mb-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Authorized Personnel Only</span>
               </div>
               <p className="text-[11px] leading-relaxed text-slate-400">
-                Email: <code className="text-cyan-300 font-mono">admin@techagenz.com</code>
-                <br />
-                Password: <code className="text-cyan-300 font-mono">techagenz2026!</code>
+                This internal portal is restricted to authorized Tech Agenz engineers and administrators. All login attempts are logged and monitored.
               </p>
             </div>
 

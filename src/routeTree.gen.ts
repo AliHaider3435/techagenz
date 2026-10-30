@@ -15,10 +15,14 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkRouteImport } from './routes/work'
 import { Route as BlogsIndexRouteImport } from './routes/blogs.index'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
+import { Route as WorkIndexRouteImport } from './routes/work.index'
+import { Route as WorkSlugRouteImport } from './routes/work.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -50,9 +54,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorkRoute = WorkRouteImport.update({
@@ -70,6 +84,16 @@ const BlogsSlugRoute = BlogsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogsRoute,
 } as any)
+const WorkIndexRoute = WorkIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WorkRoute,
+} as any)
+const WorkSlugRoute = WorkSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => WorkRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -78,10 +102,14 @@ export interface FileRoutesByFullPath {
   '/blogs': typeof BlogsRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
-  '/work': typeof WorkRoute
+  '/terms': typeof TermsRoute
+  '/work': typeof WorkRouteWithChildren
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/work/$slug': typeof WorkSlugRoute
   '/blogs/': typeof BlogsIndexRoute
+  '/work/': typeof WorkIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,10 +117,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
-  '/work': typeof WorkRoute
+  '/terms': typeof TermsRoute
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/work/$slug': typeof WorkSlugRoute
   '/blogs': typeof BlogsIndexRoute
+  '/work': typeof WorkIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,10 +133,14 @@ export interface FileRoutesById {
   '/blogs': typeof BlogsRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
-  '/work': typeof WorkRoute
+  '/terms': typeof TermsRoute
+  '/work': typeof WorkRouteWithChildren
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/work/$slug': typeof WorkSlugRoute
   '/blogs/': typeof BlogsIndexRoute
+  '/work/': typeof WorkIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,10 +151,14 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/login'
+    | '/privacy'
     | '/services'
+    | '/terms'
     | '/work'
     | '/blogs/$slug'
+    | '/work/$slug'
     | '/blogs/'
+    | '/work/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -127,10 +166,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/login'
+    | '/privacy'
     | '/services'
-    | '/work'
+    | '/terms'
     | '/blogs/$slug'
+    | '/work/$slug'
     | '/blogs'
+    | '/work'
   id:
     | '__root__'
     | '/'
@@ -139,10 +181,14 @@ export interface FileRouteTypes {
     | '/blogs'
     | '/contact'
     | '/login'
+    | '/privacy'
     | '/services'
+    | '/terms'
     | '/work'
     | '/blogs/$slug'
+    | '/work/$slug'
     | '/blogs/'
+    | '/work/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,8 +198,10 @@ export interface RootRouteChildren {
   BlogsRoute: typeof BlogsRouteWithChildren
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   ServicesRoute: typeof ServicesRoute
-  WorkRoute: typeof WorkRoute
+  TermsRoute: typeof TermsRoute
+  WorkRoute: typeof WorkRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -200,11 +248,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/work': {
@@ -228,6 +290,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogsSlugRouteImport
       parentRoute: typeof BlogsRoute
     }
+    '/work/': {
+      id: '/work/'
+      path: '/'
+      fullPath: '/work/'
+      preLoaderRoute: typeof WorkIndexRouteImport
+      parentRoute: typeof WorkRoute
+    }
+    '/work/$slug': {
+      id: '/work/$slug'
+      path: '/$slug'
+      fullPath: '/work/$slug'
+      preLoaderRoute: typeof WorkSlugRouteImport
+      parentRoute: typeof WorkRoute
+    }
   }
 }
 
@@ -243,6 +319,18 @@ const BlogsRouteChildren: BlogsRouteChildren = {
 
 const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
 
+interface WorkRouteChildren {
+  WorkSlugRoute: typeof WorkSlugRoute
+  WorkIndexRoute: typeof WorkIndexRoute
+}
+
+const WorkRouteChildren: WorkRouteChildren = {
+  WorkSlugRoute: WorkSlugRoute,
+  WorkIndexRoute: WorkIndexRoute,
+}
+
+const WorkRouteWithChildren = WorkRoute._addFileChildren(WorkRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -250,8 +338,10 @@ const rootRouteChildren: RootRouteChildren = {
   BlogsRoute: BlogsRouteWithChildren,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
+  PrivacyRoute: PrivacyRoute,
   ServicesRoute: ServicesRoute,
-  WorkRoute: WorkRoute,
+  TermsRoute: TermsRoute,
+  WorkRoute: WorkRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
