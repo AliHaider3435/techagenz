@@ -55,39 +55,21 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- Production Case Study Pages -->
+  <!-- 3 Verified Production Case Study Pages -->
   <url>
-    <loc>https://techagenz.com/work/whatsapp-clinic-booking</loc>
+    <loc>https://techagenz.com/work/dr-iqbal-kharal</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://techagenz.com/work/erpnext-supply-chain</loc>
+    <loc>https://techagenz.com/work/garwan-law-chamber</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://techagenz.com/work/restaurant-cloud-pos</loc>
-    <lastmod>2026-10-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://techagenz.com/work/garwan-law-portal</loc>
-    <lastmod>2026-10-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://techagenz.com/work/clinical-workflow-engine</loc>
-    <lastmod>2026-10-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://techagenz.com/work/ecommerce-inventory-sync</loc>
+    <loc>https://techagenz.com/work/dr-sajid-sohail</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>

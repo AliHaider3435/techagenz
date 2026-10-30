@@ -18,18 +18,18 @@ export const Route = createFileRoute("/work/")({
       {
         name: "description",
         content:
-          "Explore production case studies of WhatsApp automation, ERPNext deployments, real-time Cloud POS, and custom software systems engineered by Tech Agenz in Pakistan.",
+          "Explore production case studies of clinical appointment scheduling systems, legal tech portals, and patient consultation workflows engineered by Tech Agenz in Pakistan.",
       },
       {
         name: "keywords",
         content:
-          "Software House in Pakistan Portfolio, WhatsApp Automation Case Studies, ERPNext Implementation Pakistan, Restaurant POS System, Clinic Management Software, Custom Software Development Case Studies",
+          "Software House in Pakistan Portfolio, Clinic Management Software, Doctor Appointment Booking System, Legal Tech Portal, Custom Software Development Case Studies",
       },
       { property: "og:title", content: "Portfolio & Case Studies — Tech Agenz" },
       {
         property: "og:description",
         content:
-          "Verifiable production case studies with real metrics: WhatsApp booking automation, ERPNext multi-branch inventory, and cloud POS systems.",
+          "Verifiable production case studies with real metrics: clinical queue management, legal practice intake, and patient consultation portals.",
       },
       { property: "og:url", content: "https://techagenz.com/work" },
       { property: "og:type", content: "website" },
@@ -160,7 +160,7 @@ function WorkPortfolioPage() {
               Ready to Solve Your Operational Bottleneck?
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Whether you need WhatsApp appointment scheduling, a Frappe / ERPNext multi-warehouse rollout, or a high-availability cloud POS, we deliver working production software in 3 to 5 weeks.
+              Whether you need clinical appointment scheduling, automated WhatsApp queue alerts, or a bespoke legal technology portal, we engineer production software designed around your real operational workflows.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <BouncyButton

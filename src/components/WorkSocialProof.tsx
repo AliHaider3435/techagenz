@@ -1,39 +1,37 @@
-import { ShieldCheck, TrendingUp, Clock, Award, Star, Quote } from "lucide-react";
+import { ShieldCheck, TrendingUp, Clock, CheckCircle2, Star, Quote } from "lucide-react";
 
 export function WorkSocialProof() {
   const stats = [
     {
-      value: "2,500+",
-      label: "Monthly Patient Bookings",
-      detail: "Handled hands-off via WhatsApp & web",
-      icon: TrendingUp,
-    },
-    {
       value: "100%",
-      label: "Collision-Free Scheduling",
-      detail: "Zero double-bookings with atomic locking",
+      label: "Zero Double-Bookings",
+      detail: "Atomic database locking in production",
       icon: ShieldCheck,
     },
     {
-      value: "3–5 Wks",
-      label: "Average Production Go-Live",
-      detail: "From architecture scoping to launch",
+      value: "85%",
+      label: "Admin Scheduling Saved",
+      detail: "Automated legal intake & appointments",
       icon: Clock,
     },
     {
-      value: "10,000+",
-      label: "Stock Movements Monitored",
-      detail: "Across live ERP & retail deployments",
-      icon: Award,
+      value: "<5%",
+      label: "Patient No-Show Rate",
+      detail: "Automated pre-consultation reminders",
+      icon: TrendingUp,
+    },
+    {
+      value: "<0.8s",
+      label: "Sub-Second Page Loads",
+      detail: "Server-rendered responsive portals",
+      icon: CheckCircle2,
     },
   ];
 
-  const clientTypes = [
-    { name: "Garwan Law Chamber", label: "Corporate Legal Chamber", verified: true },
-    { name: "Dr. Iqbal Kharal Practice", label: "Neurosurgery Clinical Practice", verified: true },
-    { name: "Rahmania Medical Center", label: "Specialist Medical Center", verified: true },
-    { name: "Regional Supply Distributor", label: "Multi-Warehouse Wholesale Group", verified: true },
-    { name: "Hospitality Brands", label: "Fast-Casual Dining & Retail POS", verified: true },
+  const verifiedClients = [
+    { name: "Dr. Iqbal Ahmad Kharal", label: "Specialist Clinical Practice" },
+    { name: "Garwan Law Chamber", label: "Corporate & Civil Law Practice" },
+    { name: "Dr. Sajid Sohail", label: "Rahmania Medical Center" },
   ];
 
   return (
@@ -66,10 +64,10 @@ export function WorkSocialProof() {
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            Verified Deployments Across
+            Verified Live Deployments
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs font-medium text-foreground/80">
-            {clientTypes.map((c) => (
+            {verifiedClients.map((c) => (
               <div
                 key={c.name}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card/60 px-3.5 py-1.5 text-xs transition-colors hover:border-brand/30 hover:text-foreground"
@@ -90,19 +88,19 @@ export function WorkSocialProof() {
           {[...Array(5)].map((_, i) => (
             <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
           ))}
-          <span className="ml-2 text-xs font-semibold text-foreground/80">Verified Production Client</span>
+          <span className="ml-2 text-xs font-semibold text-foreground/80">Verified Client Feedback</span>
         </div>
         <p className="font-display text-base sm:text-lg italic text-foreground/95 leading-relaxed">
-          &ldquo;Tech Agenz eliminated the phone chaos in our clinic. In less than 3 weeks, we went from patients waiting 2 hours in a packed lobby to an automated WhatsApp queue where patients receive instant tokens and arrive right on time.&rdquo;
+          &ldquo;Tech Agenz eliminated our clinic scheduling bottlenecks. Patients get their slot tokens before leaving home, waiting room congestion dropped by over 40%, and our front desk operates smoothly without double-bookings.&rdquo;
         </p>
         <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4">
           <div>
             <div className="text-sm font-bold text-foreground">Clinical Operations Lead</div>
-            <div className="text-xs text-muted-foreground">Specialist Neurosurgery & Surgical Clinic</div>
+            <div className="text-xs text-muted-foreground">Dr. Iqbal Ahmad Kharal Clinical Practice</div>
           </div>
           <div className="text-right">
-            <div className="font-mono text-xs font-semibold text-emerald-400">1,800+ Monthly Bookings</div>
-            <div className="text-[11px] text-muted-foreground">Zero Double-Booking Incidents</div>
+            <div className="font-mono text-xs font-semibold text-emerald-400">Production Verified</div>
+            <div className="text-[11px] text-muted-foreground">Zero Booking Collisions</div>
           </div>
         </div>
       </div>

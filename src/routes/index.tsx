@@ -930,10 +930,10 @@ function Work() {
           </p>
         </div>
 
-        {/* 1. Homepage Teaser: 4 Projects Grid */}
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+        {/* 3 Real Production Projects Grid */}
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProjects.map((project, idx) => (
-            <ProjectCard key={project.slug} project={project} priority={idx < 2} />
+            <ProjectCard key={project.slug} project={project} priority={idx < 3} />
           ))}
         </div>
 
@@ -943,11 +943,11 @@ function Work() {
             to="/work"
             className="glow-brand inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-brand/90 shadow-lg shadow-brand/20"
           >
-            <span>View All Projects & Case Studies</span>
+            <span>Explore All Production Case Studies</span>
             <ArrowUpRight className="h-4 w-4" />
           </Link>
           <p className="mt-2.5 text-xs text-muted-foreground">
-            Explore deep dives into architecture, database atomicity, and process workflows.
+            Detailed architectures, operational problems, and verified results.
           </p>
         </div>
 
