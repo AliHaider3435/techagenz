@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "lastSyncedAt": "2026-10-29T11:00:43.457Z",
+  "lastSyncedAt": "2026-10-29T12:21:12.682Z",
   "team": [
     {
       "id": "ali-haider",
-      "image": "/team-images/team1.webp",
+      "image": "/assets/team1-HH9XAR_k.webp",
       "title": "Ali Haider",
       "subtitle": "Founder & AI Engineer",
       "borderColor": "#38BDF8",
@@ -42,9 +42,7 @@
       "subtitle": "Product Designer",
       "borderColor": "#60A5FA",
       "gradient": "linear-gradient(195deg, #60A5FA, #050B14)",
-      "url": "https://www.linkedin.com/in/haider5617/",
-      "location": "Lahore, Pakistan",
-      "bio": "Translating complex ERP business rules and legal practice workflows into clean, frictionless software products."
+      "url": ""
     },
     {
       "id": "laraib",
@@ -59,7 +57,7 @@
     },
     {
       "id": "muhammad-rizwan",
-      "image": "/team-images/team6.jpg",
+      "image": "/assets/team6-CdFzekPH.jpg",
       "title": "Muhammad Rizwan",
       "subtitle": "Data Scientist",
       "borderColor": "#0891B2",
