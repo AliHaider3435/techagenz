@@ -40,7 +40,6 @@ import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials"
 import { SplineScene } from "@/components/ui/spline-scene";
 import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT } from "@/lib/cms-store";
 import { getAllProjects, getFeaturedProjects } from "@/lib/projects-data";
-import clientPortrait from "@/assets/team6.jpg";
 import ProjectCard from "@/components/ProjectCard";
 import WorkSocialProof from "@/components/WorkSocialProof";
 import workDev from "@/assets/work-dev.webp";
@@ -916,8 +915,6 @@ export { About, StatCard };
 
 function Portfolio() {
   const allProjects = getAllProjects();
-  const leftCol = allProjects.slice(0, 6);
-  const rightCol = allProjects.slice(6, 12);
 
   return (
     <section id="portfolio" className="relative py-24">
@@ -936,25 +933,25 @@ function Portfolio() {
           </p>
         </div>
 
-        {/* 3-Column Card Layout Matching Reference Image */}
+        {/* Card Container */}
         <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
-            {/* Column 1: PORTFOLIO */}
-            <div className="lg:col-span-4 flex flex-col">
+            {/* Left Area: PORTFOLIO Projects */}
+            <div className="lg:col-span-8 flex flex-col">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                 Portfolio
               </h3>
-              <div className="divide-y divide-white/5">
-                {leftCol.map((project) => (
+              <div className="divide-y divide-white/5 flex-1 flex flex-col justify-around">
+                {allProjects.map((project) => (
                   <Link
                     key={project.slug}
                     to="/work/$slug"
                     params={{ slug: project.slug }}
                     data-cursor="hover"
-                    className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
+                    className="group flex items-start gap-4 py-4 transition-colors hover:bg-white/[0.03] rounded-xl px-3 -mx-3"
                   >
-                    <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
+                    <div className="shrink-0 w-16 h-14 sm:w-20 sm:h-16 rounded-lg overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
                       <img
                         src={project.coverImage}
                         alt={project.shortTitle}
@@ -963,62 +960,46 @@ function Portfolio() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
-                        {project.shortTitle}
-                      </h4>
-                      <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-sm sm:text-base font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
+                          {project.shortTitle}
+                        </h4>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-medium shrink-0">
+                          {project.category}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mt-1">
                         {project.formulaSummary}
                       </p>
+                      <div className="mt-2 flex items-center gap-3 text-[11px]">
+                        <span className="text-emerald-400 font-semibold">
+                          ✓ {project.results.stats[0]?.metric} {project.results.stats[0]?.label}
+                        </span>
+                        <span className="text-slate-600">•</span>
+                        <span className="text-slate-500">{project.clientType}</span>
+                      </div>
                     </div>
+                    <ArrowUpRight className="shrink-0 h-4 w-4 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all hidden sm:block mt-1" />
                   </Link>
                 ))}
               </div>
             </div>
 
-            {/* Column 2: PORTFOLIO */}
-            <div className="lg:col-span-4 flex flex-col">
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
-                Portfolio
-              </h3>
-              <div className="divide-y divide-white/5">
-                {rightCol.map((project) => (
-                  <Link
-                    key={project.slug}
-                    to="/work/$slug"
-                    params={{ slug: project.slug }}
-                    data-cursor="hover"
-                    className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
-                  >
-                    <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
-                      <img
-                        src={project.coverImage}
-                        alt={project.shortTitle}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
-                        {project.shortTitle}
-                      </h4>
-                      <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
-                        {project.formulaSummary}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Column 3: TESTIMONIAL */}
+            {/* Right Area: TESTIMONIAL */}
             <div className="lg:col-span-4 flex flex-col">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                 Testimonial
               </h3>
               <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-900 flex-1 min-h-[380px] flex flex-col justify-end p-6 group">
                 <img
-                  src={clientPortrait}
+                  src="/project-images/team6.jpg"
                   alt="Client Testimonial"
+                  onError={(e) => {
+                    const t = e.currentTarget;
+                    if (!t.src.endsWith("/team6.jpg")) {
+                      t.src = "/team6.jpg";
+                    }
+                  }}
                   className="absolute inset-0 w-full h-full object-cover grayscale contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/20" />
@@ -1041,9 +1022,11 @@ function Portfolio() {
 
           </div>
 
-          {/* Footer note matching reference screenshot */}
+          {/* Footer note */}
           <div className="mt-6 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-            <span>No email required to see your number.</span>
+            <span className="text-slate-400">
+              Production-grade delivery in 3 to 5 weeks. No upfront lock-in.
+            </span>
             <Link to="/work" className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1">
               Explore full case studies &amp; architectures <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>

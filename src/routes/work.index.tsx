@@ -8,7 +8,6 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
 import { getAllProjects, projectCategories } from "@/lib/projects-data";
-import clientPortrait from "@/assets/team6.jpg";
 
 export const Route = createFileRoute("/work/")({
   head: () => ({
@@ -52,21 +51,21 @@ function PortfolioRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 6 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
+      transition={{ duration: 0.2, delay: index * 0.04 }}
     >
       <Link
         to="/work/$slug"
         params={{ slug: project.slug }}
         data-cursor="hover"
-        className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
+        className="group flex items-start gap-4 py-4 transition-colors hover:bg-white/[0.03] rounded-xl px-3 -mx-3"
       >
         {/* Small thumbnail */}
-        <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
+        <div className="shrink-0 w-16 h-14 sm:w-20 sm:h-16 rounded-lg overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
           <img
             src={project.coverImage}
             alt={project.shortTitle}
-            width={48}
-            height={40}
+            width={80}
+            height={64}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
@@ -74,13 +73,27 @@ function PortfolioRow({
 
         {/* Text */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
-            {project.shortTitle}
-          </h4>
-          <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <h4 className="text-sm sm:text-base font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
+              {project.shortTitle}
+            </h4>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-medium shrink-0">
+              {project.category}
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mt-1">
             {project.formulaSummary}
           </p>
+          <div className="mt-2 flex items-center gap-3 text-[11px]">
+            <span className="text-emerald-400 font-semibold">
+              ✓ {project.results.stats[0]?.metric} {project.results.stats[0]?.label}
+            </span>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-500">{project.clientType}</span>
+          </div>
         </div>
+
+        <ArrowUpRight className="shrink-0 h-4 w-4 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all hidden sm:block mt-1" />
       </Link>
     </motion.div>
   );
@@ -94,11 +107,6 @@ function WorkPortfolioPage() {
     activeCategory === "All"
       ? allProjects
       : allProjects.filter((p) => p.category === activeCategory);
-
-  // Split projects into two columns
-  const mid = Math.ceil(filteredProjects.length / 2);
-  const leftCol = filteredProjects.slice(0, mid);
-  const rightCol = filteredProjects.slice(mid);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -172,49 +180,41 @@ function WorkPortfolioPage() {
         </div>
       </section>
 
-      {/* 3-Column Portfolio Card Layout Matching Reference Screenshot */}
+      {/* Portfolio Card Layout */}
       <section className="relative pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-              {/* Left Column: PORTFOLIO */}
-              <div className="lg:col-span-4 flex flex-col">
+              {/* Left Area: PORTFOLIO */}
+              <div className="lg:col-span-8 flex flex-col">
                 <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                   Portfolio
                 </h3>
-                <div className="divide-y divide-white/5">
+                <div className="divide-y divide-white/5 flex-1 flex flex-col justify-around">
                   <AnimatePresence mode="popLayout">
-                    {leftCol.map((project, idx) => (
+                    {filteredProjects.map((project, idx) => (
                       <PortfolioRow key={project.slug} project={project} index={idx} />
                     ))}
                   </AnimatePresence>
                 </div>
               </div>
 
-              {/* Middle Column: PORTFOLIO */}
-              <div className="lg:col-span-4 flex flex-col">
-                <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
-                  Portfolio
-                </h3>
-                <div className="divide-y divide-white/5">
-                  <AnimatePresence mode="popLayout">
-                    {rightCol.map((project, idx) => (
-                      <PortfolioRow key={project.slug} project={project} index={idx + leftCol.length} />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              {/* Right Column: TESTIMONIAL */}
+              {/* Right Area: TESTIMONIAL */}
               <div className="lg:col-span-4 flex flex-col">
                 <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                   Testimonial
                 </h3>
                 <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-900 flex-1 min-h-[380px] flex flex-col justify-end p-6 group">
                   <img
-                    src={clientPortrait}
+                    src="/project-images/team6.jpg"
                     alt="Client Testimonial"
+                    onError={(e) => {
+                      const t = e.currentTarget;
+                      if (!t.src.endsWith("/team6.jpg")) {
+                        t.src = "/team6.jpg";
+                      }
+                    }}
                     className="absolute inset-0 w-full h-full object-cover grayscale contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/20" />
@@ -239,10 +239,12 @@ function WorkPortfolioPage() {
 
             {/* Bottom Note */}
             <div className="mt-6 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-              <span>No email required to see your number.</span>
               <span className="text-slate-400">
                 Production-grade delivery in 3 to 5 weeks. No upfront lock-in.
               </span>
+              <Link to="/contact" className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1">
+                Schedule an engineering discovery call <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </div>
         </div>
