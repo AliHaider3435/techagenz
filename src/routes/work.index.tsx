@@ -8,6 +8,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
 import { getAllProjects, projectCategories } from "@/lib/projects-data";
+import clientPortrait from "@/assets/team6.jpg";
 
 export const Route = createFileRoute("/work/")({
   head: () => ({
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/work/")({
     links: [{ rel: "canonical", href: "https://techagenz.com/work" }],
   }),
   component: WorkPortfolioPage,
-}));
+});
 
 function PortfolioRow({
   project,
@@ -48,24 +49,24 @@ function PortfolioRow({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={{ duration: 0.25, delay: index * 0.04 }}
+      exit={{ opacity: 0, y: 6 }}
+      transition={{ duration: 0.2, delay: index * 0.03 }}
     >
       <Link
         to="/work/$slug"
         params={{ slug: project.slug }}
         data-cursor="hover"
-        className="group flex items-start gap-4 py-4 border-b border-border/40 hover:border-brand/30 transition-colors"
+        className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
       >
         {/* Small thumbnail */}
-        <div className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-slate-900 border border-border/50 group-hover:border-brand/30 transition-colors">
+        <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
           <img
             src={project.coverImage}
             alt={project.shortTitle}
-            width={56}
-            height={56}
+            width={48}
+            height={40}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
@@ -73,16 +74,13 @@ function PortfolioRow({
 
         {/* Text */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-foreground group-hover:text-brand transition-colors leading-snug line-clamp-1">
+          <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
             {project.shortTitle}
-          </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          </h4>
+          <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
             {project.formulaSummary}
           </p>
         </div>
-
-        {/* Arrow */}
-        <ArrowUpRight className="shrink-0 h-4 w-4 text-muted-foreground/40 group-hover:text-brand group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all mt-0.5" />
       </Link>
     </motion.div>
   );
@@ -97,13 +95,10 @@ function WorkPortfolioPage() {
       ? allProjects
       : allProjects.filter((p) => p.category === activeCategory);
 
-  // Split into two columns
+  // Split projects into two columns
   const mid = Math.ceil(filteredProjects.length / 2);
   const leftCol = filteredProjects.slice(0, mid);
   const rightCol = filteredProjects.slice(mid);
-
-  // Pick a featured testimonial if any project has one
-  const testimonialProject = allProjects.find((p) => p.testimonial);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -177,118 +172,78 @@ function WorkPortfolioPage() {
         </div>
       </section>
 
-      {/* Portfolio List — two columns + optional testimonial */}
+      {/* 3-Column Portfolio Card Layout Matching Reference Screenshot */}
       <section className="relative pb-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-1 gap-0 lg:grid-cols-3 lg:gap-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-            {/* Left column */}
-            <div className="lg:col-span-1">
-              <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                Portfolio
-              </p>
-              <AnimatePresence mode="popLayout">
-                {leftCol.map((project, idx) => (
-                  <PortfolioRow key={project.slug} project={project} index={idx} />
-                ))}
-              </AnimatePresence>
-            </div>
+              {/* Left Column: PORTFOLIO */}
+              <div className="lg:col-span-4 flex flex-col">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
+                  Portfolio
+                </h3>
+                <div className="divide-y divide-white/5">
+                  <AnimatePresence mode="popLayout">
+                    {leftCol.map((project, idx) => (
+                      <PortfolioRow key={project.slug} project={project} index={idx} />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
 
-            {/* Right column */}
-            <div className="lg:col-span-1 mt-8 lg:mt-0">
-              <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                Portfolio
-              </p>
-              <AnimatePresence mode="popLayout">
-                {rightCol.map((project, idx) => (
-                  <PortfolioRow key={project.slug} project={project} index={idx + leftCol.length} />
-                ))}
-              </AnimatePresence>
-            </div>
+              {/* Middle Column: PORTFOLIO */}
+              <div className="lg:col-span-4 flex flex-col">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
+                  Portfolio
+                </h3>
+                <div className="divide-y divide-white/5">
+                  <AnimatePresence mode="popLayout">
+                    {rightCol.map((project, idx) => (
+                      <PortfolioRow key={project.slug} project={project} index={idx + leftCol.length} />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
 
-            {/* Testimonial panel */}
-            {testimonialProject?.testimonial && (
-              <div className="lg:col-span-1 mt-8 lg:mt-0">
-                <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+              {/* Right Column: TESTIMONIAL */}
+              <div className="lg:col-span-4 flex flex-col">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                   Testimonial
-                </p>
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md"
-                >
-                  {/* Cover image as background */}
-                  <div className="relative h-52 overflow-hidden">
-                    <img
-                      src={testimonialProject.coverImage}
-                      alt={testimonialProject.clientName}
-                      className="h-full w-full object-cover grayscale"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/50 to-transparent" />
-                  </div>
+                </h3>
+                <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-900 flex-1 min-h-[380px] flex flex-col justify-end p-6 group">
+                  <img
+                    src={clientPortrait}
+                    alt="Client Testimonial"
+                    className="absolute inset-0 w-full h-full object-cover grayscale contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/20" />
 
-                  {/* Quote */}
-                  <div className="p-6 pt-0 -mt-12 relative">
-                    <blockquote className="text-sm leading-relaxed text-foreground font-medium">
-                      "{testimonialProject.testimonial.quote}"
-                    </blockquote>
-                    <div className="mt-4 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-brand/20 border border-brand/30 flex items-center justify-center text-brand text-xs font-bold">
-                        {testimonialProject.testimonial.author.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-foreground">
-                          {testimonialProject.testimonial.author}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {testimonialProject.testimonial.role}, {testimonialProject.testimonial.organization}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="relative z-10 space-y-4">
+                    <p className="text-sm sm:text-base font-medium leading-relaxed text-slate-100">
+                      &ldquo;Out of everyone who I got quotes from, they were the first ones to go, &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are very, very professional. I&apos;ll go for them again.&rdquo;
+                    </p>
 
                     <Link
-                      to="/work/$slug"
-                      params={{ slug: testimonialProject.slug }}
-                      className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-secondary/40 px-4 py-2.5 text-xs font-semibold text-foreground hover:bg-secondary/70 hover:border-brand/30 transition-colors"
+                      to="/contact"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 hover:bg-cyan-400 transition-colors shadow-lg"
                     >
-                      Watch Case Study <ArrowUpRight className="h-3.5 w-3.5" />
+                      <span>Watch Testimonial</span>
+                      <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
-                </motion.div>
+                </div>
               </div>
-            )}
 
-            {/* If no testimonial, show CTA panel instead */}
-            {!testimonialProject?.testimonial && (
-              <div className="lg:col-span-1 mt-8 lg:mt-0">
-                <p className="mb-4 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
-                  Start a Project
-                </p>
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="rounded-2xl border border-brand/20 bg-brand/5 p-6 flex flex-col gap-4"
-                >
-                  <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold text-emerald-400 self-start">
-                    <ShieldCheck className="h-3.5 w-3.5" /> Production-Grade
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground leading-snug">
-                    Ready to build your next solution?
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    All projects ship in 3–5 weeks. Let's talk about your operational challenge.
-                  </p>
-                  <BouncyButton
-                    href="/contact"
-                    className="glow-brand inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-primary-foreground hover:scale-105 transition-transform"
-                  >
-                    Start a Project <ArrowUpRight className="h-4 w-4" />
-                  </BouncyButton>
-                </motion.div>
-              </div>
-            )}
+            </div>
+
+            {/* Bottom Note */}
+            <div className="mt-6 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+              <span>No email required to see your number.</span>
+              <span className="text-slate-400">
+                Production-grade delivery in 3 to 5 weeks. No upfront lock-in.
+              </span>
+            </div>
           </div>
         </div>
       </section>

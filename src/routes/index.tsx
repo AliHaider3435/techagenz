@@ -39,7 +39,8 @@ import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
 import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT } from "@/lib/cms-store";
-import { getFeaturedProjects } from "@/lib/projects-data";
+import { getAllProjects, getFeaturedProjects } from "@/lib/projects-data";
+import clientPortrait from "@/assets/team6.jpg";
 import ProjectCard from "@/components/ProjectCard";
 import WorkSocialProof from "@/components/WorkSocialProof";
 import workDev from "@/assets/work-dev.webp";
@@ -117,7 +118,7 @@ function Index() {
           <TeamSection />
         </RevealSection>
         <RevealSection>
-          <Work />
+          <Portfolio />
         </RevealSection>
         <RevealSection>
           <Testimonials />
@@ -479,7 +480,7 @@ function AIVision() {
               href="/work"
               className="font-display inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-6 py-3 text-sm text-foreground"
             >
-              Explore Our Work <ArrowUpRight className="h-4 w-4" />
+              Explore Our Portfolio <ArrowUpRight className="h-4 w-4" />
             </BouncyButton>
             <Link
               to="/contact"
@@ -913,42 +914,140 @@ function StatCard({
 
 export { About, StatCard };
 
-function Work() {
-  const featuredProjects = getFeaturedProjects();
+function Portfolio() {
+  const allProjects = getAllProjects();
+  const leftCol = allProjects.slice(0, 6);
+  const rightCol = allProjects.slice(6, 12);
 
   return (
-    <section id="work" className="relative py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="portfolio" className="relative py-24">
+      {/* Anchor for backward compatibility */}
+      <span id="work" className="sr-only" />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <SectionPill>Selected Work & Deployments</SectionPill>
+        <div className="mx-auto max-w-2xl text-center mb-12">
+          <SectionPill>Portfolio</SectionPill>
           <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
             Real Systems with <span className="text-gradient-brand">Verifiable Numbers</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-            Only our highest-impact work. Each card features real production metrics, live architecture, and tangible operational outcomes.
+            Every project below represents a live production system in active daily use. Built with transparent architectures, countable metrics, and rapid 3-to-5-week delivery timelines.
           </p>
         </div>
 
-        {/* 3 Real Production Projects Grid */}
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
-          {featuredProjects.map((project, idx) => (
-            <ProjectCard key={project.slug} project={project} priority={idx < 3} />
-          ))}
-        </div>
+        {/* 3-Column Card Layout Matching Reference Image */}
+        <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            {/* Column 1: PORTFOLIO */}
+            <div className="lg:col-span-4 flex flex-col">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
+                Portfolio
+              </h3>
+              <div className="divide-y divide-white/5">
+                {leftCol.map((project) => (
+                  <Link
+                    key={project.slug}
+                    to="/work/$slug"
+                    params={{ slug: project.slug }}
+                    data-cursor="hover"
+                    className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
+                  >
+                    <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
+                      <img
+                        src={project.coverImage}
+                        alt={project.shortTitle}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
+                        {project.shortTitle}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
+                        {project.formulaSummary}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-        {/* View All Projects Button */}
-        <div className="mt-12 text-center">
-          <Link
-            to="/work"
-            className="glow-brand inline-flex items-center gap-2.5 rounded-full bg-brand px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-brand/90 shadow-lg shadow-brand/20"
-          >
-            <span>Explore All Production Case Studies</span>
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-          <p className="mt-2.5 text-xs text-muted-foreground">
-            Detailed architectures, operational problems, and verified results.
-          </p>
+            {/* Column 2: PORTFOLIO */}
+            <div className="lg:col-span-4 flex flex-col">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
+                Portfolio
+              </h3>
+              <div className="divide-y divide-white/5">
+                {rightCol.map((project) => (
+                  <Link
+                    key={project.slug}
+                    to="/work/$slug"
+                    params={{ slug: project.slug }}
+                    data-cursor="hover"
+                    className="group flex items-center gap-3.5 py-3 transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
+                  >
+                    <div className="shrink-0 w-12 h-10 rounded-md overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
+                      <img
+                        src={project.coverImage}
+                        alt={project.shortTitle}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs sm:text-sm font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors truncate">
+                        {project.shortTitle}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 line-clamp-1 leading-snug mt-0.5">
+                        {project.formulaSummary}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Column 3: TESTIMONIAL */}
+            <div className="lg:col-span-4 flex flex-col">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
+                Testimonial
+              </h3>
+              <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-900 flex-1 min-h-[380px] flex flex-col justify-end p-6 group">
+                <img
+                  src={clientPortrait}
+                  alt="Client Testimonial"
+                  className="absolute inset-0 w-full h-full object-cover grayscale contrast-125 brightness-75 transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/20" />
+
+                <div className="relative z-10 space-y-4">
+                  <p className="text-sm sm:text-base font-medium leading-relaxed text-slate-100">
+                    &ldquo;Out of everyone who I got quotes from, they were the first ones to go, &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are very, very professional. I&apos;ll go for them again.&rdquo;
+                  </p>
+                  
+                  <Link
+                    to="/work"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 hover:bg-cyan-400 transition-colors shadow-lg"
+                  >
+                    <span>Watch Testimonial</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Footer note matching reference screenshot */}
+          <div className="mt-6 pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+            <span>No email required to see your number.</span>
+            <Link to="/work" className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1">
+              Explore full case studies &amp; architectures <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         {/* Social Proof Strip & Counter Around Grid */}
