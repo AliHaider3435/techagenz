@@ -249,7 +249,7 @@ function AboutPage() {
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
-                    <strong>Headquarters & Physical Office:</strong> Main Boulevard, Gulberg III, Lahore, Punjab, Pakistan (Postal: 54000).
+                    <strong>Headquarters & Operations:</strong> Based in Pakistan (serving enterprise clients globally).
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground/90">

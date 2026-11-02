@@ -96,9 +96,9 @@ const localBusinessSchema = JSON.stringify({
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Main Boulevard, Gulberg III",
-    addressLocality: "Lahore",
-    addressRegion: "Punjab",
+    streetAddress: "Tech Agenz Headquarters",
+    addressLocality: "Pakistan",
+    addressRegion: "Pakistan",
     postalCode: "54000",
     addressCountry: "PK",
   },

@@ -445,6 +445,37 @@ function triggerAutoSync(actionDesc: string) {
 }
 
 /**
+ * Normalizes team member data to prevent stale hashed assets or unapproved locations
+ */
+export function sanitizeTeamMember(member: TeamMember): TeamMember {
+  let image = member.image;
+  const cleanId = (member.id || "").toLowerCase();
+  const cleanTitle = (member.title || "").toLowerCase();
+
+  if (cleanId === "ali-haider" || cleanTitle.includes("ali haider")) {
+    image = "/team-images/team1.webp";
+  } else if (cleanId === "muhammad-rizwan" || cleanTitle.includes("rizwan")) {
+    image = "/team-images/team6.jpg";
+  } else if (image) {
+    if (image.includes("team1")) {
+      image = "/team-images/team1.webp";
+    } else if (image.includes("team6")) {
+      image = "/team-images/team6.jpg";
+    }
+  }
+
+  const { location, ...rest } = member;
+  const sanitizedLocation =
+    location && location.toLowerCase().includes("lahore") ? undefined : location;
+
+  return {
+    ...rest,
+    ...(sanitizedLocation ? { location: sanitizedLocation } : {}),
+    image: image || AVATAR_PLACEHOLDER,
+  };
+}
+
+/**
  * Fetches live data from the server API so any visitor gets updated content immediately
  */
 export async function fetchLiveCmsData(): Promise<boolean> {
@@ -459,8 +490,9 @@ export async function fetchLiveCmsData(): Promise<boolean> {
     let changed = false;
 
     if (Array.isArray(team) && team.length > 0) {
+      const sanitizedTeam = team.map(sanitizeTeamMember);
       const currentTeam = localStorage.getItem(STORAGE_KEYS.TEAM);
-      const newTeamStr = JSON.stringify(team);
+      const newTeamStr = JSON.stringify(sanitizedTeam);
       if (currentTeam !== newTeamStr) {
         localStorage.setItem(STORAGE_KEYS.TEAM, newTeamStr);
         changed = true;
@@ -592,14 +624,15 @@ export function logoutUser(): void {
 // ==================== TEAM MEMBER CMS ====================
 
 export function getTeamMembers(): TeamMember[] {
-  if (typeof window === "undefined") return DEFAULT_TEAM;
+  if (typeof window === "undefined") return DEFAULT_TEAM.map(sanitizeTeamMember);
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.TEAM);
-    if (!raw) return DEFAULT_TEAM;
+    if (!raw) return DEFAULT_TEAM.map(sanitizeTeamMember);
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_TEAM;
+    const list = Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_TEAM;
+    return list.map(sanitizeTeamMember);
   } catch {
-    return DEFAULT_TEAM;
+    return DEFAULT_TEAM.map(sanitizeTeamMember);
   }
 }
 

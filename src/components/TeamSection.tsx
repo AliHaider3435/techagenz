@@ -1,9 +1,54 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { getTeamMembers, fetchLiveCmsData, CMS_UPDATE_EVENT, type TeamMember } from "@/lib/cms-store";
+import {
+  getTeamMembers,
+  fetchLiveCmsData,
+  CMS_UPDATE_EVENT,
+  AVATAR_PLACEHOLDER,
+  type TeamMember,
+} from "@/lib/cms-store";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const resolveMemberImage = (image?: string, id?: string, title?: string) => {
+  const cleanId = (id || "").toLowerCase();
+  const cleanTitle = (title || "").toLowerCase();
+  if (cleanId === "ali-haider" || cleanTitle.includes("ali haider")) {
+    return "/team-images/team1.webp";
+  }
+  if (cleanId === "muhammad-rizwan" || cleanTitle.includes("rizwan")) {
+    return "/team-images/team6.jpg";
+  }
+  if (image) {
+    if (image.includes("team1")) return "/team-images/team1.webp";
+    if (image.includes("team6")) return "/team-images/team6.jpg";
+    if (image.startsWith("data:") || image.startsWith("http") || image.startsWith("/")) return image;
+  }
+  return AVATAR_PLACEHOLDER;
+};
+
+const handleMemberImageError = (
+  e: React.SyntheticEvent<HTMLImageElement, Event>,
+  member: TeamMember,
+) => {
+  const target = e.currentTarget;
+  const cleanId = (member.id || "").toLowerCase();
+  const cleanTitle = (member.title || "").toLowerCase();
+  if (cleanId === "ali-haider" || cleanTitle.includes("ali haider")) {
+    if (!target.src.endsWith("/team-images/team1.webp") && !target.src.endsWith("/team1.webp")) {
+      target.src = "/team-images/team1.webp";
+      return;
+    }
+  }
+  if (cleanId === "muhammad-rizwan" || cleanTitle.includes("rizwan")) {
+    if (!target.src.endsWith("/team-images/team6.jpg") && !target.src.endsWith("/team6.jpg")) {
+      target.src = "/team-images/team6.jpg";
+      return;
+    }
+  }
+  target.src = AVATAR_PLACEHOLDER;
+};
 
 type ChromaGridProps = {
   items?: TeamMember[];
@@ -116,39 +161,48 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
       className={`chroma-grid ${className}`}
       style={{ "--cols": columns, "--rows": rows } as React.CSSProperties}
     >
-      {data.map((c, i) => (
-        <article
-          key={`${c.title}-${i}`}
-          className="chroma-card"
-          onMouseEnter={handleCardEnter}
-          onMouseLeave={handleCardLeave}
-          onClick={() => handleCardClick(c.url)}
-          style={
-            {
-              "--card-border": c.borderColor || "transparent",
-              "--card-gradient": c.gradient,
-              cursor: c.url ? "pointer" : "default",
-            } as React.CSSProperties
-          }
-        >
-          <div className="chroma-img-wrapper">
-            <img className="chroma-img-base" src={c.image} alt={c.title} loading="lazy" />
-            <img
-              className="chroma-img-color"
-              src={c.image}
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-            />
-          </div>
-          <footer className="chroma-info">
-            <h3 className="name">{c.title}</h3>
-            <p className="role">{c.subtitle}</p>
-            {c.location && <span className="location">{c.location}</span>}
-            {c.bio && <p className="bio">{c.bio}</p>}
-          </footer>
-        </article>
-      ))}
+      {data.map((c, i) => {
+        const imgSrc = resolveMemberImage(c.image, c.id, c.title);
+        return (
+          <article
+            key={`${c.title}-${i}`}
+            className="chroma-card"
+            onMouseEnter={handleCardEnter}
+            onMouseLeave={handleCardLeave}
+            onClick={() => handleCardClick(c.url)}
+            style={
+              {
+                "--card-border": c.borderColor || "transparent",
+                "--card-gradient": c.gradient,
+                cursor: c.url ? "pointer" : "default",
+              } as React.CSSProperties
+            }
+          >
+            <div className="chroma-img-wrapper">
+              <img
+                className="chroma-img-base"
+                src={imgSrc}
+                alt={c.title}
+                loading="lazy"
+                onError={(e) => handleMemberImageError(e, c)}
+              />
+              <img
+                className="chroma-img-color"
+                src={imgSrc}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                onError={(e) => handleMemberImageError(e, c)}
+              />
+            </div>
+            <footer className="chroma-info">
+              <h3 className="name">{c.title}</h3>
+              <p className="role">{c.subtitle}</p>
+              {c.bio && <p className="bio">{c.bio}</p>}
+            </footer>
+          </article>
+        );
+      })}
     </div>
   );
 };

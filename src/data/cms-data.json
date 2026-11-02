@@ -4,13 +4,12 @@
   "team": [
     {
       "id": "ali-haider",
-      "image": "/assets/team1-HH9XAR_k.webp",
+      "image": "/team-images/team1.webp",
       "title": "Ali Haider",
       "subtitle": "Founder & AI Engineer",
       "borderColor": "#38BDF8",
       "gradient": "linear-gradient(145deg, #38BDF8, #050B14)",
       "url": "https://www.linkedin.com/in/haider5617/",
-      "location": "Lahore, Pakistan",
       "bio": "6+ years architecting applied AI systems, LLM orchestration pipelines, and high-concurrency cloud software platforms."
     },
     {
@@ -21,7 +20,6 @@
       "borderColor": "#0EA5E9",
       "gradient": "linear-gradient(210deg, #0EA5E9, #050B14)",
       "url": "https://www.linkedin.com/in/haider5617/",
-      "location": "Lahore, Pakistan",
       "bio": "Specialist in enterprise design systems, human-centered SaaS interfaces, and clinical workflow accessibility."
     },
     {
@@ -32,7 +30,6 @@
       "borderColor": "#22D3EE",
       "gradient": "linear-gradient(165deg, #22D3EE, #050B14)",
       "url": "https://www.linkedin.com/in/haider5617/",
-      "location": "Lahore, Pakistan",
       "bio": "Lead engineer for WhatsApp Cloud API webhooks, state machine orchestrations, and doctor scheduling bots."
     },
     {
@@ -52,18 +49,16 @@
       "borderColor": "#2563EB",
       "gradient": "linear-gradient(225deg, #2563EB, #050B14)",
       "url": "https://github.com/AliHaider3435",
-      "location": "Lahore, Pakistan",
       "bio": "Full-stack engineer focusing on React 19, TypeScript, PostgreSQL database atomicity, and REST API design."
     },
     {
       "id": "muhammad-rizwan",
-      "image": "/assets/team6-CdFzekPH.jpg",
+      "image": "/team-images/team6.jpg",
       "title": "Muhammad Rizwan",
       "subtitle": "Data Scientist",
       "borderColor": "#0891B2",
       "gradient": "linear-gradient(135deg, #0891B2, #050B14)",
       "url": "https://www.linkedin.com/in/haider5617/",
-      "location": "Lahore, Pakistan",
       "bio": "Data intelligence specialist building ERPNext financial models, automated forecasting, and inventory analytics."
     }
   ],
@@ -472,7 +467,7 @@
       ],
       "content": [
         "Mobile commerce now accounts for over 72% of global e-commerce transactions, making a polished mobile app non-negotiable for modern businesses. Yet choosing the right development partner remains one of the most consequential decisions a founder will make.",
-        "Pakistan's mobile development ecosystem has matured rapidly. Senior React Native and Flutter engineers here have shipped apps with millions of active users for clients in the US, UK, and the Middle East. The talent density in cities like Lahore, Islamabad, and Karachi rivals major outsourcing hubs in Eastern Europe.",
+        "Pakistan's mobile development ecosystem has matured rapidly. Senior React Native and Flutter engineers here have shipped apps with millions of active users for clients in the US, UK, and the Middle East. The talent density across premier tech hubs in Pakistan rivals major outsourcing hubs in Eastern Europe.",
         "At Tech Agenz, we default to React Native for most projects because of its massive ecosystem, strong TypeScript support, and seamless code sharing with web applications. For GPU-intensive or animation-heavy apps, we recommend Flutter's Skia rendering engine.",
         "Beyond the build phase, we provide 12-month maintenance packages that include real-time crash analytics via Sentry, automated regression testing on every OS update, and App Store / Google Play compliance monitoring to prevent unexpected de-listings."
       ]

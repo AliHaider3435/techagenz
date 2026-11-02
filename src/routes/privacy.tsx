@@ -70,7 +70,7 @@ function PrivacyPolicyPage() {
             <div>
               <h2 className="font-display text-2xl font-bold text-foreground">1. Introduction & Overview</h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Welcome to <strong>Tech Agenz</strong> (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;). We are an AI automation and custom software engineering agency headquartered in Lahore, Pakistan, serving domestic and international enterprise clients. We are committed to protecting your personal data, respecting your privacy rights, and maintaining strict transparency in our operational practices.
+                Welcome to <strong>Tech Agenz</strong> (&ldquo;we,&rdquo; &ldquo;our,&rdquo; or &ldquo;us&rdquo;). We are an AI automation and custom software engineering agency based in Pakistan, serving domestic and international enterprise clients. We are committed to protecting your personal data, respecting your privacy rights, and maintaining strict transparency in our operational practices.
               </p>
               <p className="mt-3 text-muted-foreground leading-relaxed">
                 This Privacy Policy outlines how Tech Agenz collects, processes, stores, and protects information when you visit our website (<strong>https://techagenz.com</strong>), use our contact and consultation tools, interact with our web applications, or engage with our digital services.
@@ -292,7 +292,7 @@ function PrivacyPolicyPage() {
                 </div>
                 <div className="flex items-center gap-2 text-foreground">
                   <MapPin className="h-4 w-4 text-brand" />
-                  <span>Lahore, Punjab, Pakistan</span>
+                  <span>Pakistan</span>
                 </div>
               </div>
             </div>

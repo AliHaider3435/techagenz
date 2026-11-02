@@ -274,8 +274,8 @@ function ContactPage() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">Engineering Headquarters</div>
-                      <div className="font-medium text-foreground">Gulberg III, Lahore, Punjab, Pakistan</div>
-                      <div className="text-[11px] text-muted-foreground">Main Boulevard Commercial District</div>
+                      <div className="font-medium text-foreground">Based in Pakistan</div>
+                      <div className="text-[11px] text-muted-foreground">Serving Global Clients</div>
                     </div>
                   </div>
 

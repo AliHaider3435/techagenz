@@ -168,7 +168,7 @@ function TermsOfServicePage() {
             <div>
               <h2 className="font-display text-2xl font-bold text-foreground">8. Governing Law & Dispute Resolution</h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                These Terms and any dispute arising from them shall be governed by and construed in accordance with the laws of the <strong>Islamic Republic of Pakistan</strong>. The courts located in <strong>Lahore, Pakistan</strong> shall have exclusive jurisdiction to settle any disputes, provided both parties agree to first attempt resolution via amicable negotiation in good faith.
+                These Terms and any dispute arising from them shall be governed by and construed in accordance with the laws of the <strong>Islamic Republic of Pakistan</strong>. The courts located in <strong>Pakistan</strong> shall have exclusive jurisdiction to settle any disputes, provided both parties agree to first attempt resolution via amicable negotiation in good faith.
               </p>
             </div>
 
@@ -193,7 +193,7 @@ function TermsOfServicePage() {
                 </div>
                 <div className="flex items-center gap-2 text-foreground">
                   <MapPin className="h-4 w-4 text-brand" />
-                  <span>Lahore, Punjab, Pakistan</span>
+                  <span>Pakistan</span>
                 </div>
               </div>
             </div>
