@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastSyncedAt": "2026-10-29T12:21:12.682Z",
+  "lastSyncedAt": "2026-11-02T07:07:57.416Z",
   "team": [
     {
       "id": "ali-haider",
@@ -9,8 +9,7 @@
       "subtitle": "Founder & AI Engineer",
       "borderColor": "#38BDF8",
       "gradient": "linear-gradient(145deg, #38BDF8, #050B14)",
-      "url": "https://www.linkedin.com/in/haider5617/",
-      "bio": "6+ years architecting applied AI systems, LLM orchestration pipelines, and high-concurrency cloud software platforms."
+      "url": ""
     },
     {
       "id": "irfan-ul-haq",
@@ -19,8 +18,7 @@
       "subtitle": "UI/UX Designer",
       "borderColor": "#0EA5E9",
       "gradient": "linear-gradient(210deg, #0EA5E9, #050B14)",
-      "url": "https://www.linkedin.com/in/haider5617/",
-      "bio": "Specialist in enterprise design systems, human-centered SaaS interfaces, and clinical workflow accessibility."
+      "url": ""
     },
     {
       "id": "muhammad-faizan",
@@ -29,16 +27,15 @@
       "subtitle": "Automation Engineer",
       "borderColor": "#22D3EE",
       "gradient": "linear-gradient(165deg, #22D3EE, #050B14)",
-      "url": "https://www.linkedin.com/in/haider5617/",
-      "bio": "Lead engineer for WhatsApp Cloud API webhooks, state machine orchestrations, and doctor scheduling bots."
+      "url": ""
     },
     {
       "id": "saad-arif",
       "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='12' fill='%230d1b2a'/%3E%3Ccircle cx='60' cy='45' r='22' fill='%2322d3ee' opacity='.3'/%3E%3Cellipse cx='60' cy='100' rx='34' ry='22' fill='%2322d3ee' opacity='.2'/%3E%3C/svg%3E",
-      "title": "Saad Arif",
-      "subtitle": "Product Designer",
-      "borderColor": "#60A5FA",
-      "gradient": "linear-gradient(195deg, #60A5FA, #050B14)",
+      "title": "Ahmed Ali",
+      "subtitle": "SOC Analyst",
+      "borderColor": "#0EA5E9",
+      "gradient": "linear-gradient(145deg, #0EA5E9, #050B14)",
       "url": ""
     },
     {
@@ -48,8 +45,7 @@
       "subtitle": "Full-Stack Developer",
       "borderColor": "#2563EB",
       "gradient": "linear-gradient(225deg, #2563EB, #050B14)",
-      "url": "https://github.com/AliHaider3435",
-      "bio": "Full-stack engineer focusing on React 19, TypeScript, PostgreSQL database atomicity, and REST API design."
+      "url": ""
     },
     {
       "id": "muhammad-rizwan",
@@ -58,8 +54,7 @@
       "subtitle": "Data Scientist",
       "borderColor": "#0891B2",
       "gradient": "linear-gradient(135deg, #0891B2, #050B14)",
-      "url": "https://www.linkedin.com/in/haider5617/",
-      "bio": "Data intelligence specialist building ERPNext financial models, automated forecasting, and inventory analytics."
+      "url": ""
     }
   ],
   "blogs": [
