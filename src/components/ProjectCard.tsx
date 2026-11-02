@@ -11,11 +11,11 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
   return (
     <article
       data-cursor="hover"
-      className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-card/60 backdrop-blur-md transition-all duration-300 hover:border-brand/40 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand/5"
+      className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-card/60 backdrop-blur-md transition-all duration-300 hover:border-brand/40 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand/5"
     >
-      <div>
+      <div className="flex flex-1 flex-col">
         {/* 16:9 Thumbnail Cover Image */}
-        <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+        <div className="relative aspect-video w-full overflow-hidden bg-slate-950 shrink-0">
           <img
             src={project.coverImage}
             alt={project.title}
@@ -50,22 +50,23 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
         </div>
 
         {/* Card Body */}
-        <div className="p-6">
-          {/* Title in required format: Project Name: What It Is, Said Plainly */}
-          <h3 className="font-display text-lg font-bold leading-snug text-foreground group-hover:text-brand transition-colors">
-            <Link to="/work/$slug" params={{ slug: project.slug }}>
-              {project.title}
-            </Link>
-          </h3>
+        <div className="flex flex-1 flex-col justify-between p-6">
+          <div className="space-y-3">
+            {/* Title in required format: Project Name: What It Is, Said Plainly */}
+            <h3 className="font-display text-lg font-bold leading-snug text-foreground group-hover:text-brand transition-colors line-clamp-2 min-h-[3.25rem]">
+              <Link to="/work/$slug" params={{ slug: project.slug }}>
+                {project.title}
+              </Link>
+            </h3>
 
-          {/* One paragraph in required formula:
-              "A [type of system] built with [tech stack] for [client type], achieving [metric 1], [metric 2], [metric 3]." */}
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            {project.formulaSummary}
-          </p>
+            {/* One paragraph in required formula */}
+            <p className="text-sm leading-relaxed text-muted-foreground line-clamp-4 min-h-[5rem]">
+              {project.formulaSummary}
+            </p>
+          </div>
 
           {/* Stack Chips */}
-          <div className="mt-4 flex flex-wrap gap-1.5">
+          <div className="mt-4 flex flex-wrap items-center gap-1.5 pt-2">
             {project.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
@@ -84,7 +85,7 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
       </div>
 
       {/* Card Footer: View Project Link */}
-      <div className="border-t border-border/50 p-6 pt-4 flex items-center justify-between">
+      <div className="border-t border-border/50 p-6 pt-4 flex items-center justify-between shrink-0 mt-auto">
         <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
           <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
           <span>{project.results.stats[1]?.metric} {project.results.stats[1]?.label}</span>

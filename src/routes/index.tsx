@@ -931,7 +931,7 @@ function Work() {
         </div>
 
         {/* 3 Real Production Projects Grid */}
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
           {featuredProjects.map((project, idx) => (
             <ProjectCard key={project.slug} project={project} priority={idx < 3} />
           ))}

@@ -198,7 +198,6 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
             <footer className="chroma-info">
               <h3 className="name">{c.title}</h3>
               <p className="role">{c.subtitle}</p>
-              {c.bio && <p className="bio">{c.bio}</p>}
             </footer>
           </article>
         );

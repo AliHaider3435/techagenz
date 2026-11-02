@@ -126,13 +126,14 @@ function WorkPortfolioPage() {
         <div className="mx-auto max-w-7xl px-6">
           <motion.div
             layout
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch"
           >
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project, idx) => (
                 <motion.div
                   key={project.slug}
                   layout
+                  className="h-full flex flex-col"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
