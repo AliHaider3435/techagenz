@@ -10,7 +10,6 @@ import {
   EyeOff,
   Sparkles,
   AlertCircle,
-  KeyRound,
   CheckCircle2,
 } from "lucide-react";
 import Nav from "@/components/Nav";
@@ -65,12 +64,6 @@ function LoginPage() {
         setIsLoading(false);
       }
     }, 400);
-  };
-
-  const handleFillCredentials = () => {
-    setEmail("admin@techagenz.com");
-    setPassword("techagenz2026!");
-    setError(null);
   };
 
   return (
@@ -156,19 +149,10 @@ function LoginPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
                     Password
                   </label>
-                  <button
-                    type="button"
-                    onClick={handleFillCredentials}
-                    className="inline-flex items-center gap-1 text-[11px] text-cyan-400 hover:text-cyan-300 transition"
-                    title="Click to fill default credentials"
-                  >
-                    <KeyRound className="h-3 w-3" />
-                    <span>Auto-fill default</span>
-                  </button>
                 </div>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
