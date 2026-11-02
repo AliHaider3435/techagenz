@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { fetchLiveCmsData } from "@/lib/cms-store";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/space-grotesk";
 import heroFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
@@ -211,6 +212,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    fetchLiveCmsData();
+
+    const handleFocus = () => {
+      fetchLiveCmsData();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

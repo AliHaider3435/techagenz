@@ -273,7 +273,7 @@ function AdminDashboardPage() {
         // Direct update on existing member
         updateTeamMember(targetMemberId, { image: compressed });
         setTeamMembers(getTeamMembers());
-        showToast("Team member photo updated successfully!");
+        showToast("Team member photo updated & auto-syncing in background!");
       } else if (editingMember) {
         // Updating in edit modal
         setEditingMember({ ...editingMember, image: compressed });
@@ -310,7 +310,7 @@ function AdminDashboardPage() {
       borderColor: "#22D3EE",
       image: "",
     });
-    showToast("New team member added successfully!");
+    showToast("New team member added & auto-syncing in background!");
   };
 
   const handleSaveEditMember = (e: React.FormEvent) => {
@@ -326,14 +326,14 @@ function AdminDashboardPage() {
 
     setTeamMembers(getTeamMembers());
     setEditingMember(null);
-    showToast("Team member details saved!");
+    showToast("Team member details saved & auto-syncing in background!");
   };
 
   const handleDeleteMember = (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to remove ${name} from the team?`)) {
       deleteTeamMember(id);
       setTeamMembers(getTeamMembers());
-      showToast(`${name} removed from team.`);
+      showToast(`${name} removed & auto-syncing in background.`);
     }
   };
 
@@ -421,7 +421,7 @@ function AdminDashboardPage() {
       keyTakeaways: "Rapid delivery cycles\nTailored AI architecture\nEnterprise-grade data security",
       content: "",
     });
-    showToast("Blog post published successfully!");
+    showToast("Blog post published & auto-syncing in background!");
   };
 
   const handleSaveEditBlog = (e: React.FormEvent) => {
@@ -442,14 +442,14 @@ function AdminDashboardPage() {
 
     setBlogs(getBlogs());
     setEditingBlog(null);
-    showToast("Blog updated successfully!");
+    showToast("Blog updated & auto-syncing in background!");
   };
 
   const handleDeleteBlog = (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to delete the blog post "${title}"?`)) {
       deleteBlog(id);
       setBlogs(getBlogs());
-      showToast("Blog post deleted.");
+      showToast("Blog post deleted & auto-syncing in background.");
     }
   };
 
@@ -568,6 +568,25 @@ function AdminDashboardPage() {
             <p className="text-sm text-slate-400 mt-1">
               Directly edit and publish blogs, update team member names and photos without writing code.
             </p>
+            {gitHubConfig.token ? (
+              <div className="flex items-center gap-2 mt-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Auto-Sync Active: Changes are automatically saved & synced to all devices in background</span>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("settings")}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 text-[11px] font-medium text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
+                >
+                  <AlertTriangle className="h-3 w-3" />
+                  <span>Connect GitHub in Settings once to enable permanent auto-sync on all devices</span>
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
@@ -607,10 +626,10 @@ function AdminDashboardPage() {
               onClick={handleManualGitHubSync}
               disabled={isSyncing}
               className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/40 bg-cyan-500/20 px-3.5 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/30 transition disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(34,211,238,0.15)]"
-              title="Push current state to GitHub main branch and trigger Vercel deployment"
+              title="Manual Sync: Changes already auto-sync automatically. Click to force an immediate push."
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-cyan-400" : ""}`} />
-              <span>{isSyncing ? "Syncing..." : "Sync to GitHub"}</span>
+              <span>{isSyncing ? "Syncing..." : "Sync Now"}</span>
             </button>
 
             <Link

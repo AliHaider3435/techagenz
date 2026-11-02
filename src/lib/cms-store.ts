@@ -429,19 +429,43 @@ export async function syncCmsToGitHub(commitMessage?: string): Promise<{
   }
 }
 
+let autoSyncTimer: ReturnType<typeof setTimeout> | null = null;
+let isAutoSyncRunning = false;
+let queuedActionDesc: string | null = null;
+
 /**
- * Triggers background GitHub sync if autoSync is enabled
+ * Triggers background GitHub sync if autoSync is enabled with debouncing and concurrency locking
  */
-function triggerAutoSync(actionDesc: string) {
+export function triggerAutoSync(actionDesc: string) {
   const config = getGitHubConfig();
-  if (config.autoSync) {
-    // Run asynchronously without blocking UI
-    setTimeout(() => {
-      syncCmsToGitHub(`CMS auto-sync: ${actionDesc}`).catch((err) => {
-        console.warn("[CMS AutoSync Error]:", err);
-      });
-    }, 500);
+  if (!config.autoSync) return;
+
+  queuedActionDesc = actionDesc;
+
+  if (autoSyncTimer) {
+    clearTimeout(autoSyncTimer);
   }
+
+  autoSyncTimer = setTimeout(async () => {
+    if (isAutoSyncRunning) {
+      return;
+    }
+
+    const currentAction = queuedActionDesc || "auto-sync update";
+    queuedActionDesc = null;
+    isAutoSyncRunning = true;
+
+    try {
+      await syncCmsToGitHub(`CMS auto-sync: ${currentAction}`);
+    } catch (err) {
+      console.warn("[CMS AutoSync Error]:", err);
+    } finally {
+      isAutoSyncRunning = false;
+      if (queuedActionDesc) {
+        triggerAutoSync(queuedActionDesc);
+      }
+    }
+  }, 400);
 }
 
 /**
@@ -476,15 +500,45 @@ export function sanitizeTeamMember(member: TeamMember): TeamMember {
 }
 
 /**
- * Fetches live data from the server API so any visitor gets updated content immediately
+ * Fetches live data from the server API or GitHub directly so any visitor gets updated content immediately
  */
 export async function fetchLiveCmsData(): Promise<boolean> {
   if (typeof window === "undefined") return false;
   try {
-    const res = await fetch("/api/cms");
-    if (!res.ok) return false;
-    const json = await res.json();
-    if (!json.success || !json.data) return false;
+    let json: { success?: boolean; data?: { team?: TeamMember[]; blogs?: BlogPost[] } } | null =
+      null;
+
+    // 1. Try local serverless /api/cms with timestamp query to bust browser and CDN caches
+    try {
+      const res = await fetch(`/api/cms?t=${Date.now()}`, {
+        headers: { "Cache-Control": "no-cache" },
+      });
+      if (res.ok) {
+        json = await res.json();
+      }
+    } catch (err) {
+      console.warn("[CMS] /api/cms fetch notice:", err);
+    }
+
+    // 2. Direct GitHub raw fallback if /api/cms was unreachable or returned empty
+    if (!json?.success || !json.data) {
+      try {
+        const ghRes = await fetch(
+          `https://raw.githubusercontent.com/AliHaider3435/techagenz/main/src/data/cms-data.json?t=${Date.now()}`,
+          { headers: { "Cache-Control": "no-cache" } },
+        );
+        if (ghRes.ok) {
+          const ghData = await ghRes.json();
+          if (ghData && (Array.isArray(ghData.team) || Array.isArray(ghData.blogs))) {
+            json = { success: true, data: ghData };
+          }
+        }
+      } catch (err) {
+        console.warn("[CMS] Direct GitHub fetch notice:", err);
+      }
+    }
+
+    if (!json?.success || !json.data) return false;
 
     const { team, blogs } = json.data;
     let changed = false;
