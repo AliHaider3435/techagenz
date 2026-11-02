@@ -1,7 +1,41 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import cmsData from "../src/data/cms-data.json";
 
+/**
+ * Fetch JSON from a GitHub raw URL, returning null on any failure.
+ */
+async function fetchRawJson(url: string, token?: string): Promise<unknown | null> {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "Cache-Control": "no-cache, no-store",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Compare two ISO timestamp strings and return the one that is newer.
+ * Falls back to `b` if neither is a valid date.
+ */
+function newerData(
+  a: { lastSyncedAt?: string; team?: unknown[]; blogs?: unknown[] } | null,
+  b: { lastSyncedAt?: string; team?: unknown[]; blogs?: unknown[] } | null,
+): { lastSyncedAt?: string; team?: unknown[]; blogs?: unknown[] } | null {
+  if (!a) return b;
+  if (!b) return a;
+  const tsA = a.lastSyncedAt ? Date.parse(a.lastSyncedAt) : 0;
+  const tsB = b.lastSyncedAt ? Date.parse(b.lastSyncedAt) : 0;
+  return tsA >= tsB ? a : b;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Hard-disable all caches so every request reads live GitHub state
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
   res.setHeader("Pragma", "no-cache");
   res.setHeader("Expires", "0");
@@ -10,61 +44,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const owner = process.env.GITHUB_REPO_OWNER || "AliHaider3435";
   const repo = process.env.GITHUB_REPO_NAME || "techagenz";
-  const branch = process.env.GITHUB_BRANCH || "main";
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "").trim();
+  const cacheBust = `t=${Date.now()}`;
+  const filePath = "src/data/cms-data.json";
 
-  // 1. Attempt to fetch live content directly from GitHub repository main branch
+  type CmsPayload = { lastSyncedAt?: string; team?: unknown[]; blogs?: unknown[] };
+
+  // 1. Try the dedicated cms-data branch (written by the Admin Panel)
+  let cmsDataBranchJson: CmsPayload | null = null;
   try {
-    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/src/data/cms-data.json?t=${Date.now()}`;
-    const rawRes = await fetch(rawUrl, {
-      headers: {
-        "Cache-Control": "no-cache",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (rawRes.ok) {
-      const liveJson = (await rawRes.json()) as { team?: unknown[]; blogs?: unknown[] };
-      if (liveJson && (Array.isArray(liveJson.team) || Array.isArray(liveJson.blogs))) {
-        return res.status(200).json({
-          success: true,
-          source: "github-live",
-          data: liveJson,
-        });
-      }
+    const raw = (await fetchRawJson(
+      `https://raw.githubusercontent.com/${owner}/${repo}/cms-data/${filePath}?${cacheBust}`,
+      token,
+    )) as CmsPayload | null;
+    if (raw && (Array.isArray(raw.team) || Array.isArray(raw.blogs))) {
+      cmsDataBranchJson = raw;
     }
   } catch (err) {
-    console.warn("[api/cms] GitHub raw fetch error:", err);
+    console.warn("[api/cms] cms-data branch fetch error:", err);
   }
 
-  // 2. Attempt GitHub Contents API
+  // 2. Try the main branch (reflects VS Code / Vercel-deployed code)
+  let mainBranchJson: CmsPayload | null = null;
   try {
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/src/data/cms-data.json?ref=${branch}`;
-    const apiRes = await fetch(apiUrl, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (apiRes.ok) {
-      const fileData = (await apiRes.json()) as { content?: string };
-      if (fileData.content) {
-        const decoded = Buffer.from(fileData.content, "base64").toString("utf-8");
-        const parsed = JSON.parse(decoded);
-        return res.status(200).json({
-          success: true,
-          source: "github-api",
-          data: parsed,
-        });
-      }
+    const raw = (await fetchRawJson(
+      `https://raw.githubusercontent.com/${owner}/${repo}/main/${filePath}?${cacheBust}`,
+      token,
+    )) as CmsPayload | null;
+    if (raw && (Array.isArray(raw.team) || Array.isArray(raw.blogs))) {
+      mainBranchJson = raw;
     }
   } catch (err) {
-    console.warn("[api/cms] GitHub API fetch error:", err);
+    console.warn("[api/cms] main branch fetch error:", err);
   }
 
-  // 3. Fallback to bundled local data
+  // 3. Pick whichever branch has the newer lastSyncedAt timestamp.
+  //    Admin Panel writes to cms-data → its timestamp will always be >= main.
+  //    If the developer intentionally updated team/blogs in VS Code and pushed
+  //    to main with a newer timestamp, that intentional change is still honoured.
+  const best = newerData(cmsDataBranchJson, mainBranchJson);
+
+  if (best && (Array.isArray(best.team) || Array.isArray(best.blogs))) {
+    return res.status(200).json({
+      success: true,
+      source: "github-live",
+      data: best,
+    });
+  }
+
+  // 4. Last-resort: bundled static JSON baked into the Vercel deployment
   return res.status(200).json({
     success: true,
     source: "local-bundled",

@@ -67,7 +67,9 @@ const DEFAULT_GITHUB_CONFIG: GitHubConfig = {
   token: "",
   repoOwner: "AliHaider3435",
   repoName: "techagenz",
-  branch: "main",
+  // Admin Panel ALWAYS writes to the dedicated 'cms-data' branch.
+  // VS Code / Vercel deployment works on 'main'. The two branches never conflict.
+  branch: "cms-data",
   autoSync: true,
   lastSyncStatus: "idle",
 };
@@ -315,6 +317,8 @@ export async function syncCmsToGitHub(commitMessage?: string): Promise<{
   const payloadData = {
     version: 1,
     lastSyncedAt: new Date().toISOString(),
+    // Tag this payload so it's identifiable as an Admin Panel write on the cms-data branch
+    source: "admin-console",
     team,
     blogs,
   };
@@ -500,47 +504,83 @@ export function sanitizeTeamMember(member: TeamMember): TeamMember {
 }
 
 /**
- * Fetches live data from the server API or GitHub directly so any visitor gets updated content immediately
+ * Fetches live data from the server API or GitHub directly so any visitor gets updated content immediately.
+ * Priority order:
+ *  1. /api/cms (server-side, compares cms-data branch vs main and returns the newest)
+ *  2. cms-data branch directly (Admin Panel writes here — never conflicts with VS Code's main branch)
+ *  3. main branch directly (VS Code / Vercel deployment)
  */
 export async function fetchLiveCmsData(): Promise<boolean> {
   if (typeof window === "undefined") return false;
-  try {
-    let json: { success?: boolean; data?: { team?: TeamMember[]; blogs?: BlogPost[] } } | null =
-      null;
+  const owner = "AliHaider3435";
+  const repo = "techagenz";
+  const cacheBust = `t=${Date.now()}`;
 
-    // 1. Try local serverless /api/cms with timestamp query to bust browser and CDN caches
+  type LivePayload = { lastSyncedAt?: string; team?: TeamMember[]; blogs?: BlogPost[] };
+
+  function pickNewer(a: LivePayload | null, b: LivePayload | null): LivePayload | null {
+    if (!a) return b;
+    if (!b) return a;
+    const tsA = a.lastSyncedAt ? Date.parse(a.lastSyncedAt) : 0;
+    const tsB = b.lastSyncedAt ? Date.parse(b.lastSyncedAt) : 0;
+    return tsA >= tsB ? a : b;
+  }
+
+  try {
+    let best: LivePayload | null = null;
+
+    // 1. Try /api/cms — server already compares cms-data branch vs main
     try {
-      const res = await fetch(`/api/cms?t=${Date.now()}`, {
-        headers: { "Cache-Control": "no-cache" },
+      const res = await fetch(`/api/cms?${cacheBust}`, {
+        headers: { "Cache-Control": "no-cache, no-store" },
       });
       if (res.ok) {
-        json = await res.json();
+        const json = await res.json() as { success?: boolean; data?: LivePayload };
+        if (json?.success && json.data && (Array.isArray(json.data.team) || Array.isArray(json.data.blogs))) {
+          best = json.data;
+        }
       }
     } catch (err) {
       console.warn("[CMS] /api/cms fetch notice:", err);
     }
 
-    // 2. Direct GitHub raw fallback if /api/cms was unreachable or returned empty
-    if (!json?.success || !json.data) {
+    // 2. Direct GitHub raw fallback — check cms-data branch (Admin Panel target)
+    if (!best) {
       try {
         const ghRes = await fetch(
-          `https://raw.githubusercontent.com/AliHaider3435/techagenz/main/src/data/cms-data.json?t=${Date.now()}`,
+          `https://raw.githubusercontent.com/${owner}/${repo}/cms-data/src/data/cms-data.json?${cacheBust}`,
           { headers: { "Cache-Control": "no-cache" } },
         );
         if (ghRes.ok) {
-          const ghData = await ghRes.json();
+          const ghData = await ghRes.json() as LivePayload;
           if (ghData && (Array.isArray(ghData.team) || Array.isArray(ghData.blogs))) {
-            json = { success: true, data: ghData };
+            best = pickNewer(best, ghData);
           }
         }
       } catch (err) {
-        console.warn("[CMS] Direct GitHub fetch notice:", err);
+        console.warn("[CMS] cms-data branch fetch notice:", err);
+      }
+
+      // 3. Also check main branch and pick whichever is newer
+      try {
+        const ghResMain = await fetch(
+          `https://raw.githubusercontent.com/${owner}/${repo}/main/src/data/cms-data.json?${cacheBust}`,
+          { headers: { "Cache-Control": "no-cache" } },
+        );
+        if (ghResMain.ok) {
+          const mainData = await ghResMain.json() as LivePayload;
+          if (mainData && (Array.isArray(mainData.team) || Array.isArray(mainData.blogs))) {
+            best = pickNewer(best, mainData);
+          }
+        }
+      } catch (err) {
+        console.warn("[CMS] main branch fetch notice:", err);
       }
     }
 
-    if (!json?.success || !json.data) return false;
+    if (!best) return false;
 
-    const { team, blogs } = json.data;
+    const { team, blogs } = best;
     let changed = false;
 
     if (Array.isArray(team) && team.length > 0) {

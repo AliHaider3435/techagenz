@@ -1,0 +1,17 @@
+# TechAgenz – Git Attributes
+# 
+# cms-data.json is managed by the Admin Panel on the dedicated `cms-data` branch.
+# VS Code / developers work on `main` and should NEVER accidentally overwrite Admin
+# Panel data with a stale local copy of this file.
+#
+# Setting merge=ours means: if a merge/pull touches this file, Git keeps YOUR
+# current version (the version already on the branch you're merging INTO) and
+# ignores the incoming side. Combined with the `cms-data` branch architecture this
+# means:
+#   • On main: merges keep main's copy  → VS Code pushes are always safe
+#   • On cms-data: merges keep cms-data's copy → Admin Panel data is always safe
+#
+# The real source of truth is always determined at RUNTIME by the /api/cms endpoint
+# which compares lastSyncedAt timestamps from both branches and serves the newest.
+
+src/data/cms-data.json merge=ours
