@@ -37,7 +37,6 @@ type SplineInternal = {
 };
 
 function applyThemeToSpline(app: SplineApp) {
-  // @ts-expect-error — traverse is on the internal THREE scene, not in public types
   const threeScene = (app as SplineInternal).scene;
   if (!threeScene || typeof threeScene.traverse !== "function") return;
 
