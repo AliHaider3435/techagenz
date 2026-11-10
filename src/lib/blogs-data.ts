@@ -35,7 +35,9 @@ export function getAllBlogs(): BlogPost[] {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
-    } catch {}
+    } catch {
+      // localStorage may be blocked in private browsing — ignore
+    }
   }
   return blogPosts;
 }

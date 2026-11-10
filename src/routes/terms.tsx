@@ -1,5 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Shield, CheckCircle2, AlertCircle, Scale, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import {
+  FileText,
+  Shield,
+  CheckCircle2,
+  AlertCircle,
+  Scale,
+  Mail,
+  Phone,
+  MapPin,
+  ArrowUpRight,
+} from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -65,12 +75,18 @@ function TermsOfServicePage() {
       <section className="relative pb-24">
         <div className="mx-auto max-w-4xl px-6">
           <div className="glass-card rounded-3xl border border-border/70 p-8 sm:p-12 space-y-10 text-foreground/90 leading-relaxed text-sm sm:text-base">
-            
             {/* 1. Acceptance */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">1. Acceptance of Terms</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                1. Acceptance of Terms
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                These Terms of Service (&ldquo;Terms&rdquo;) constitute a legally binding agreement between you (&ldquo;Client,&rdquo; &ldquo;User,&rdquo; or &ldquo;you&rdquo;) and <strong>Tech Agenz</strong> (&ldquo;Company,&rdquo; &ldquo;we,&rdquo; or &ldquo;us&rdquo;), registered in Pakistan. By accessing our website, purchasing our services, or engaging us for software engineering, WhatsApp automation, or ERPNext deployment, you agree to be bound by these Terms and our{" "}
+                These Terms of Service (&ldquo;Terms&rdquo;) constitute a legally binding agreement
+                between you (&ldquo;Client,&rdquo; &ldquo;User,&rdquo; or &ldquo;you&rdquo;) and{" "}
+                <strong>Tech Agenz</strong> (&ldquo;Company,&rdquo; &ldquo;we,&rdquo; or
+                &ldquo;us&rdquo;), registered in Pakistan. By accessing our website, purchasing our
+                services, or engaging us for software engineering, WhatsApp automation, or ERPNext
+                deployment, you agree to be bound by these Terms and our{" "}
                 <Link to="/privacy" className="text-brand underline hover:text-brand/80">
                   Privacy Policy
                 </Link>
@@ -80,9 +96,12 @@ function TermsOfServicePage() {
 
             {/* 2. Scope of Services */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">2. Scope of Engineering Services</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                2. Scope of Engineering Services
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Tech Agenz provides bespoke software development, AI solutions, and systems integration services, including but not limited to:
+                Tech Agenz provides bespoke software development, AI solutions, and systems
+                integration services, including but not limited to:
               </p>
               <ul className="mt-3 grid gap-2.5 sm:grid-cols-2 text-xs sm:text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
@@ -114,9 +133,14 @@ function TermsOfServicePage() {
 
             {/* 3. Statements of Work & Deliverables */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">3. Statements of Work (SOW) & Milestones</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                3. Statements of Work (SOW) & Milestones
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Every custom project is executed under a detailed Statement of Work (SOW) or proposal defining project scope, deliverables, technology stack, acceptance criteria, milestone timelines, and commercial terms. Any alterations or scope expansions will be documented in a mutual Change Request order.
+                Every custom project is executed under a detailed Statement of Work (SOW) or
+                proposal defining project scope, deliverables, technology stack, acceptance
+                criteria, milestone timelines, and commercial terms. Any alterations or scope
+                expansions will be documented in a mutual Change Request order.
               </p>
             </div>
 
@@ -126,31 +150,53 @@ function TermsOfServicePage() {
                 <Shield className="h-5 w-5 text-brand" /> 4. Intellectual Property & Code Ownership
               </h2>
               <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                <strong>Client Deliverables:</strong> Upon receipt of full payment for project milestones, Tech Agenz assigns to the Client all right, title, and interest in the custom application code, bespoke database schemas, and tailored assets created specifically for the project.
+                <strong>Client Deliverables:</strong> Upon receipt of full payment for project
+                milestones, Tech Agenz assigns to the Client all right, title, and interest in the
+                custom application code, bespoke database schemas, and tailored assets created
+                specifically for the project.
               </p>
               <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                <strong>Pre-Existing IP & Open-Source:</strong> Tech Agenz retains ownership of proprietary libraries, pre-built utility scripts, and developer tooling. Open-source frameworks (e.g., React, Frappe, ERPNext, PostgreSQL, Node.js) remain governed by their respective open-source licenses (MIT, GNU GPL, Apache 2.0).
+                <strong>Pre-Existing IP & Open-Source:</strong> Tech Agenz retains ownership of
+                proprietary libraries, pre-built utility scripts, and developer tooling. Open-source
+                frameworks (e.g., React, Frappe, ERPNext, PostgreSQL, Node.js) remain governed by
+                their respective open-source licenses (MIT, GNU GPL, Apache 2.0).
               </p>
             </div>
 
             {/* 5. Payment Terms & Invoicing */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">5. Commercial Terms & Invoicing</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                5. Commercial Terms & Invoicing
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
                 Unless otherwise agreed in a specific contract:
               </p>
               <ul className="mt-3 space-y-2 text-muted-foreground list-disc list-inside text-xs sm:text-sm">
-                <li>Fixed-price projects are billed on milestone basis (e.g., 30% advance, 40% demo milestone, 30% final go-live deployment).</li>
-                <li>Invoices are due within 7 business days of issuance via direct bank wire transfer or authorized digital payment gateway.</li>
-                <li>Monthly support, cloud infrastructure hosting, and maintenance retainers are invoiced on the first day of each billing cycle.</li>
+                <li>
+                  Fixed-price projects are billed on milestone basis (e.g., 30% advance, 40% demo
+                  milestone, 30% final go-live deployment).
+                </li>
+                <li>
+                  Invoices are due within 7 business days of issuance via direct bank wire transfer
+                  or authorized digital payment gateway.
+                </li>
+                <li>
+                  Monthly support, cloud infrastructure hosting, and maintenance retainers are
+                  invoiced on the first day of each billing cycle.
+                </li>
               </ul>
             </div>
 
             {/* 6. Warranties & SLA */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">6. Production Warranty & Bug Support</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                6. Production Warranty & Bug Support
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Tech Agenz provides a standard <strong>30-day post-launch warranty</strong> for all custom software deliverables. During this warranty window, we fix any verifiable defects, bugs, or discrepancies against agreed specifications at zero additional charge.
+                Tech Agenz provides a standard <strong>30-day post-launch warranty</strong> for all
+                custom software deliverables. During this warranty window, we fix any verifiable
+                defects, bugs, or discrepancies against agreed specifications at zero additional
+                charge.
               </p>
             </div>
 
@@ -160,23 +206,37 @@ function TermsOfServicePage() {
                 <AlertCircle className="h-5 w-5 text-amber-400" /> 7. Limitation of Liability
               </h2>
               <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                To the maximum extent permitted by applicable law, in no event shall Tech Agenz, its directors, employees, or contractors be liable for any indirect, incidental, punitive, or consequential damages, including loss of profits, data corruption, or business interruption arising out of your use or inability to use the software. Tech Agenz&rsquo;s total cumulative liability shall not exceed the aggregate fees paid by the client under the specific SOW during the preceding three (3) months.
+                To the maximum extent permitted by applicable law, in no event shall Tech Agenz, its
+                directors, employees, or contractors be liable for any indirect, incidental,
+                punitive, or consequential damages, including loss of profits, data corruption, or
+                business interruption arising out of your use or inability to use the software. Tech
+                Agenz&rsquo;s total cumulative liability shall not exceed the aggregate fees paid by
+                the client under the specific SOW during the preceding three (3) months.
               </p>
             </div>
 
             {/* 8. Governing Law & Jurisdiction */}
             <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">8. Governing Law & Dispute Resolution</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                8. Governing Law & Dispute Resolution
+              </h2>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                These Terms and any dispute arising from them shall be governed by and construed in accordance with the laws of the <strong>Islamic Republic of Pakistan</strong>. The courts located in <strong>Pakistan</strong> shall have exclusive jurisdiction to settle any disputes, provided both parties agree to first attempt resolution via amicable negotiation in good faith.
+                These Terms and any dispute arising from them shall be governed by and construed in
+                accordance with the laws of the <strong>Islamic Republic of Pakistan</strong>. The
+                courts located in <strong>Pakistan</strong> shall have exclusive jurisdiction to
+                settle any disputes, provided both parties agree to first attempt resolution via
+                amicable negotiation in good faith.
               </p>
             </div>
 
             {/* 9. Contact Details */}
             <div className="rounded-2xl border border-border/80 bg-card/60 p-6">
-              <h2 className="font-display text-xl font-bold text-foreground">9. Inquiries Regarding Terms</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">
+                9. Inquiries Regarding Terms
+              </h2>
               <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-                For questions regarding these Terms or to request a formal bilateral Master Services Agreement (MSA), reach out to our legal coordination team:
+                For questions regarding these Terms or to request a formal bilateral Master Services
+                Agreement (MSA), reach out to our legal coordination team:
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-3 text-xs">
                 <div className="flex items-center gap-2 text-foreground">
@@ -197,7 +257,6 @@ function TermsOfServicePage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>

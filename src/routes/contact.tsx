@@ -21,6 +21,9 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { submitEnquiry } from "@/api/send-enquiry";
+import type { EnquiryEmailNotificationStatus } from "@/api/send-enquiry";
 
 const contactPageSchema = {
   "@context": "https://schema.org",
@@ -102,7 +105,12 @@ function ContactPage() {
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [emailNotification, setEmailNotification] = useState<EnquiryEmailNotificationStatus | null>(
+    null,
+  );
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetSignal, setTurnstileResetSignal] = useState(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -113,59 +121,23 @@ function ContactPage() {
     e.preventDefault();
     setStatus("sending");
     setErrorMessage("");
+    setEmailNotification(null);
 
-    let success = false;
-
-    // 1. Primary server endpoint
     try {
-      const res = await fetch("/api/send-enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        success = true;
-      }
-    } catch {
-      // Endpoint unreachable, continue to fallback
-    }
-
-    // 2. Direct client fallback: FormSubmit directly to info@techagenz.com
-    if (!success) {
-      try {
-        const fallbackRes = await fetch("https://formsubmit.co/ajax/info@techagenz.com", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            company: formData.company || "Not specified",
-            message: formData.message,
-            _subject: `New Enquiry from ${formData.name}`,
-            _replyto: formData.email,
-          }),
-        });
-
-        if (fallbackRes.ok) {
-          success = true;
-        }
-      } catch {
-        // Fallback failed
-      }
-    }
-
-    if (success) {
+      const result = await submitEnquiry(formData, turnstileToken);
+      setEmailNotification(result.emailNotification);
       setStatus("sent");
       setFormData({ name: "", email: "", company: "", message: "" });
-    } else {
+    } catch (error) {
       setStatus("error");
       setErrorMessage(
-        "Something went wrong — please try again or email info@techagenz.com directly.",
+        error instanceof Error
+          ? error.message
+          : "Unable to deliver enquiry. Please contact info@techagenz.com or WhatsApp directly.",
       );
+    } finally {
+      setTurnstileToken("");
+      setTurnstileResetSignal((signal) => signal + 1);
     }
   };
 
@@ -262,9 +234,7 @@ function ContactPage() {
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">WhatsApp & Phone</div>
-                      <div className="font-medium text-foreground">
-                        +92 339 4555004
-                      </div>
+                      <div className="font-medium text-foreground">+92 339 4555004</div>
                     </div>
                   </a>
 
@@ -275,7 +245,9 @@ function ContactPage() {
                     <div>
                       <div className="text-xs text-muted-foreground">Engineering Headquarters</div>
                       <div className="font-medium text-foreground">Based in Pakistan</div>
-                      <div className="text-[11px] text-muted-foreground">Serving Global Clients</div>
+                      <div className="text-[11px] text-muted-foreground">
+                        Serving Global Clients
+                      </div>
                     </div>
                   </div>
 
@@ -360,6 +332,8 @@ function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        minLength={2}
+                        maxLength={100}
                         className="w-full rounded-xl border border-border/60 bg-card/70 px-3.5 py-2.5 text-sm text-foreground outline-none ring-0 focus:border-brand"
                         placeholder="e.g. Alex Johnson"
                       />
@@ -373,6 +347,7 @@ function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        maxLength={254}
                         className="w-full rounded-xl border border-border/60 bg-card/70 px-3.5 py-2.5 text-sm text-foreground outline-none ring-0 focus:border-brand"
                         placeholder="you@company.com"
                       />
@@ -385,6 +360,7 @@ function ContactPage() {
                       name="company"
                       value={formData.company}
                       onChange={handleChange}
+                      maxLength={100}
                       className="w-full rounded-xl border border-border/60 bg-card/70 px-3.5 py-2.5 text-sm text-foreground outline-none ring-0 focus:border-brand"
                       placeholder="e.g. Acme Corp"
                     />
@@ -397,16 +373,26 @@ function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       required
+                      minLength={10}
+                      maxLength={3000}
                       rows={5}
                       className="w-full rounded-xl border border-border/60 bg-card/70 px-3.5 py-2.5 text-sm text-foreground outline-none ring-0 focus:border-brand"
                       placeholder="Briefly describe what you're looking to engineer, target timeline, or specific requirements..."
                     />
                   </label>
 
+                  <TurnstileWidget
+                    onToken={setTurnstileToken}
+                    onError={() =>
+                      setErrorMessage("Secure verification could not be loaded. Please try again.")
+                    }
+                    resetSignal={turnstileResetSignal}
+                  />
+
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={status === "sending"}
+                      disabled={status === "sending" || !turnstileToken}
                       className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                     >
                       {status === "sending" ? "Sending enquiry..." : "Send enquiry"}{" "}
@@ -420,8 +406,9 @@ function ContactPage() {
                       animate={{ opacity: 1, y: 0 }}
                       className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-400"
                     >
-                      ✓ Thank you — your enquiry has been received. Our team will review your
-                      project and email you back within 24 hours.
+                      {emailNotification === "accepted"
+                        ? "✓ Your enquiry was saved, and the team notification was accepted by our email provider. We’ll review your project and follow up within 24 hours."
+                        : "✓ Your enquiry was saved, but the team notification email could not be sent. Please also contact info@techagenz.com or WhatsApp us to ensure we see your request."}
                     </motion.div>
                   )}
 

@@ -35,7 +35,7 @@ function Nav() {
               }}
               className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-brand/10 hover:text-foreground"
             >
-              [ {item.label} ]
+              {item.label}
             </Link>
           ))}
         </nav>
@@ -72,7 +72,7 @@ function Nav() {
                 }}
                 className="flex items-center justify-between rounded-2xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-brand/10 hover:text-foreground"
               >
-                <span>[ {item.label} ]</span>
+                <span>{item.label}</span>
                 <ArrowUpRight className="h-4 w-4 opacity-50" />
               </Link>
             ))}

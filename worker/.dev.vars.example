@@ -1,0 +1,14 @@
+# Example configuration only — safe to commit.
+# Copy this file to .dev.vars and replace placeholders locally.
+# NEVER commit the actual .dev.vars file.
+# Copy this file to .dev.vars and fill in real values for local wrangler dev
+
+# Email dispatch (Resend)
+RESEND_API_KEY=re_your_resend_api_key_here
+
+# Cloudflare Turnstile (bot protection for public forms)
+CF_TURNSTILE_SECRET_KEY=your_turnstile_secret_key_here
+
+# Cloudflare Access (admin JWT verification — Phase 3)
+CF_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+CF_ACCESS_AUD=your_cloudflare_access_audience_tag_here

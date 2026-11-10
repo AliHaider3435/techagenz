@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, ArrowUpRight, Search, Sparkles, Tag, CheckCircle } from "lucide-react";
 import Nav from "@/components/Nav";
@@ -7,9 +7,10 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import { blogCategories } from "@/lib/blogs-data";
-import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT, type BlogPost } from "@/lib/cms-store";
+import { filterBlogPosts, publicCms } from "@/lib/public-cms";
 
 export const Route = createFileRoute("/blogs/")({
+  loader: async () => ({ posts: (await publicCms.getBlogs()).data }),
   head: () => ({
     meta: [
       {
@@ -57,38 +58,14 @@ export const Route = createFileRoute("/blogs/")({
 });
 
 function BlogsIndexPage() {
+  const { posts } = Route.useLoaderData();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState("");
-  const [posts, setPosts] = useState<BlogPost[]>(getBlogs);
-
-  useEffect(() => {
-    setPosts(getBlogs());
-    fetchLiveCmsData();
-    const handler = () => setPosts(getBlogs());
-    window.addEventListener(CMS_UPDATE_EVENT, handler);
-    window.addEventListener("storage", handler);
-    return () => {
-      window.removeEventListener(CMS_UPDATE_EVENT, handler);
-      window.removeEventListener("storage", handler);
-    };
-  }, []);
 
   const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
-      const matchesCategory = activeCategory === "All" || post.category === activeCategory;
-      const q = searchQuery.toLowerCase().trim();
-      if (!q) return matchesCategory;
-
-      const matchesSearch =
-        post.title.toLowerCase().includes(q) ||
-        post.excerpt.toLowerCase().includes(q) ||
-        post.keywords.some((k) => k.toLowerCase().includes(q)) ||
-        post.category.toLowerCase().includes(q);
-
-      return matchesCategory && matchesSearch;
-    });
+    return filterBlogPosts(posts, activeCategory, searchQuery);
   }, [posts, activeCategory, searchQuery]);
 
   const featuredPost = useMemo(() => {

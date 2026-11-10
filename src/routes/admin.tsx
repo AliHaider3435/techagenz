@@ -1,18 +1,19 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   FileText,
+  Briefcase,
+  Mail,
+  Image as ImageIcon,
   Settings,
   Plus,
   Trash2,
   Edit2,
   Upload,
-  Image as ImageIcon,
   Check,
   X,
-  LogOut,
   ExternalLink,
   RefreshCw,
   Download,
@@ -23,52 +24,40 @@ import {
   Search,
   CheckCircle2,
   Lock,
-  Mail,
   Camera,
-  GitBranch,
-  Github,
-  Key,
-  EyeOff,
+  Server,
+  Database,
+  ShieldCheck,
+  Copy,
+  Tag,
+  Clock,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { TechCursor } from "@/components/TechCursor";
 import {
   getTeamMembers,
-  saveTeamMembers,
-  addTeamMember,
-  updateTeamMember,
-  deleteTeamMember,
-  resetTeamMembers,
   getBlogs,
-  saveBlogs,
-  addBlog,
-  updateBlog,
-  deleteBlog,
-  resetBlogs,
-  compressImageFile,
-  isAuthenticated,
-  getAuthSession,
-  logoutUser,
-  getAuthConfig,
-  updateAuthConfig,
   exportCmsData,
-  importCmsData,
-  getGitHubConfig,
-  saveGitHubConfig,
-  testGitHubConnection,
-  syncCmsToGitHub,
-  CMS_SYNC_STATUS_EVENT,
-  type GitHubConfig,
   AVATAR_PLACEHOLDER,
   type TeamMember,
 } from "@/lib/cms-store";
 import { blogCategories, type BlogPost } from "@/lib/blogs-data";
+import { projects as defaultProjects, type CaseStudy } from "@/lib/projects-data";
+import {
+  createAdminApiClient,
+  type AdminApiAccessState,
+  type EnquiryDto,
+  type MediaAssetDto,
+} from "@/api/admin-client";
+import type { TeamMemberDto, BlogDetailDto, CaseStudyDto } from "@/api/cms-client";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Team Content Console — Tech Agenz" },
+      { title: "Content Console — Tech Agenz" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -87,32 +76,55 @@ const COLOR_PRESETS = [
 
 function AdminDashboardPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"team" | "blogs" | "settings">("team");
-  const [session, setSession] = useState<{ email: string; displayName: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "team" | "blogs" | "projects" | "enquiries" | "media" | "settings"
+  >("team");
+  const [adminApiCheckVersion, setAdminApiCheckVersion] = useState(0);
+
+  const adminApiClient = useMemo(
+    () => createAdminApiClient(import.meta.env.VITE_ADMIN_API_BASE_URL),
+    [],
+  );
+  const [adminApiAccessState, setAdminApiAccessState] = useState<AdminApiAccessState>(
+    adminApiClient.accessUrl ? "checking" : "unconfigured",
+  );
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+
+  // General state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Team state
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberDto[]>([]);
+  const [editingMember, setEditingMember] = useState<TeamMemberDto | null>(null);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
-  const [newMemberForm, setNewMemberForm] = useState({
-    title: "",
-    subtitle: "",
+  const [newMemberForm, setNewMemberForm] = useState<{
+    name: string;
+    role: string;
+    borderColor: string;
+    image: string;
+    sortOrder: number;
+  }>({
+    name: "",
+    role: "",
     borderColor: "#22D3EE",
     image: "",
+    sortOrder: 1,
   });
 
   // Blogs state
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [blogs, setBlogs] = useState<BlogDetailDto[]>([]);
   const [blogSearch, setBlogSearch] = useState("");
-  const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [editingBlog, setEditingBlog] = useState<BlogDetailDto | null>(null);
   const [isAddBlogOpen, setIsAddBlogOpen] = useState(false);
   const [newBlogForm, setNewBlogForm] = useState<{
     title: string;
-    category: BlogPost["category"];
+    category: string;
     author: string;
     readTime: string;
     excerpt: string;
     image: string;
+    featured: boolean;
     keywords: string;
     keyTakeaways: string;
     content: string;
@@ -123,401 +135,571 @@ function AdminDashboardPage() {
     readTime: "5 min read",
     excerpt: "",
     image: "",
+    featured: false,
     keywords: "AI Software House, Custom Software, Tech Agenz",
     keyTakeaways: "Rapid delivery cycles\nTailored AI architecture\nEnterprise-grade data security",
-    content: "Write the full article content here. You can add multiple paragraphs separated by line breaks.",
+    content: "Write the full article content here. Separate paragraphs with double newlines.",
   });
 
-  // Settings state
-  const [settingsForm, setSettingsForm] = useState({
-    email: "",
-    password: "",
+  // Projects state
+  const [projects, setProjects] = useState<CaseStudyDto[]>([]);
+  const [projectSearch, setProjectSearch] = useState("");
+  const [editingProject, setEditingProject] = useState<CaseStudyDto | null>(null);
+  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
+  const [newProjectForm, setNewProjectForm] = useState<{
+    title: string;
+    slug: string;
+    shortTitle: string;
+    category: string;
+    clientName: string;
+    clientType: string;
+    coverImage: string;
+    timeline: string;
+    status: string;
+    featuredOnHome: boolean;
+    order: number;
+    problemHeading: string;
+    problemDescription: string;
+    painPoints: string;
+    solutionHeading: string;
+    solutionDescription: string;
+    deliverables: string;
+    stack: string;
+    architectureOverview: string;
+    stats: string;
+    bullets: string;
+    testimonialQuote: string;
+    testimonialAuthor: string;
+  }>({
+    title: "",
+    slug: "",
+    shortTitle: "",
+    category: "AI & Web Solutions",
+    clientName: "",
+    clientType: "Enterprise Client",
+    coverImage: "",
+    timeline: "6 Weeks",
+    status: "Live in Production",
+    featuredOnHome: true,
+    order: 1,
+    problemHeading: "Core Operational Challenge",
+    problemDescription: "Describe the bottlenecks faced by the client.",
+    painPoints: "Manual paper processes\nFrequent scheduling collisions\nData fragmentation",
+    solutionHeading: "Automated Digital Infrastructure",
+    solutionDescription: "Describe the custom platform engineered by Tech Agenz.",
+    deliverables: "High-throughput Worker API\nD1 Structured Storage\nAdmin Portal",
+    stack: "React, TypeScript, Cloudflare Workers, D1, Tailwind CSS",
+    architectureOverview: "Edge-routed architecture deployed on Cloudflare Workers.",
+    stats: "99.9% | Availability | Zero downtime\n5x | Processing Speed | Sub-second latency",
+    bullets: "Eliminated all manual scheduling conflicts\nAutomated real-time notifications",
+    testimonialQuote: "Tech Agenz built exactly what our organization needed.",
+    testimonialAuthor: "Operations Director",
   });
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // GitHub Auto-Sync State
-  const [gitHubConfig, setGitHubConfig] = useState<GitHubConfig>(getGitHubConfig);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [isTestingGitHub, setIsTestingGitHub] = useState(false);
-  const [gitTestResult, setGitTestResult] = useState<{
-    success?: boolean;
-    message?: string;
-    error?: string;
-    warning?: string;
-  } | null>(null);
-  const [showToken, setShowToken] = useState(false);
+  // Enquiries state
+  const [enquiries, setEnquiries] = useState<EnquiryDto[]>([]);
+  const [enquiryStatusFilter, setEnquiryStatusFilter] = useState<string>("all");
+  const [enquiryCounts, setEnquiryCounts] = useState<{
+    total: number;
+    new: number;
+    read: number;
+    replied: number;
+    archived: number;
+  }>({ total: 0, new: 0, read: 0, replied: 0, archived: 0 });
 
-  const importFileInputRef = useRef<HTMLInputElement | null>(null);
+  // Media Library state
+  const [mediaAssets, setMediaAssets] = useState<MediaAssetDto[]>([]);
+  const [mediaFolderFilter, setMediaFolderFilter] = useState<string>("all");
+  const [mediaSearch, setMediaSearch] = useState<string>("");
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4500);
   };
 
-  // Auth Protection
+  // ── Access Probe ────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate({ to: "/login" });
-      return;
+    let active = true;
+    if (!adminApiClient.accessUrl) {
+      setAdminApiAccessState("unconfigured");
+      return () => {
+        active = false;
+      };
     }
-    const currentSession = getAuthSession();
-    if (currentSession) {
-      setSession({ email: currentSession.email, displayName: currentSession.displayName });
-    }
 
-    // Load initial data
-    setTeamMembers(getTeamMembers());
-    setBlogs(getBlogs());
-    setGitHubConfig(getGitHubConfig());
-
-    const authConfig = getAuthConfig();
-    setSettingsForm({ email: authConfig.email, password: authConfig.passwordHash });
-
-    // Listen to custom updates from other components/tabs
-    const handler = () => {
-      setTeamMembers(getTeamMembers());
-      setBlogs(getBlogs());
-      setGitHubConfig(getGitHubConfig());
-    };
-    window.addEventListener("techagenz_cms_update", handler);
-
-    // Listen to GitHub sync status events
-    const syncStatusHandler = (e: Event) => {
-      const customEvt = e as CustomEvent;
-      const detail = customEvt.detail;
-      if (!detail) return;
-      if (detail.state === "syncing") {
-        setIsSyncing(true);
-      } else if (detail.state === "success") {
-        setIsSyncing(false);
-        setGitHubConfig(getGitHubConfig());
-        showToast(detail.message || `✓ Synced with GitHub (${detail.commitSha})! Vercel is deploying.`);
-      } else if (detail.state === "error") {
-        setIsSyncing(false);
-        setGitHubConfig(getGitHubConfig());
-        if (detail.error) {
-          showToast(`⚠️ Sync notice: ${detail.error.slice(0, 90)}`);
-        }
+    setAdminApiAccessState("checking");
+    void adminApiClient.verifyAccess().then((result) => {
+      if (active) {
+        setAdminApiAccessState(result.state);
+        if (result.email) setAdminEmail(result.email);
       }
-    };
-    window.addEventListener(CMS_SYNC_STATUS_EVENT, syncStatusHandler);
+    });
 
     return () => {
-      window.removeEventListener("techagenz_cms_update", handler);
-      window.removeEventListener(CMS_SYNC_STATUS_EVENT, syncStatusHandler);
+      active = false;
     };
-  }, [navigate]);
+  }, [adminApiClient, adminApiCheckVersion]);
+
+  // ── Initial Data Loading ────────────────────────────────────────────────
+  const loadLiveContent = async () => {
+    try {
+      const [teamData, blogData, projectData, enquiryData, mediaData] = await Promise.allSettled([
+        adminApiClient.listTeam(),
+        adminApiClient.listBlogs(),
+        adminApiClient.listProjects(),
+        adminApiClient.listEnquiries(),
+        adminApiClient.listMedia(),
+      ]);
+
+      if (teamData.status === "fulfilled") setTeamMembers(teamData.value);
+      if (blogData.status === "fulfilled") setBlogs(blogData.value);
+      if (projectData.status === "fulfilled") setProjects(projectData.value);
+      if (enquiryData.status === "fulfilled") {
+        setEnquiries(enquiryData.value.enquiries);
+        setEnquiryCounts(enquiryData.value.counts);
+      }
+      if (mediaData.status === "fulfilled") setMediaAssets(mediaData.value.assets);
+    } catch {
+      // Fallback to local data
+      loadLocalFallback();
+    }
+  };
+
+  const loadLocalFallback = () => {
+    const localTeam = getTeamMembers().map((m, idx) => ({
+      id: m.id,
+      name: m.title,
+      role: m.subtitle,
+      image: m.image,
+      borderColor: m.borderColor || "#22D3EE",
+      gradient: m.gradient || "",
+      sortOrder: idx + 1,
+    }));
+    setTeamMembers(localTeam);
+
+    const localBlogs = getBlogs().map((b) => ({
+      ...b,
+      featured: Boolean(b.featured),
+      keywords: b.keywords || [],
+      keyTakeaways: b.keyTakeaways || [],
+      content: b.content || [],
+    }));
+    setBlogs(localBlogs);
+
+    const localProjects = defaultProjects.map((p) => ({
+      ...p,
+      problem: {
+        ...p.problem,
+        painPoints: p.problem.painPoints || [],
+      },
+      solution: {
+        ...p.solution,
+        keyDeliverables: p.solution.keyDeliverables || [],
+      },
+      stack: p.stack || [],
+      architecture: {
+        ...p.architecture,
+        flowSteps: p.architecture.flowSteps || [],
+      },
+      results: {
+        ...p.results,
+        stats: p.results.stats || [],
+        bullets: p.results.bullets || [],
+      },
+      keyFeatures: (p.keyFeatures || []).map((kf) => ({
+        ...kf,
+        tag: kf.tag || null,
+      })),
+      testimonial: p.testimonial
+        ? {
+            quote: p.testimonial.quote,
+            author: p.testimonial.author || null,
+            role: p.testimonial.role || null,
+            organization: p.testimonial.organization || null,
+          }
+        : null,
+    }));
+    setProjects(localProjects);
+  };
+
+  useEffect(() => {
+    if (adminApiAccessState === "authorized" || adminApiAccessState === "authorized-read-only") {
+      void loadLiveContent();
+    } else {
+      loadLocalFallback();
+    }
+  }, [adminApiAccessState]);
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to sign out of the portal?")) {
-      logoutUser();
-      navigate({ to: "/login" });
+    navigate({ to: "/login" });
+  };
+
+  const requireWriteAuth = (): boolean => {
+    if (adminApiAccessState !== "authorized") {
+      showToast(
+        "Access Required: Please sign in via Cloudflare Access at admin-dev.techagenz.com.",
+      );
+      return false;
     }
+    return true;
   };
 
-  // ==================== GITHUB AUTO-SYNC HANDLERS ====================
-
-  const handleTestGitHubConnection = async () => {
-    setIsTestingGitHub(true);
-    setGitTestResult(null);
-    try {
-      const res = await testGitHubConnection(gitHubConfig.token);
-      setGitTestResult(res);
-      if (res.success) {
-        showToast(res.message || "✓ GitHub connection verified!");
-      } else {
-        showToast(`Connection failed: ${res.error || res.warning || "Check token"}`);
-      }
-    } finally {
-      setIsTestingGitHub(false);
-    }
-  };
-
-  const handleSaveGitHubSettings = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updated = saveGitHubConfig(gitHubConfig);
-    setGitHubConfig(updated);
-    showToast("GitHub Auto-Sync configuration saved!");
-  };
-
-  const handleManualGitHubSync = async () => {
-    if (isSyncing) return;
-    setIsSyncing(true);
-    showToast("Syncing all blogs and team members to GitHub repository...");
-    try {
-      const res = await syncCmsToGitHub("Manual sync from Tech Agenz CMS Console");
-      if (res.success) {
-        setGitHubConfig(getGitHubConfig());
-        showToast(`✓ Synced to GitHub (${res.commitSha})! Vercel is deploying.`);
-      } else {
-        showToast(`Sync failed: ${res.error || "Unknown error"}`);
-      }
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  // ==================== TEAM MEMBER HANDLERS ====================
+  // ════════════════════════════════════════════════════════════════════════
+  // TEAM HANDLERS
+  // ════════════════════════════════════════════════════════════════════════
 
   const handleMemberImageUpload = async (file: File, targetMemberId?: string) => {
+    if (!requireWriteAuth()) return;
     try {
-      showToast("Optimizing and uploading image...");
-      const compressed = await compressImageFile(file, {
-        maxWidth: 500,
-        maxHeight: 500,
-        quality: 0.85,
-        mimeType: "image/webp",
-      });
-
+      showToast("Uploading member photo to R2...");
+      const { url } = await adminApiClient.uploadMedia(file, "team");
       if (targetMemberId) {
-        // Direct update on existing member
-        updateTeamMember(targetMemberId, { image: compressed });
-        setTeamMembers(getTeamMembers());
-        showToast("Team member photo updated & auto-syncing in background!");
-      } else if (editingMember) {
-        // Updating in edit modal
-        setEditingMember({ ...editingMember, image: compressed });
+        await adminApiClient.updateTeamMember(targetMemberId, { image: url });
+        setTeamMembers((prev) =>
+          prev.map((m) => (m.id === targetMemberId ? { ...m, image: url } : m)),
+        );
+        showToast("Member photo updated!");
       } else {
-        // New member modal
-        setNewMemberForm((prev) => ({ ...prev, image: compressed }));
-        showToast("Photo attached to new member!");
+        setNewMemberForm((prev) => ({ ...prev, image: url }));
+        showToast("Photo uploaded!");
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload image";
-      alert(`Error uploading image: ${msg}`);
+    } catch (err) {
+      showToast(`Upload failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
   };
 
-  const handleSaveAddMember = (e: React.FormEvent) => {
+  const handleSaveAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMemberForm.title.trim() || !newMemberForm.subtitle.trim()) {
-      alert("Please provide both Name and Role for the member.");
-      return;
+    if (!requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const created = await adminApiClient.createTeamMember(newMemberForm);
+      setTeamMembers((prev) => [...prev, created]);
+      setIsAddMemberOpen(false);
+      setNewMemberForm({
+        name: "",
+        role: "",
+        borderColor: "#22D3EE",
+        image: "",
+        sortOrder: teamMembers.length + 1,
+      });
+      showToast(`Added team member "${created.name}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to add member"}`);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    addTeamMember({
-      title: newMemberForm.title.trim(),
-      subtitle: newMemberForm.subtitle.trim(),
-      borderColor: newMemberForm.borderColor,
-      image: newMemberForm.image || AVATAR_PLACEHOLDER,
-    });
-
-    setTeamMembers(getTeamMembers());
-    setIsAddMemberOpen(false);
-    setNewMemberForm({
-      title: "",
-      subtitle: "",
-      borderColor: "#22D3EE",
-      image: "",
-    });
-    showToast("New team member added & auto-syncing in background!");
   };
 
-  const handleSaveEditMember = (e: React.FormEvent) => {
+  const handleSaveEditMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingMember) return;
-
-    updateTeamMember(editingMember.id, {
-      title: editingMember.title.trim(),
-      subtitle: editingMember.subtitle.trim(),
-      borderColor: editingMember.borderColor,
-      image: editingMember.image,
-    });
-
-    setTeamMembers(getTeamMembers());
-    setEditingMember(null);
-    showToast("Team member details saved & auto-syncing in background!");
-  };
-
-  const handleDeleteMember = (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to remove ${name} from the team?`)) {
-      deleteTeamMember(id);
-      setTeamMembers(getTeamMembers());
-      showToast(`${name} removed & auto-syncing in background.`);
+    if (!editingMember || !requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const updated = await adminApiClient.updateTeamMember(editingMember.id, editingMember);
+      setTeamMembers((prev) => prev.map((m) => (m.id === updated.id ? updated : m)));
+      setEditingMember(null);
+      showToast(`Updated "${updated.name}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to update member"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleResetTeam = () => {
-    if (
-      window.confirm(
-        "Reset team list to original defaults? This will restore original members and remove custom entries.",
-      )
-    ) {
-      resetTeamMembers();
-      setTeamMembers(getTeamMembers());
-      showToast("Team reset to defaults.");
+  const handleDeleteMember = async (id: string, name: string) => {
+    if (!requireWriteAuth()) return;
+    if (!window.confirm(`Are you sure you want to remove team member "${name}"?`)) return;
+    try {
+      await adminApiClient.deleteTeamMember(id);
+      setTeamMembers((prev) => prev.filter((m) => m.id !== id));
+      showToast(`Removed "${name}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to delete"}`);
     }
   };
 
-  // ==================== BLOG POST HANDLERS ====================
+  // ════════════════════════════════════════════════════════════════════════
+  // BLOG POST HANDLERS
+  // ════════════════════════════════════════════════════════════════════════
 
   const handleBlogImageUpload = async (file: File, isEdit = false) => {
+    if (!requireWriteAuth()) return;
     try {
-      showToast("Optimizing blog banner image...");
-      const compressed = await compressImageFile(file, {
-        maxWidth: 1200,
-        maxHeight: 750,
-        quality: 0.82,
-        mimeType: "image/webp",
+      showToast("Uploading blog cover to R2...");
+      const { url } = await adminApiClient.uploadMedia(file, "blogs");
+      if (isEdit && editingBlog) {
+        setEditingBlog({ ...editingBlog, image: url });
+      } else {
+        setNewBlogForm((prev) => ({ ...prev, image: url }));
+      }
+      showToast("Cover image uploaded!");
+    } catch (err) {
+      showToast(`Upload failed: ${err instanceof Error ? err.message : "Error"}`);
+    }
+  };
+
+  const handleSaveAddBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const created = await adminApiClient.createBlog({
+        title: newBlogForm.title,
+        category: newBlogForm.category,
+        author: newBlogForm.author,
+        readTime: newBlogForm.readTime,
+        excerpt: newBlogForm.excerpt,
+        image: newBlogForm.image,
+        featured: newBlogForm.featured,
+        keywords: newBlogForm.keywords
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean),
+        keyTakeaways: newBlogForm.keyTakeaways
+          .split("\n")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        content: newBlogForm.content
+          .split("\n\n")
+          .map((c) => c.trim())
+          .filter(Boolean),
+      });
+      setBlogs((prev) => [created, ...prev]);
+      setIsAddBlogOpen(false);
+      showToast(`Published article "${created.title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to post blog"}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSaveEditBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBlog || !requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const updated = await adminApiClient.updateBlog(editingBlog.id, editingBlog);
+      setBlogs((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+      setEditingBlog(null);
+      showToast(`Updated "${updated.title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to update blog"}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteBlog = async (id: string, title: string) => {
+    if (!requireWriteAuth()) return;
+    if (!window.confirm(`Delete blog post "${title}"?`)) return;
+    try {
+      await adminApiClient.deleteBlog(id);
+      setBlogs((prev) => prev.filter((b) => b.id !== id));
+      showToast(`Deleted "${title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to delete"}`);
+    }
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // PROJECT / CASE STUDY HANDLERS
+  // ════════════════════════════════════════════════════════════════════════
+
+  const handleProjectImageUpload = async (file: File, isEdit = false) => {
+    if (!requireWriteAuth()) return;
+    try {
+      showToast("Uploading project cover to R2...");
+      const { url } = await adminApiClient.uploadMedia(file, "projects");
+      if (isEdit && editingProject) {
+        setEditingProject({ ...editingProject, coverImage: url });
+      } else {
+        setNewProjectForm((prev) => ({ ...prev, coverImage: url }));
+      }
+      showToast("Project cover uploaded!");
+    } catch (err) {
+      showToast(`Upload failed: ${err instanceof Error ? err.message : "Error"}`);
+    }
+  };
+
+  const handleSaveAddProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const statsParsed = newProjectForm.stats.split("\n").map((line) => {
+        const parts = line.split("|").map((p) => p.trim());
+        return { metric: parts[0] || "", label: parts[1] || "", context: parts[2] || "" };
+      });
+      const created = await adminApiClient.createProject({
+        title: newProjectForm.title,
+        slug: newProjectForm.slug,
+        shortTitle: newProjectForm.shortTitle || newProjectForm.title,
+        category: newProjectForm.category,
+        clientName: newProjectForm.clientName,
+        clientType: newProjectForm.clientType,
+        coverImage: newProjectForm.coverImage,
+        timeline: newProjectForm.timeline,
+        status: newProjectForm.status,
+        featuredOnHome: newProjectForm.featuredOnHome,
+        order: newProjectForm.order,
+        problem: {
+          heading: newProjectForm.problemHeading,
+          description: newProjectForm.problemDescription,
+          painPoints: newProjectForm.painPoints
+            .split("\n")
+            .map((p) => p.trim())
+            .filter(Boolean),
+        },
+        solution: {
+          heading: newProjectForm.solutionHeading,
+          description: newProjectForm.solutionDescription,
+          keyDeliverables: newProjectForm.deliverables
+            .split("\n")
+            .map((d) => d.trim())
+            .filter(Boolean),
+        },
+        stack: newProjectForm.stack
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        architecture: {
+          overview: newProjectForm.architectureOverview,
+          flowSteps: [
+            { step: "01", title: "Intake", description: "System processes client inputs." },
+          ],
+        },
+        results: {
+          stats: statsParsed,
+          bullets: newProjectForm.bullets
+            .split("\n")
+            .map((b) => b.trim())
+            .filter(Boolean),
+        },
+        keyFeatures: [
+          {
+            title: "Core Platform",
+            description: "Bespoke solution engineered for speed.",
+            tag: "Core",
+          },
+        ],
+        testimonial: newProjectForm.testimonialQuote
+          ? {
+              quote: newProjectForm.testimonialQuote,
+              author: newProjectForm.testimonialAuthor || null,
+              role: null,
+              organization: newProjectForm.clientName || null,
+            }
+          : null,
       });
 
-      if (isEdit && editingBlog) {
-        setEditingBlog({ ...editingBlog, image: compressed });
-        showToast("Blog banner updated in draft!");
-      } else {
-        setNewBlogForm((prev) => ({ ...prev, image: compressed }));
-        showToast("Blog banner attached!");
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload image";
-      alert(`Error uploading banner: ${msg}`);
+      setProjects((prev) => [...prev, created]);
+      setIsAddProjectOpen(false);
+      showToast(`Created project "${created.title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to create project"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleSaveAddBlog = (e: React.FormEvent) => {
+  const handleSaveEditProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBlogForm.title.trim() || !newBlogForm.excerpt.trim()) {
-      alert("Please provide both a Title and Excerpt.");
-      return;
-    }
-
-    const keywords = newBlogForm.keywords
-      .split(",")
-      .map((k) => k.trim())
-      .filter(Boolean);
-
-    const keyTakeaways = newBlogForm.keyTakeaways
-      .split("\n")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const content = newBlogForm.content
-      .split("\n\n")
-      .map((p) => p.trim())
-      .filter(Boolean);
-
-    addBlog({
-      title: newBlogForm.title.trim(),
-      category: newBlogForm.category,
-      author: newBlogForm.author.trim() || "Tech Agenz Engineering",
-      readTime: newBlogForm.readTime.trim() || "5 min read",
-      excerpt: newBlogForm.excerpt.trim(),
-      image: newBlogForm.image || "/blog-images/ai-software-house-pakistan.webp",
-      keywords: keywords.length > 0 ? keywords : ["Tech Agenz", "Software House"],
-      keyTakeaways: keyTakeaways.length > 0 ? keyTakeaways : ["Comprehensive engineering delivery."],
-      content: content.length > 0 ? content : [newBlogForm.excerpt.trim()],
-    });
-
-    setBlogs(getBlogs());
-    setIsAddBlogOpen(false);
-    setNewBlogForm({
-      title: "",
-      category: "AI & ML",
-      author: "Ali Haider, Founder & AI Engineer",
-      readTime: "5 min read",
-      excerpt: "",
-      image: "",
-      keywords: "AI Software House, Custom Software, Tech Agenz",
-      keyTakeaways: "Rapid delivery cycles\nTailored AI architecture\nEnterprise-grade data security",
-      content: "",
-    });
-    showToast("Blog post published & auto-syncing in background!");
-  };
-
-  const handleSaveEditBlog = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingBlog) return;
-
-    updateBlog(editingBlog.id, {
-      title: editingBlog.title,
-      category: editingBlog.category,
-      author: editingBlog.author,
-      readTime: editingBlog.readTime,
-      excerpt: editingBlog.excerpt,
-      image: editingBlog.image,
-      keywords: editingBlog.keywords,
-      keyTakeaways: editingBlog.keyTakeaways,
-      content: editingBlog.content,
-    });
-
-    setBlogs(getBlogs());
-    setEditingBlog(null);
-    showToast("Blog updated & auto-syncing in background!");
-  };
-
-  const handleDeleteBlog = (id: string, title: string) => {
-    if (window.confirm(`Are you sure you want to delete the blog post "${title}"?`)) {
-      deleteBlog(id);
-      setBlogs(getBlogs());
-      showToast("Blog post deleted & auto-syncing in background.");
+    if (!editingProject || !requireWriteAuth()) return;
+    try {
+      setIsSubmitting(true);
+      const updated = await adminApiClient.updateProject(editingProject.slug, editingProject);
+      setProjects((prev) => prev.map((p) => (p.slug === updated.slug ? updated : p)));
+      setEditingProject(null);
+      showToast(`Updated project "${updated.title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to update project"}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleResetBlogs = () => {
-    if (
-      window.confirm(
-        "Reset all blogs to original defaults? Any custom blog posts will be removed.",
-      )
-    ) {
-      resetBlogs();
-      setBlogs(getBlogs());
-      showToast("Blogs reset to default 12 articles.");
+  const handleDeleteProject = async (slug: string, title: string) => {
+    if (!requireWriteAuth()) return;
+    if (!window.confirm(`Delete case study "${title}" and all its records?`)) return;
+    try {
+      await adminApiClient.deleteProject(slug);
+      setProjects((prev) => prev.filter((p) => p.slug !== slug));
+      showToast(`Deleted "${title}"`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to delete"}`);
     }
   };
 
-  // ==================== SETTINGS & BACKUP HANDLERS ====================
+  // ════════════════════════════════════════════════════════════════════════
+  // ENQUIRY HANDLERS
+  // ════════════════════════════════════════════════════════════════════════
 
-  const handleSaveSettings = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!settingsForm.email.trim() || !settingsForm.password.trim()) {
-      alert("Email and password cannot be empty.");
-      return;
+  const handleUpdateEnquiryStatus = async (id: number, status: string) => {
+    if (!requireWriteAuth()) return;
+    try {
+      const updated = await adminApiClient.updateEnquiryStatus(id, status);
+      setEnquiries((prev) => prev.map((e) => (e.id === id ? updated : e)));
+      // Refresh counts
+      const res = await adminApiClient.listEnquiries(enquiryStatusFilter);
+      setEnquiryCounts(res.counts);
+      showToast(`Enquiry #${id} marked as ${status}`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to update status"}`);
     }
-    updateAuthConfig({
-      email: settingsForm.email.trim(),
-      passwordHash: settingsForm.password.trim(),
-    });
-    showToast("Admin credentials updated successfully!");
   };
 
-  const handleExportBackup = () => {
-    const backup = exportCmsData();
-    const jsonStr = JSON.stringify(backup, null, 2);
-    const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const dateStr = new Date().toISOString().slice(0, 10);
-    link.href = url;
-    link.download = `techagenz-cms-backup-${dateStr}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    showToast("Backup JSON file downloaded!");
+  const handleDeleteEnquiry = async (id: number) => {
+    if (!requireWriteAuth()) return;
+    if (!window.confirm(`Delete enquiry #${id}?`)) return;
+    try {
+      await adminApiClient.deleteEnquiry(id);
+      setEnquiries((prev) => prev.filter((e) => e.id !== id));
+      const res = await adminApiClient.listEnquiries(enquiryStatusFilter);
+      setEnquiryCounts(res.counts);
+      showToast(`Enquiry #${id} deleted`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to delete"}`);
+    }
   };
 
-  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // ════════════════════════════════════════════════════════════════════════
+  // MEDIA HANDLERS
+  // ════════════════════════════════════════════════════════════════════════
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const parsed = JSON.parse(event.target?.result as string);
-        const res = importCmsData(parsed);
-        if (res.success) {
-          setTeamMembers(getTeamMembers());
-          setBlogs(getBlogs());
-          showToast("Data backup successfully restored!");
-        } else {
-          alert(`Import failed: ${res.message}`);
-        }
-      } catch {
-        alert("Invalid JSON file format.");
-      }
-    };
-    reader.readAsText(file);
-    // Reset file input value
-    e.target.value = "";
+  const handleUploadGeneralMedia = async (file: File, folder = "general") => {
+    if (!requireWriteAuth()) return;
+    try {
+      setIsUploadingMedia(true);
+      showToast(`Uploading ${file.name} to R2...`);
+      await adminApiClient.uploadMedia(file, folder);
+      const res = await adminApiClient.listMedia(mediaFolderFilter, mediaSearch);
+      setMediaAssets(res.assets);
+      showToast("Asset uploaded and cataloged!");
+    } catch (err) {
+      showToast(`Upload failed: ${err instanceof Error ? err.message : "Error"}`);
+    } finally {
+      setIsUploadingMedia(false);
+    }
   };
+
+  const handleDeleteMedia = async (path: string) => {
+    if (!requireWriteAuth()) return;
+    if (!window.confirm(`Delete asset "${path}" from R2?`)) return;
+    try {
+      await adminApiClient.deleteMedia(path);
+      setMediaAssets((prev) => prev.filter((a) => a.path !== path));
+      showToast(`Deleted ${path}`);
+    } catch (err) {
+      showToast(`Error: ${err instanceof Error ? err.message : "Failed to delete"}`);
+    }
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // FILTERING
+  // ════════════════════════════════════════════════════════════════════════
 
   const filteredBlogs = blogs.filter((b) => {
     const q = blogSearch.toLowerCase().trim();
@@ -527,6 +709,28 @@ function AdminDashboardPage() {
       b.category.toLowerCase().includes(q) ||
       b.author.toLowerCase().includes(q)
     );
+  });
+
+  const filteredProjects = projects.filter((p) => {
+    const q = projectSearch.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      p.title.toLowerCase().includes(q) ||
+      p.clientName.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  });
+
+  const filteredMedia = mediaAssets.filter((a) => {
+    const matchesFolder =
+      mediaFolderFilter === "all" ||
+      a.path.startsWith(`${mediaFolderFilter}/`) ||
+      a.entityType === mediaFolderFilter;
+    const matchesSearch =
+      !mediaSearch ||
+      a.fileName.toLowerCase().includes(mediaSearch.toLowerCase()) ||
+      a.path.toLowerCase().includes(mediaSearch.toLowerCase());
+    return matchesFolder && matchesSearch;
   });
 
   return (
@@ -554,82 +758,53 @@ function AdminDashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-white/10">
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400">
-                <Shield className="h-3 w-3" />
-                <span>Admin Console</span>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium ${
+                  adminApiAccessState === "authorized"
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                    : "border-cyan-500/30 bg-cyan-500/10 text-cyan-400"
+                }`}
+              >
+                <ShieldCheck className="h-3 w-3" />
+                <span>
+                  {adminApiAccessState === "authorized"
+                    ? "Verified Administrator"
+                    : "Content Preview Mode"}
+                </span>
               </span>
-              <span className="text-xs text-slate-400">
-                Signed in as <strong className="text-white">{session?.email || "Team"}</strong>
-              </span>
+              {adminEmail && (
+                <span className="text-xs text-slate-400">
+                  User: <strong className="text-cyan-300">{adminEmail}</strong>
+                </span>
+              )}
             </div>
             <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Tech Agenz Website Manager
+              Tech Agenz Admin Console
             </h1>
             <p className="text-sm text-slate-400 mt-1">
-              Directly edit and publish blogs, update team member names and photos without writing code.
+              Live Cloudflare D1 database and R2 storage management console.
             </p>
-            {gitHubConfig.token ? (
-              <div className="flex items-center gap-2 mt-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Auto-Sync Active: Changes are automatically saved & synced to all devices in background</span>
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("settings")}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 text-[11px] font-medium text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
-                >
-                  <AlertTriangle className="h-3 w-3" />
-                  <span>Connect GitHub in Settings once to enable permanent auto-sync on all devices</span>
-                </button>
-              </div>
-            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* GitHub Sync Status Badge */}
-            {isSyncing ? (
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300">
-                <RefreshCw className="h-3.5 w-3.5 animate-spin text-cyan-400" />
-                <span>Syncing to GitHub...</span>
-              </span>
-            ) : gitHubConfig.token ? (
-              <a
-                href={gitHubConfig.lastCommitUrl || `https://github.com/${gitHubConfig.repoOwner}/${gitHubConfig.repoName}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20 transition cursor-pointer"
-                title={`Connected to ${gitHubConfig.repoOwner}/${gitHubConfig.repoName} (${gitHubConfig.branch}). Click to view on GitHub.`}
-              >
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <Github className="h-3.5 w-3.5" />
-                <span>GitHub Synced {gitHubConfig.lastCommitSha ? `(${gitHubConfig.lastCommitSha})` : ""}</span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setActiveTab("settings")}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-300 hover:bg-amber-500/20 transition cursor-pointer"
-                title="Click to set up GitHub Auto-Sync token"
-              >
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
-                <span>Setup GitHub Sync</span>
-              </button>
-            )}
-
-            {/* Quick Sync Button */}
             <button
               type="button"
-              onClick={handleManualGitHubSync}
-              disabled={isSyncing}
-              className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/40 bg-cyan-500/20 px-3.5 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/30 transition disabled:opacity-50 cursor-pointer shadow-[0_0_15px_rgba(34,211,238,0.15)]"
-              title="Manual Sync: Changes already auto-sync automatically. Click to force an immediate push."
+              onClick={() => {
+                const backup = exportCmsData();
+                const jsonStr = JSON.stringify(backup, null, 2);
+                const blob = new Blob([jsonStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `techagenz-cms-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                showToast("Backup JSON file exported!");
+              }}
+              className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-3.5 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin text-cyan-400" : ""}`} />
-              <span>{isSyncing ? "Syncing..." : "Sync Now"}</span>
+              <Download className="h-3.5 w-3.5" />
+              <span>Export Backup</span>
             </button>
 
             <Link
@@ -640,23 +815,59 @@ function AdminDashboardPage() {
               <span>View Site</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
+
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/20 transition cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-300 hover:border-cyan-500/40 hover:text-white transition cursor-pointer"
             >
-              <LogOut className="h-3.5 w-3.5" />
-              <span>Log Out</span>
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Access guidance</span>
             </button>
           </div>
         </div>
 
-        {/* Tab switcher */}
+        {/* Security & Access Banner */}
+        <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/70 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+                Cloudflare Access & Zero-Trust Session
+              </p>
+              <p className="mt-1 text-sm text-slate-300 font-mono">
+                {adminApiAccessState === "authorized"
+                  ? "✓ Active administrator session. Full D1 and R2 write access enabled."
+                  : adminApiAccessState === "authorized-read-only"
+                    ? "✓ Authorized Access token detected. Admin CMS operates in read-only mode."
+                    : adminApiAccessState === "session-required"
+                      ? "⚠ Cloudflare Access session required to perform database writes."
+                      : adminApiAccessState === "forbidden"
+                        ? "✕ Forbidden: Your account is not on the administrator allow-list."
+                        : "Checking session..."}
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              {adminApiClient.accessUrl && (
+                <button
+                  type="button"
+                  onClick={() => setAdminApiCheckVersion((v) => v + 1)}
+                  disabled={adminApiAccessState === "checking"}
+                  className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  <span>Verify API Session</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
         <div className="mt-8 flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab("team")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === "team"
                 ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
                 : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -664,11 +875,7 @@ function AdminDashboardPage() {
           >
             <Users className="h-4 w-4" />
             <span>Team Members</span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs ${
-                activeTab === "team" ? "bg-slate-950/30 text-slate-950" : "bg-white/10 text-slate-300"
-              }`}
-            >
+            <span className="rounded-full px-2 py-0.5 text-[10px] bg-slate-950/30">
               {teamMembers.length}
             </span>
           </button>
@@ -676,7 +883,7 @@ function AdminDashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab("blogs")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === "blogs"
                 ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
                 : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -684,94 +891,123 @@ function AdminDashboardPage() {
           >
             <FileText className="h-4 w-4" />
             <span>Blog Articles</span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs ${
-                activeTab === "blogs" ? "bg-slate-950/30 text-slate-950" : "bg-white/10 text-slate-300"
-              }`}
-            >
+            <span className="rounded-full px-2 py-0.5 text-[10px] bg-slate-950/30">
               {blogs.length}
             </span>
           </button>
 
           <button
             type="button"
+            onClick={() => setActiveTab("projects")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
+              activeTab === "projects"
+                ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Briefcase className="h-4 w-4" />
+            <span>Case Studies</span>
+            <span className="rounded-full px-2 py-0.5 text-[10px] bg-slate-950/30">
+              {projects.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("enquiries")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
+              activeTab === "enquiries"
+                ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Mail className="h-4 w-4" />
+            <span>Enquiries</span>
+            {enquiryCounts.new > 0 && (
+              <span className="rounded-full px-2 py-0.5 text-[10px] bg-emerald-400 text-slate-950 font-bold">
+                {enquiryCounts.new} new
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("media")}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
+              activeTab === "media"
+                ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <ImageIcon className="h-4 w-4" />
+            <span>Media Library (R2)</span>
+            <span className="rounded-full px-2 py-0.5 text-[10px] bg-slate-950/30">
+              {mediaAssets.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab("settings")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer shrink-0 ${
               activeTab === "settings"
                 ? "bg-cyan-500 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
                 : "text-slate-400 hover:text-white hover:bg-white/5"
             }`}
           >
             <Settings className="h-4 w-4" />
-            <span>Settings & Backup</span>
+            <span>System Status</span>
           </button>
         </div>
 
-        {/* ======================================================== */}
-        {/* TAB 1: TEAM MEMBERS MANAGEMENT */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 1: TEAM MEMBERS                                          */}
+        {/* ════════════════════════════════════════════════════════════ */}
         {activeTab === "team" && (
           <div className="mt-8 space-y-6">
-            {/* Action Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950/60 border border-white/10 rounded-2xl p-4 sm:p-5">
               <div>
                 <h2 className="text-lg font-bold text-white">Team Directory</h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Changes made here update the homepage and About page instantly.
+                  Synchronized with Cloudflare D1{" "}
+                  <code className="text-cyan-300">team_members</code>.
                 </p>
               </div>
 
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={handleResetTeam}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-3.5 py-2 text-xs font-medium text-slate-400 hover:text-white hover:border-white/20 transition cursor-pointer"
-                  title="Reset team list to original defaults"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span>Reset Defaults</span>
-                </button>
-
-                <button
-                  type="button"
                   onClick={() => setIsAddMemberOpen(true)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 transition cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
-                  <span>Add New Member</span>
+                  <span>Add Team Member</span>
                 </button>
               </div>
             </div>
 
-            {/* Team Members Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {teamMembers.map((member) => (
                 <div
                   key={member.id}
                   className="group relative rounded-2xl border border-white/10 bg-slate-950/80 p-5 shadow-lg backdrop-blur-sm transition hover:border-cyan-500/40"
-                  style={{
-                    boxShadow: `0 0 25px ${member.borderColor || "#22D3EE"}15`,
-                  }}
+                  style={{ boxShadow: `0 0 25px ${member.borderColor || "#22D3EE"}15` }}
                 >
-                  {/* Member Card Header */}
                   <div className="flex items-start gap-4">
-                    {/* Member Photo with quick upload overlay */}
                     <div className="relative shrink-0 group/photo">
                       <div
                         className="h-20 w-20 rounded-2xl overflow-hidden border-2 bg-slate-900"
                         style={{ borderColor: member.borderColor || "#22D3EE" }}
                       >
                         <img
-                          src={member.image}
-                          alt={member.title}
+                          src={member.image || AVATAR_PLACEHOLDER}
+                          alt={member.name}
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
-
-                      {/* Quick upload button over image */}
                       <label
                         className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl bg-black/70 opacity-0 group-hover/photo:opacity-100 transition cursor-pointer text-[10px] text-cyan-300 font-medium"
-                        title="Click to replace this picture"
+                        title="Upload new photo to R2"
                       >
                         <Camera className="h-4 w-4 mb-0.5" />
                         <span>Change</span>
@@ -787,38 +1023,21 @@ function AdminDashboardPage() {
                       </label>
                     </div>
 
-                    {/* Member Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-white truncate">{member.title}</h3>
+                        <h3 className="text-base font-bold text-white truncate">{member.name}</h3>
                         <span
                           className="h-2.5 w-2.5 rounded-full shrink-0"
                           style={{ backgroundColor: member.borderColor || "#22D3EE" }}
-                          title="Accent glow color"
                         />
                       </div>
-                      <p className="text-xs text-cyan-400 mt-0.5 truncate">{member.subtitle}</p>
-
-                      <div className="mt-3 flex items-center gap-2">
-                        {/* Change Photo label button */}
-                        <label className="inline-flex items-center gap-1 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-medium text-cyan-300 hover:bg-cyan-500/20 transition cursor-pointer">
-                          <Upload className="h-3 w-3" />
-                          <span>Upload Picture</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleMemberImageUpload(file, member.id);
-                            }}
-                          />
-                        </label>
-                      </div>
+                      <p className="text-xs text-cyan-400 mt-0.5 truncate">{member.role}</p>
+                      <p className="text-[11px] text-slate-500 mt-1 font-mono">
+                        Order: {member.sortOrder} | ID: {member.id}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Actions Bar */}
                   <div className="mt-5 pt-4 border-t border-white/5 flex items-center justify-between">
                     <button
                       type="button"
@@ -826,14 +1045,13 @@ function AdminDashboardPage() {
                       className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-cyan-500/40 hover:text-white transition cursor-pointer"
                     >
                       <Edit2 className="h-3 w-3" />
-                      <span>Edit Name & Role</span>
+                      <span>Edit Member</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => handleDeleteMember(member.id, member.title)}
+                      onClick={() => handleDeleteMember(member.id, member.name)}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-rose-500/20 px-2.5 py-1.5 text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
-                      title="Delete member"
                     >
                       <Trash2 className="h-3 w-3" />
                       <span>Delete</span>
@@ -845,12 +1063,11 @@ function AdminDashboardPage() {
           </div>
         )}
 
-        {/* ======================================================== */}
-        {/* TAB 2: BLOG POSTS MANAGEMENT */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 2: BLOG POSTS                                            */}
+        {/* ════════════════════════════════════════════════════════════ */}
         {activeTab === "blogs" && (
           <div className="mt-8 space-y-6">
-            {/* Action Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950/60 border border-white/10 rounded-2xl p-4 sm:p-5">
               <div className="flex-1 max-w-md">
                 <div className="relative">
@@ -868,16 +1085,6 @@ function AdminDashboardPage() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={handleResetBlogs}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-3.5 py-2 text-xs font-medium text-slate-400 hover:text-white hover:border-white/20 transition cursor-pointer"
-                  title="Reset to 12 original blog posts"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span>Reset Defaults</span>
-                </button>
-
-                <button
-                  type="button"
                   onClick={() => setIsAddBlogOpen(true)}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 transition cursor-pointer"
                 >
@@ -887,7 +1094,6 @@ function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Blogs List */}
             <div className="space-y-4">
               {filteredBlogs.map((post) => (
                 <div
@@ -896,7 +1102,7 @@ function AdminDashboardPage() {
                 >
                   <div className="flex items-start gap-4 flex-1 min-w-0">
                     <img
-                      src={post.image}
+                      src={post.image || "/blog-images/default.webp"}
                       alt={post.title}
                       className="h-20 w-28 shrink-0 rounded-xl object-cover border border-white/10 bg-slate-900"
                     />
@@ -905,6 +1111,11 @@ function AdminDashboardPage() {
                         <span className="rounded-full bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 text-[10px] font-medium text-cyan-400">
                           {post.category}
                         </span>
+                        {post.featured && (
+                          <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-400">
+                            ★ Featured
+                          </span>
+                        )}
                         <span className="text-[11px] text-slate-500">{post.date}</span>
                         <span className="text-[11px] text-slate-500">• {post.readTime}</span>
                       </div>
@@ -912,7 +1123,16 @@ function AdminDashboardPage() {
                         {post.title}
                       </h3>
                       <p className="text-xs text-slate-400 line-clamp-2 mt-1">{post.excerpt}</p>
-                      <p className="text-[11px] text-slate-500 mt-1">Author: {post.author}</p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {post.keywords?.map((k, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] font-mono bg-white/5 text-slate-400 px-1.5 py-0.5 rounded"
+                          >
+                            #{k}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
@@ -951,369 +1171,427 @@ function AdminDashboardPage() {
           </div>
         )}
 
-        {/* ======================================================== */}
-        {/* TAB 3: SETTINGS & BACKUP */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 3: CASE STUDIES (PROJECTS)                               */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {activeTab === "projects" && (
+          <div className="mt-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950/60 border border-white/10 rounded-2xl p-4 sm:p-5">
+              <div className="flex-1 max-w-md">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                  <input
+                    type="text"
+                    value={projectSearch}
+                    onChange={(e) => setProjectSearch(e.target.value)}
+                    placeholder="Search projects by title, client, category..."
+                    className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAddProjectOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 transition cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add Case Study</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {filteredProjects.map((proj) => (
+                <div
+                  key={proj.slug}
+                  className="flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/80 p-5 backdrop-blur-sm transition hover:border-cyan-500/40"
+                >
+                  <div className="flex items-start gap-4 flex-1 min-w-0">
+                    <img
+                      src={proj.coverImage || "/assets/placeholder-project.webp"}
+                      alt={proj.title}
+                      className="h-20 w-28 shrink-0 rounded-xl object-cover border border-white/10 bg-slate-900"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="rounded-full bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 text-[10px] font-medium text-cyan-400">
+                          {proj.category}
+                        </span>
+                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+                          {proj.status}
+                        </span>
+                        <span className="text-[11px] text-slate-500">
+                          Client: {proj.clientName}
+                        </span>
+                      </div>
+                      <h3 className="text-sm sm:text-base font-bold text-white line-clamp-1">
+                        {proj.title}
+                      </h3>
+                      <p className="text-xs text-slate-400 line-clamp-2 mt-1">
+                        {proj.problem?.description}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {proj.tags?.map((t, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[10px] font-mono bg-white/5 text-slate-400 px-1.5 py-0.5 rounded"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0 border-t md:border-t-0 pt-3 md:pt-0 border-white/5">
+                    <Link
+                      to="/work/$slug"
+                      params={{ slug: proj.slug }}
+                      target="_blank"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:border-white/20 transition"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      <span>View</span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditingProject(proj)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition cursor-pointer"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteProject(proj.slug, proj.title)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-400 hover:bg-rose-500/20 transition cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 4: ENQUIRIES INBOX                                       */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {activeTab === "enquiries" && (
+          <div className="mt-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950/60 border border-white/10 rounded-2xl p-4 sm:p-5">
+              <div>
+                <h2 className="text-lg font-bold text-white">Client Enquiries Inbox</h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Submissions captured from public forms with Turnstile verification.
+                </p>
+              </div>
+
+              {/* Status Filter Tabs */}
+              <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/90 border border-white/10 rounded-xl p-1">
+                {(["all", "new", "read", "replied", "archived"] as const).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={async () => {
+                      setEnquiryStatusFilter(st);
+                      const res = await adminApiClient.listEnquiries(st);
+                      setEnquiries(res.enquiries);
+                      setEnquiryCounts(res.counts);
+                    }}
+                    className={`rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition cursor-pointer ${
+                      enquiryStatusFilter === st
+                        ? "bg-cyan-500 text-slate-950 font-bold"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {st}
+                    {st !== "all" && (
+                      <span className="ml-1.5 text-[10px] opacity-75">({enquiryCounts[st]})</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {enquiries.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-12 text-center text-slate-400">
+                  <Mail className="h-8 w-8 mx-auto text-slate-600 mb-2" />
+                  <p className="text-sm">No enquiries found in this category.</p>
+                </div>
+              ) : (
+                enquiries.map((enq) => (
+                  <div
+                    key={enq.id}
+                    className="rounded-2xl border border-white/10 bg-slate-950/80 p-5 backdrop-blur-sm transition hover:border-cyan-500/40"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-white/5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-base">{enq.name}</span>
+                        <a
+                          href={`mailto:${enq.email}`}
+                          className="text-xs text-cyan-400 hover:underline"
+                        >
+                          {enq.email}
+                        </a>
+                        {enq.phone && <span className="text-xs text-slate-400">• {enq.phone}</span>}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-slate-500">{enq.created_at}</span>
+                        <select
+                          value={enq.status}
+                          onChange={(e) => handleUpdateEnquiryStatus(enq.id, e.target.value)}
+                          className={`rounded-lg px-2.5 py-1 text-xs font-medium border outline-none cursor-pointer ${
+                            enq.status === "new"
+                              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                              : enq.status === "read"
+                                ? "border-cyan-500/40 bg-cyan-500/10 text-cyan-400"
+                                : enq.status === "replied"
+                                  ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                                  : "border-slate-500/40 bg-slate-500/10 text-slate-400"
+                          }`}
+                        >
+                          <option value="new">New</option>
+                          <option value="read">Read</option>
+                          <option value="replied">Replied</option>
+                          <option value="archived">Archived</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteEnquiry(enq.id)}
+                          className="rounded-lg p-1.5 text-slate-500 hover:text-rose-400 transition cursor-pointer"
+                          title="Delete enquiry"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-400">
+                      {enq.company && (
+                        <span>
+                          Company: <strong className="text-white">{enq.company}</strong>
+                        </span>
+                      )}
+                      {enq.service && (
+                        <span>
+                          Service: <strong className="text-cyan-300">{enq.service}</strong>
+                        </span>
+                      )}
+                      {enq.budget && (
+                        <span>
+                          Budget: <strong className="text-emerald-300">{enq.budget}</strong>
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="mt-3 text-xs sm:text-sm text-slate-200 bg-slate-900/60 p-3 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed">
+                      {enq.message}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 5: MEDIA ASSETS LIBRARY (R2)                             */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {activeTab === "media" && (
+          <div className="mt-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950/60 border border-white/10 rounded-2xl p-4 sm:p-5">
+              <div>
+                <h2 className="text-lg font-bold text-white">R2 Media Assets</h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Stored in bucket <code className="text-cyan-300">techagenz-dev-assets</code> and
+                  cataloged in D1.
+                </p>
+              </div>
+
+              {/* Upload Drop Button */}
+              <label className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 transition cursor-pointer">
+                <Upload className="h-4 w-4" />
+                <span>{isUploadingMedia ? "Uploading..." : "Upload Asset to R2"}</span>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  disabled={isUploadingMedia}
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file)
+                      handleUploadGeneralMedia(
+                        file,
+                        mediaFolderFilter === "all" ? "general" : mediaFolderFilter,
+                      );
+                  }}
+                />
+              </label>
+            </div>
+
+            {/* Folder Tabs & Search */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {(["all", "team", "blogs", "projects", "general"] as const).map((folder) => (
+                  <button
+                    key={folder}
+                    type="button"
+                    onClick={() => setMediaFolderFilter(folder)}
+                    className={`rounded-xl px-3.5 py-1.5 text-xs font-medium capitalize transition cursor-pointer ${
+                      mediaFolderFilter === folder
+                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                        : "bg-slate-900/80 text-slate-400 border border-white/5 hover:text-white"
+                    }`}
+                  >
+                    {folder}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative w-full sm:w-64">
+                <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  value={mediaSearch}
+                  onChange={(e) => setMediaSearch(e.target.value)}
+                  placeholder="Filter media files..."
+                  className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-1.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                />
+              </div>
+            </div>
+
+            {/* Media Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {filteredMedia.map((asset) => (
+                <div
+                  key={asset.path}
+                  className="group relative rounded-2xl border border-white/10 bg-slate-950/80 p-2.5 backdrop-blur-sm transition hover:border-cyan-500/40 flex flex-col justify-between"
+                >
+                  <div className="h-28 w-full rounded-xl overflow-hidden bg-slate-900 relative">
+                    <img
+                      src={asset.url}
+                      alt={asset.fileName}
+                      className="h-full w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(asset.url);
+                        showToast(`Copied URL: ${asset.url}`);
+                      }}
+                      className="absolute top-2 right-2 rounded-lg bg-black/60 p-1 text-slate-300 hover:text-white transition"
+                      title="Copy URL"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </button>
+                  </div>
+
+                  <div className="mt-2 text-[11px]">
+                    <p className="font-semibold text-white truncate" title={asset.fileName}>
+                      {asset.fileName}
+                    </p>
+                    <p className="text-slate-500 font-mono text-[10px] truncate">{asset.path}</p>
+                    {asset.sizeBytes && (
+                      <p className="text-[10px] text-slate-400">
+                        {(asset.sizeBytes / 1024).toFixed(1)} KB
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteMedia(asset.path)}
+                    className="mt-2 flex items-center justify-center gap-1 w-full rounded-lg border border-rose-500/20 py-1 text-[10px] text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* TAB 6: SETTINGS & SYSTEM STATUS                              */}
+        {/* ════════════════════════════════════════════════════════════ */}
         {activeTab === "settings" && (
           <div className="mt-8 space-y-8">
-            {/* GitHub Auto-Sync & Deployment Card */}
             <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-b from-slate-950/90 to-slate-900/90 p-6 sm:p-8 backdrop-blur-sm shadow-[0_0_30px_rgba(34,211,238,0.1)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
-                    <Github className="h-5 w-5" />
+                    <Shield className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-bold text-white">GitHub Auto-Sync & Global Deployment</h2>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 text-[11px] font-semibold text-cyan-400">
-                        <GitBranch className="h-3 w-3" />
-                        <span>{gitHubConfig.branch}</span>
-                      </span>
-                    </div>
+                    <h2 className="text-lg font-bold text-white">
+                      Cloudflare Production Architecture
+                    </h2>
                     <p className="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">
-                      Automatically commits changes to your repository (<strong className="text-white">{gitHubConfig.repoOwner}/{gitHubConfig.repoName}</strong>).
-                      When committed, Vercel automatically deploys your updates so they are immediately live for every visitor across all browsers.
+                      Full-stack edge architecture with Worker routing, D1 relational tables, and R2
+                      object storage.
                     </p>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleManualGitHubSync}
-                    disabled={isSyncing}
-                    className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 transition cursor-pointer shadow-[0_0_15px_rgba(34,211,238,0.3)] disabled:opacity-50"
-                  >
-                    <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`} />
-                    <span>{isSyncing ? "Syncing..." : "Sync to GitHub Now"}</span>
-                  </button>
-                </div>
               </div>
 
-              {/* Status Banner */}
-              <div className="mt-6">
-                {gitHubConfig.token ? (
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs text-emerald-300 flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-2.5">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                      <div>
-                        <div className="font-semibold text-white">
-                          Connected to GitHub ({gitHubConfig.repoOwner}/{gitHubConfig.repoName})
-                        </div>
-                        <div className="text-slate-300 mt-0.5">
-                          Auto-Sync is <strong className="text-emerald-300">{gitHubConfig.autoSync ? "ENABLED" : "PAUSED"}</strong>.
-                          Every blog or team change commits directly to branch <code className="text-cyan-300 bg-black/40 px-1 py-0.5 rounded">{gitHubConfig.branch}</code>.
-                        </div>
-                        {gitHubConfig.lastSyncTime && (
-                          <div className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-2">
-                            <span>Last synced: {new Date(gitHubConfig.lastSyncTime).toLocaleString()}</span>
-                            {gitHubConfig.lastCommitSha && (
-                              <a
-                                href={gitHubConfig.lastCommitUrl || `https://github.com/${gitHubConfig.repoOwner}/${gitHubConfig.repoName}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-cyan-400 hover:underline flex items-center gap-1 font-mono"
-                              >
-                                <span>Commit {gitHubConfig.lastCommitSha}</span>
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-4">
+                  <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs mb-1">
+                    <Server className="h-4 w-4" />
+                    <span>Cloudflare Worker</span>
                   </div>
-                ) : (
-                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-200">
-                    <div className="flex items-start gap-2.5">
-                      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
-                      <div>
-                        <div className="font-semibold text-white">
-                          GitHub Token Needed for Cloud Auto-Sync
-                        </div>
-                        <div className="text-slate-300 mt-0.5">
-                          To have your changes automatically update the live website on all devices and preserve data in Git, enter your GitHub Personal Access Token below.
-                        </div>
-                      </div>
-                    </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Worker: <code className="text-cyan-300">techagenz-api-dev</code>
+                  </p>
+                  <span className="inline-block mt-2 text-[10px] text-emerald-400 font-mono bg-emerald-400/10 px-2 py-0.5 rounded">
+                    Active on api-dev.techagenz.com
+                  </span>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-4">
+                  <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs mb-1">
+                    <Database className="h-4 w-4" />
+                    <span>D1 Relational Database</span>
                   </div>
-                )}
-              </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Database: <code className="text-cyan-300">techagenz-dev-db</code>
+                  </p>
+                  <span className="inline-block mt-2 text-[10px] text-emerald-400 font-mono bg-emerald-400/10 px-2 py-0.5 rounded">
+                    Schemas Active (0001, 0002, 0003)
+                  </span>
+                </div>
 
-              {/* Form Settings */}
-              <form onSubmit={handleSaveGitHubSettings} className="mt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Token Field */}
-                  <div className="md:col-span-2">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                        GitHub Personal Access Token (PAT)
-                      </label>
-                      <a
-                        href="https://github.com/settings/tokens/new?scopes=repo&description=TechAgenz+CMS+Sync"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
-                      >
-                        <span>Generate Token on GitHub</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type={showToken ? "text" : "password"}
-                        placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                        value={gitHubConfig.token}
-                        onChange={(e) =>
-                          setGitHubConfig({ ...gitHubConfig, token: e.target.value.trim() })
-                        }
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 pl-3.5 pr-20 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowToken(!showToken)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-slate-400 hover:text-white text-xs flex items-center gap-1 cursor-pointer"
-                      >
-                        {showToken ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                        <span className="text-[10px]">{showToken ? "Hide" : "Show"}</span>
-                      </button>
-                    </div>
+                <div className="rounded-xl border border-white/10 bg-slate-900/60 p-4">
+                  <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs mb-1">
+                    <ImageIcon className="h-4 w-4" />
+                    <span>R2 Object Storage</span>
                   </div>
-
-                  {/* Branch */}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Target Branch
-                    </label>
-                    <input
-                      type="text"
-                      value={gitHubConfig.branch}
-                      onChange={(e) =>
-                        setGitHubConfig({ ...gitHubConfig, branch: e.target.value.trim() })
-                      }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
-                    />
-                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Bucket: <code className="text-cyan-300">techagenz-dev-assets</code>
+                  </p>
+                  <span className="inline-block mt-2 text-[10px] text-emerald-400 font-mono bg-emerald-400/10 px-2 py-0.5 rounded">
+                    Public Reads + Authenticated Writes
+                  </span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      GitHub Repository Owner
-                    </label>
-                    <input
-                      type="text"
-                      value={gitHubConfig.repoOwner}
-                      onChange={(e) =>
-                        setGitHubConfig({ ...gitHubConfig, repoOwner: e.target.value.trim() })
-                      }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Repository Name
-                    </label>
-                    <input
-                      type="text"
-                      value={gitHubConfig.repoName}
-                      onChange={(e) =>
-                        setGitHubConfig({ ...gitHubConfig, repoName: e.target.value.trim() })
-                      }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
-                    />
-                  </div>
-                </div>
-
-                {/* AutoSync Checkbox & Actions */}
-                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/10">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={gitHubConfig.autoSync}
-                      onChange={(e) =>
-                        setGitHubConfig({ ...gitHubConfig, autoSync: e.target.checked })
-                      }
-                      className="h-4 w-4 rounded border-white/20 bg-slate-900 text-cyan-500 accent-cyan-400"
-                    />
-                    <span className="text-xs text-slate-300">
-                      Enable Auto-Sync (Automatically push changes on every save, add, or delete)
-                    </span>
-                  </label>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={handleTestGitHubConnection}
-                      disabled={isTestingGitHub}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white hover:border-cyan-500/40 transition cursor-pointer disabled:opacity-50"
-                    >
-                      {isTestingGitHub ? (
-                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <Key className="h-3.5 w-3.5 text-cyan-400" />
-                      )}
-                      <span>{isTestingGitHub ? "Testing..." : "Test Connection"}</span>
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 py-2.5 px-5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 transition cursor-pointer"
-                    >
-                      <Check className="h-4 w-4" />
-                      <span>Save GitHub Settings</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Test Result Message */}
-                {gitTestResult && (
-                  <div
-                    className={`rounded-xl p-3 text-xs flex items-center gap-2 ${
-                      gitTestResult.success
-                        ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
-                        : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
-                    }`}
-                  >
-                    {gitTestResult.success ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
-                    )}
-                    <span>{gitTestResult.message || gitTestResult.error || gitTestResult.warning}</span>
-                  </div>
-                )}
-              </form>
-
-              {/* Instructions Guide */}
-              <div className="mt-6 rounded-xl border border-white/5 bg-slate-900/60 p-4 text-xs text-slate-400">
-                <div className="font-semibold text-white mb-1.5 flex items-center gap-2">
-                  <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-                  <span>How GitHub Auto-Sync keeps your data permanently safe everywhere:</span>
-                </div>
-                <ol className="list-decimal list-inside space-y-1 text-slate-400 text-[11px] leading-relaxed">
-                  <li>
-                    When you post or update a blog or team member, Tech Agenz CMS commits the updated <code className="text-cyan-300">src/data/cms-data.json</code> directly to your GitHub repository.
-                  </li>
-                  <li>
-                    GitHub receives the commit and immediately notifies Vercel to rebuild.
-                  </li>
-                  <li>
-                    Vercel builds and publishes the new version worldwide. Every browser, mobile device, or visitor opening <strong className="text-white">techagenz.com</strong> sees the updated content.
-                  </li>
-                  <li>
-                    Your data is never lost because it is permanently saved in your GitHub Git commit history!
-                  </li>
-                </ol>
-              </div>
-            </div>
-
-            {/* Grid of Credentials & Backup */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Credentials Card */}
-              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6 sm:p-8 backdrop-blur-sm">
-              <div className="flex items-center gap-2.5 mb-2">
-                <Lock className="h-5 w-5 text-cyan-400" />
-                <h2 className="text-lg font-bold text-white">Admin Credentials</h2>
-              </div>
-              <p className="text-xs text-slate-400 mb-6">
-                Change the login email and password used by your team to access this portal.
-              </p>
-
-              <form onSubmit={handleSaveSettings} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                    Login Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={settingsForm.email}
-                    onChange={(e) => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                    Password
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={settingsForm.password}
-                    onChange={(e) => setSettingsForm({ ...settingsForm, password: e.target.value })}
-                    className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-mono"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 py-2.5 px-5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 transition cursor-pointer"
-                >
-                  <Check className="h-4 w-4" />
-                  <span>Save New Credentials</span>
-                </button>
-              </form>
-            </div>
-
-            {/* Backup & Export Card */}
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-6 sm:p-8 backdrop-blur-sm flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2.5 mb-2">
-                  <Download className="h-5 w-5 text-cyan-400" />
-                  <h2 className="text-lg font-bold text-white">Data Backup & Sync</h2>
-                </div>
-                <p className="text-xs text-slate-400 mb-6 leading-relaxed">
-                  Export all your edited blogs and team members into a single JSON file. You can import this file anytime to restore data or sync across different browsers.
-                </p>
-
-                <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={handleExportBackup}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 py-3 px-4 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 transition cursor-pointer"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span>Download JSON Backup</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => importFileInputRef.current?.click()}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/90 py-3 px-4 text-xs font-semibold text-slate-300 hover:text-white hover:border-white/20 transition cursor-pointer"
-                  >
-                    <Upload className="h-4 w-4" />
-                    <span>Restore / Import JSON Backup</span>
-                  </button>
-                  <input
-                    ref={importFileInputRef}
-                    type="file"
-                    accept=".json,application/json"
-                    className="hidden"
-                    onChange={handleImportBackup}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5 text-xs text-amber-300/80">
-                <div className="flex items-center gap-2 font-medium text-amber-400 mb-1">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  <span>Browser Storage Notice</span>
-                </div>
-                <span>
-                  All content is preserved in browser storage. Download an export after big changes to keep a secure permanent copy.
-                </span>
               </div>
             </div>
           </div>
-        </div>
         )}
 
-        {/* ======================================================== */}
-        {/* MODAL: ADD NEW TEAM MEMBER */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* MODAL: ADD TEAM MEMBER                                       */}
+        {/* ════════════════════════════════════════════════════════════ */}
         <AnimatePresence>
           {isAddMemberOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -1321,7 +1599,7 @@ function AdminDashboardPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl"
+                className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1338,7 +1616,6 @@ function AdminDashboardPage() {
                 </div>
 
                 <form onSubmit={handleSaveAddMember} className="mt-6 space-y-4">
-                  {/* Photo Upload Box */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
                       Profile Picture
@@ -1354,7 +1631,7 @@ function AdminDashboardPage() {
                       <div className="flex-1">
                         <label className="inline-flex items-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 px-3.5 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30 transition cursor-pointer">
                           <Upload className="h-3.5 w-3.5" />
-                          <span>Choose Photo from Device</span>
+                          <span>Choose Photo</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -1365,9 +1642,6 @@ function AdminDashboardPage() {
                             }}
                           />
                         </label>
-                        <p className="text-[11px] text-slate-400 mt-1">
-                          Accepts PNG, JPG, WebP. Automatically optimized.
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -1380,33 +1654,31 @@ function AdminDashboardPage() {
                       type="text"
                       required
                       placeholder="e.g. Hassan Tariq"
-                      value={newMemberForm.title}
-                      onChange={(e) => setNewMemberForm({ ...newMemberForm, title: e.target.value })}
+                      value={newMemberForm.name}
+                      onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Role / Subtitle
+                      Role / Designation
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Senior DevOps & Cloud Architect"
-                      value={newMemberForm.subtitle}
-                      onChange={(e) =>
-                        setNewMemberForm({ ...newMemberForm, subtitle: e.target.value })
-                      }
+                      placeholder="e.g. Senior Security Architect"
+                      value={newMemberForm.role}
+                      onChange={(e) => setNewMemberForm({ ...newMemberForm, role: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                      Card Border Glow Accent
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Accent Color
                     </label>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {COLOR_PRESETS.map((color) => (
                         <button
                           key={color.hex}
@@ -1416,30 +1688,30 @@ function AdminDashboardPage() {
                           }
                           className={`h-7 w-7 rounded-full border-2 transition cursor-pointer ${
                             newMemberForm.borderColor === color.hex
-                              ? "scale-110 border-white ring-2 ring-cyan-400/50"
-                              : "border-transparent opacity-70 hover:opacity-100"
+                              ? "border-white scale-110"
+                              : "border-transparent"
                           }`}
                           style={{ backgroundColor: color.hex }}
-                          title={color.name}
                         />
                       ))}
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setIsAddMemberOpen(false)}
-                      className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white"
+                      className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 cursor-pointer"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition cursor-pointer disabled:opacity-50"
                     >
                       <Check className="h-4 w-4" />
-                      <span>Save & Add Member</span>
+                      <span>{isSubmitting ? "Saving..." : "Save Member"}</span>
                     </button>
                   </div>
                 </form>
@@ -1448,9 +1720,9 @@ function AdminDashboardPage() {
           )}
         </AnimatePresence>
 
-        {/* ======================================================== */}
-        {/* MODAL: EDIT TEAM MEMBER */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* MODAL: EDIT TEAM MEMBER                                      */}
+        {/* ════════════════════════════════════════════════════════════ */}
         <AnimatePresence>
           {editingMember && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -1458,7 +1730,7 @@ function AdminDashboardPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl"
+                className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1475,40 +1747,6 @@ function AdminDashboardPage() {
                 </div>
 
                 <form onSubmit={handleSaveEditMember} className="mt-6 space-y-4">
-                  {/* Photo Edit */}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                      Profile Picture
-                    </label>
-                    <div className="flex items-center gap-4">
-                      <div className="h-20 w-20 rounded-2xl overflow-hidden border-2 border-cyan-400 bg-slate-900 shrink-0">
-                        <img
-                          src={editingMember.image}
-                          alt={editingMember.title}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <label className="inline-flex items-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 px-3.5 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30 transition cursor-pointer">
-                          <Upload className="h-3.5 w-3.5" />
-                          <span>Replace Picture</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleMemberImageUpload(file);
-                            }}
-                          />
-                        </label>
-                        <p className="text-[11px] text-slate-400 mt-1">
-                          Changes take effect immediately on save.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
                       Full Name
@@ -1516,67 +1754,57 @@ function AdminDashboardPage() {
                     <input
                       type="text"
                       required
-                      value={editingMember.title}
-                      onChange={(e) =>
-                        setEditingMember({ ...editingMember, title: e.target.value })
-                      }
+                      value={editingMember.name}
+                      onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Role / Subtitle
+                      Role / Designation
                     </label>
                     <input
                       type="text"
                       required
-                      value={editingMember.subtitle}
-                      onChange={(e) =>
-                        setEditingMember({ ...editingMember, subtitle: e.target.value })
-                      }
+                      value={editingMember.role}
+                      onChange={(e) => setEditingMember({ ...editingMember, role: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                      Border Glow Accent
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Sort Order
                     </label>
-                    <div className="flex items-center gap-2">
-                      {COLOR_PRESETS.map((color) => (
-                        <button
-                          key={color.hex}
-                          type="button"
-                          onClick={() =>
-                            setEditingMember({ ...editingMember, borderColor: color.hex })
-                          }
-                          className={`h-7 w-7 rounded-full border-2 transition cursor-pointer ${
-                            editingMember.borderColor === color.hex
-                              ? "scale-110 border-white ring-2 ring-cyan-400/50"
-                              : "border-transparent opacity-70 hover:opacity-100"
-                          }`}
-                          style={{ backgroundColor: color.hex }}
-                          title={color.name}
-                        />
-                      ))}
-                    </div>
+                    <input
+                      type="number"
+                      value={editingMember.sortOrder}
+                      onChange={(e) =>
+                        setEditingMember({
+                          ...editingMember,
+                          sortOrder: parseInt(e.target.value, 10) || 1,
+                        })
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                    />
                   </div>
 
-                  <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setEditingMember(null)}
-                      className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white"
+                      className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition cursor-pointer disabled:opacity-50"
                     >
                       <Check className="h-4 w-4" />
-                      <span>Save Changes</span>
+                      <span>{isSubmitting ? "Saving..." : "Update Member"}</span>
                     </button>
                   </div>
                 </form>
@@ -1585,22 +1813,22 @@ function AdminDashboardPage() {
           )}
         </AnimatePresence>
 
-        {/* ======================================================== */}
-        {/* MODAL: POST NEW BLOG */}
-        {/* ======================================================== */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* MODAL: ADD BLOG POST                                         */}
+        {/* ════════════════════════════════════════════════════════════ */}
         <AnimatePresence>
           {isAddBlogOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="relative w-full max-w-2xl my-8 rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
+                className="relative w-full max-w-2xl rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
               >
-                <div className="flex items-center justify-between pb-4 border-b border-white/10 sticky top-0 bg-slate-950 z-10">
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
                     <Plus className="h-5 w-5 text-cyan-400" />
-                    <span>Publish New Blog Post</span>
+                    <span>Create New Blog Post</span>
                   </h3>
                   <button
                     type="button"
@@ -1612,40 +1840,6 @@ function AdminDashboardPage() {
                 </div>
 
                 <form onSubmit={handleSaveAddBlog} className="mt-6 space-y-4">
-                  {/* Banner Image Upload Box */}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                      Cover Banner Image
-                    </label>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      {newBlogForm.image && (
-                        <img
-                          src={newBlogForm.image}
-                          alt="Banner preview"
-                          className="h-24 w-40 rounded-xl object-cover border border-cyan-500/40 bg-slate-900"
-                        />
-                      )}
-                      <div className="space-y-2">
-                        <label className="inline-flex items-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 px-4 py-2.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30 transition cursor-pointer">
-                          <Upload className="h-4 w-4" />
-                          <span>Upload Picture (PNG, JPG, WebP)</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleBlogImageUpload(file, false);
-                            }}
-                          />
-                        </label>
-                        <p className="text-[11px] text-slate-400">
-                          Automatically resized and optimized for high-speed page loads.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
                       Article Title
@@ -1653,14 +1847,14 @@ function AdminDashboardPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Next-Gen Enterprise AI Automation in Pakistan"
+                      placeholder="e.g. The Future of AI Agents in Production"
                       value={newBlogForm.title}
                       onChange={(e) => setNewBlogForm({ ...newBlogForm, title: e.target.value })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
                         Category
@@ -1668,18 +1862,15 @@ function AdminDashboardPage() {
                       <select
                         value={newBlogForm.category}
                         onChange={(e) =>
-                          setNewBlogForm({
-                            ...newBlogForm,
-                            category: e.target.value as BlogPost["category"],
-                          })
+                          setNewBlogForm({ ...newBlogForm, category: e.target.value })
                         }
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white outline-none focus:border-cyan-500"
                       >
                         {blogCategories
                           .filter((c) => c !== "All")
-                          .map((c) => (
-                            <option key={c} value={c}>
-                              {c}
+                          .map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
                             </option>
                           ))}
                       </select>
@@ -1693,151 +1884,34 @@ function AdminDashboardPage() {
                         type="text"
                         value={newBlogForm.author}
                         onChange={(e) => setNewBlogForm({ ...newBlogForm, author: e.target.value })}
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white outline-none focus:border-cyan-500"
                       />
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Estimated Read Time
-                      </label>
+                  {/* Cover Image Upload */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Cover Image
+                    </label>
+                    <div className="flex items-center gap-3">
                       <input
                         type="text"
-                        value={newBlogForm.readTime}
-                        onChange={(e) =>
-                          setNewBlogForm({ ...newBlogForm, readTime: e.target.value })
-                        }
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                        value={newBlogForm.image}
+                        onChange={(e) => setNewBlogForm({ ...newBlogForm, image: e.target.value })}
+                        placeholder="/blog-images/cover.webp or R2 URL"
+                        className="flex-1 rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none"
                       />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Short Excerpt / Meta Description
-                    </label>
-                    <textarea
-                      required
-                      rows={2}
-                      placeholder="Brief 2-3 sentence overview for search engines and preview cards..."
-                      value={newBlogForm.excerpt}
-                      onChange={(e) => setNewBlogForm({ ...newBlogForm, excerpt: e.target.value })}
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Key Takeaways (one per line)
-                    </label>
-                    <textarea
-                      rows={3}
-                      placeholder="Key bullet point 1&#10;Key bullet point 2&#10;Key bullet point 3"
-                      value={newBlogForm.keyTakeaways}
-                      onChange={(e) =>
-                        setNewBlogForm({ ...newBlogForm, keyTakeaways: e.target.value })
-                      }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-sans"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Full Article Content (paragraphs separated by blank lines)
-                    </label>
-                    <textarea
-                      rows={6}
-                      required
-                      placeholder="Write your article here..."
-                      value={newBlogForm.content}
-                      onChange={(e) => setNewBlogForm({ ...newBlogForm, content: e.target.value })}
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500 font-sans"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Keywords / SEO Tags (comma-separated)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="AI Software House, Pakistan Tech, ERPNext"
-                      value={newBlogForm.keywords}
-                      onChange={(e) => setNewBlogForm({ ...newBlogForm, keywords: e.target.value })}
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
-                    />
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10 sticky bottom-0 bg-slate-950 py-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAddBlogOpen(false)}
-                      className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:brightness-110 cursor-pointer"
-                    >
-                      <Check className="h-4 w-4" />
-                      <span>Publish Article</span>
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* ======================================================== */}
-        {/* MODAL: EDIT BLOG POST */}
-        {/* ======================================================== */}
-        <AnimatePresence>
-          {editingBlog && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="relative w-full max-w-2xl my-8 rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
-              >
-                <div className="flex items-center justify-between pb-4 border-b border-white/10 sticky top-0 bg-slate-950 z-10">
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Edit2 className="h-5 w-5 text-cyan-400" />
-                    <span>Edit Blog Post</span>
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => setEditingBlog(null)}
-                    className="rounded-lg p-1 text-slate-400 hover:text-white"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSaveEditBlog} className="mt-6 space-y-4">
-                  {/* Banner image change */}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                      Banner Image
-                    </label>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <img
-                        src={editingBlog.image}
-                        alt="Current banner"
-                        className="h-24 w-40 rounded-xl object-cover border border-cyan-500/40 bg-slate-900"
-                      />
-                      <label className="inline-flex items-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 px-4 py-2.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/30 transition cursor-pointer">
-                        <Upload className="h-4 w-4" />
-                        <span>Upload New Picture</span>
+                      <label className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-2.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 cursor-pointer">
+                        <Upload className="h-3.5 w-3.5" />
+                        <span>Upload to R2</span>
                         <input
                           type="file"
                           accept="image/*"
                           className="hidden"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) handleBlogImageUpload(file, true);
+                            if (file) handleBlogImageUpload(file);
                           }}
                         />
                       </label>
@@ -1846,78 +1920,26 @@ function AdminDashboardPage() {
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Title
+                      Short Excerpt
                     </label>
-                    <input
-                      type="text"
-                      required
-                      value={editingBlog.title}
-                      onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+                    <textarea
+                      rows={2}
+                      value={newBlogForm.excerpt}
+                      onChange={(e) => setNewBlogForm({ ...newBlogForm, excerpt: e.target.value })}
+                      placeholder="Brief overview summary..."
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
                     />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Category
-                      </label>
-                      <select
-                        value={editingBlog.category}
-                        onChange={(e) =>
-                          setEditingBlog({
-                            ...editingBlog,
-                            category: e.target.value as BlogPost["category"],
-                          })
-                        }
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
-                      >
-                        {blogCategories
-                          .filter((c) => c !== "All")
-                          .map((c) => (
-                            <option key={c} value={c}>
-                              {c}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Author
-                      </label>
-                      <input
-                        type="text"
-                        value={editingBlog.author}
-                        onChange={(e) => setEditingBlog({ ...editingBlog, author: e.target.value })}
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Read Time
-                      </label>
-                      <input
-                        type="text"
-                        value={editingBlog.readTime}
-                        onChange={(e) =>
-                          setEditingBlog({ ...editingBlog, readTime: e.target.value })
-                        }
-                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
-                      />
-                    </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Excerpt
+                      Keywords (comma-separated)
                     </label>
-                    <textarea
-                      rows={2}
-                      value={editingBlog.excerpt}
-                      onChange={(e) => setEditingBlog({ ...editingBlog, excerpt: e.target.value })}
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
+                    <input
+                      type="text"
+                      value={newBlogForm.keywords}
+                      onChange={(e) => setNewBlogForm({ ...newBlogForm, keywords: e.target.value })}
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
                     />
                   </div>
 
@@ -1927,48 +1949,245 @@ function AdminDashboardPage() {
                     </label>
                     <textarea
                       rows={3}
-                      value={editingBlog.keyTakeaways.join("\n")}
+                      value={newBlogForm.keyTakeaways}
                       onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          keyTakeaways: e.target.value.split("\n").filter(Boolean),
-                        })
+                        setNewBlogForm({ ...newBlogForm, keyTakeaways: e.target.value })
                       }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                      Content (paragraphs separated by blank lines)
+                      Article Content (double line break between paragraphs)
                     </label>
                     <textarea
                       rows={6}
-                      value={editingBlog.content.join("\n\n")}
-                      onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          content: e.target.value.split("\n\n").filter(Boolean),
-                        })
-                      }
-                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none focus:border-cyan-500"
+                      value={newBlogForm.content}
+                      onChange={(e) => setNewBlogForm({ ...newBlogForm, content: e.target.value })}
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none font-mono"
                     />
                   </div>
 
-                  <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10 sticky bottom-0 bg-slate-950 py-2">
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
                     <button
                       type="button"
-                      onClick={() => setEditingBlog(null)}
-                      className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-medium text-slate-300 hover:text-white"
+                      onClick={() => setIsAddBlogOpen(false)}
+                      className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan-400 cursor-pointer"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition cursor-pointer disabled:opacity-50"
                     >
                       <Check className="h-4 w-4" />
-                      <span>Save Changes</span>
+                      <span>{isSubmitting ? "Publishing..." : "Publish Post"}</span>
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* ════════════════════════════════════════════════════════════ */}
+        {/* MODAL: ADD CASE STUDY                                        */}
+        {/* ════════════════════════════════════════════════════════════ */}
+        <AnimatePresence>
+          {isAddProjectOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="relative w-full max-w-3xl rounded-2xl border border-cyan-500/30 bg-slate-950 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <Plus className="h-5 w-5 text-cyan-400" />
+                    <span>Create Case Study</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddProjectOpen(false)}
+                    className="rounded-lg p-1 text-slate-400 hover:text-white"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveAddProject} className="mt-6 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={newProjectForm.title}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, title: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        URL Slug
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. apex-audit-portal"
+                        value={newProjectForm.slug}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, slug: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Client Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={newProjectForm.clientName}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, clientName: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Category
+                      </label>
+                      <input
+                        type="text"
+                        value={newProjectForm.category}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, category: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Timeline
+                      </label>
+                      <input
+                        type="text"
+                        value={newProjectForm.timeline}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, timeline: e.target.value })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cover Image */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Cover Image URL
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={newProjectForm.coverImage}
+                        onChange={(e) =>
+                          setNewProjectForm({ ...newProjectForm, coverImage: e.target.value })
+                        }
+                        placeholder="/assets/cover.webp"
+                        className="flex-1 rounded-xl border border-white/10 bg-slate-900/90 py-2.5 px-3.5 text-xs text-white outline-none"
+                      />
+                      <label className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-2.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 cursor-pointer">
+                        <Upload className="h-3.5 w-3.5" />
+                        <span>Upload to R2</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleProjectImageUpload(file);
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Tech Stack (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={newProjectForm.stack}
+                      onChange={(e) =>
+                        setNewProjectForm({ ...newProjectForm, stack: e.target.value })
+                      }
+                      className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Problem Description
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={newProjectForm.problemDescription}
+                        onChange={(e) =>
+                          setNewProjectForm({
+                            ...newProjectForm,
+                            problemDescription: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Solution Description
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={newProjectForm.solutionDescription}
+                        onChange={(e) =>
+                          setNewProjectForm({
+                            ...newProjectForm,
+                            solutionDescription: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-xl border border-white/10 bg-slate-900/90 py-2 px-3 text-xs text-white outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddProjectOpen(false)}
+                      className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-5 py-2 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition cursor-pointer disabled:opacity-50"
+                    >
+                      <Check className="h-4 w-4" />
+                      <span>{isSubmitting ? "Creating..." : "Save Case Study"}</span>
                     </button>
                   </div>
                 </form>
@@ -1982,5 +2201,3 @@ function AdminDashboardPage() {
     </div>
   );
 }
-
-export default AdminDashboardPage;

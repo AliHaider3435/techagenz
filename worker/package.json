@@ -1,0 +1,23 @@
+{
+  "name": "techagenz-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tech Agenz — Cloudflare Worker backend API",
+  "scripts": {
+    "dev": "wrangler dev --config ./wrangler.toml --env dev --local",
+    "deploy": "wrangler deploy --config ./wrangler.toml --env dev",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test",
+    "db:migrate:local": "wrangler d1 migrations apply techagenz-dev-db --config ./wrangler.toml --env dev --local",
+    "db:migrate:remote": "wrangler d1 migrations apply techagenz-dev-db --config ./wrangler.toml --env dev --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.5.3",
+    "wrangler": "^4.157.0"
+  },
+  "dependencies": {
+    "jose": "6.2.15"
+  }
+}

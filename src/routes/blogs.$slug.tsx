@@ -20,26 +20,19 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import { getBlogPost, getRelatedBlogPosts } from "@/lib/blogs-data";
+import { getRelatedCmsBlogs, publicCms, resolveCmsImageUrl } from "@/lib/public-cms";
 
 export const Route = createFileRoute("/blogs/$slug")({
   loader: async ({ params }) => {
-    let post = getBlogPost(params.slug);
-    if (!post && typeof window !== "undefined") {
-      try {
-        const res = await fetch("/api/cms");
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success && Array.isArray(json.data?.blogs)) {
-            post = json.data.blogs.find((b: { id: string }) => b.id === params.slug);
-          }
-        }
-      } catch {}
-    }
+    const [postResult, blogsResult] = await Promise.all([
+      publicCms.getBlog(params.slug),
+      publicCms.getBlogs(),
+    ]);
+    const post = postResult.data;
     if (!post) {
       throw notFound();
     }
-    return { post };
+    return { post, relatedPosts: getRelatedCmsBlogs(blogsResult.data, post, 3) };
   },
   head: ({ loaderData }) => {
     const post = loaderData?.post;
@@ -50,7 +43,7 @@ export const Route = createFileRoute("/blogs/$slug")({
     }
 
     const postUrl = `https://techagenz.com/blogs/${post.id}`;
-    const imageUrl = `https://techagenz.com${post.image}`;
+    const imageUrl = resolveCmsImageUrl(post.image);
 
     const articleSchema = {
       "@context": "https://schema.org",
@@ -141,8 +134,7 @@ export const Route = createFileRoute("/blogs/$slug")({
 });
 
 function BlogPostDetail() {
-  const { post } = Route.useLoaderData();
-  const relatedPosts = getRelatedBlogPosts(post.id, 3);
+  const { post, relatedPosts } = Route.useLoaderData();
   const [copied, setCopied] = useState(false);
 
   const postUrl =
@@ -322,14 +314,20 @@ function BlogPostDetail() {
             {post.content.map((paragraph, idx) => {
               if (paragraph.startsWith("## ")) {
                 return (
-                  <h2 key={idx} className="font-display text-2xl sm:text-3xl font-bold text-foreground pt-4 pb-1 text-slate-100">
+                  <h2
+                    key={idx}
+                    className="font-display text-2xl sm:text-3xl font-bold text-foreground pt-4 pb-1 text-slate-100"
+                  >
                     {paragraph.replace(/^##\s+/, "")}
                   </h2>
                 );
               }
               if (paragraph.startsWith("### ")) {
                 return (
-                  <h3 key={idx} className="font-display text-lg sm:text-xl font-semibold text-foreground pt-2 text-cyan-300">
+                  <h3
+                    key={idx}
+                    className="font-display text-lg sm:text-xl font-semibold text-foreground pt-2 text-cyan-300"
+                  >
                     {paragraph.replace(/^###\s+/, "")}
                   </h3>
                 );
