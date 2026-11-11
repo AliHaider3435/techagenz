@@ -8,11 +8,7 @@ export interface CaseStudyArchitectureStep {
   description: string;
 }
 
-export type ProjectCategory =
-  | "All"
-  | "Booking Systems & Automation"
-  | "Legal Tech"
-  | "Healthcare";
+export type ProjectCategory = "All" | "Booking Systems & Automation" | "Legal Tech" | "Healthcare";
 
 export interface CaseStudy {
   slug: string;
@@ -21,13 +17,13 @@ export interface CaseStudy {
   formulaSummary: string; // "A [type of system] built with [tech stack] for [client type], achieving [metric 1], [metric 2], [metric 3]."
   clientType: string;
   clientName: string;
-  category: "Booking Systems & Automation" | "Legal Tech" | "Healthcare";
+  category: string;
   coverImage: string;
   tags: string[];
   featuredOnHome: boolean;
   order: number;
   timeline: string;
-  status: "Live in Production";
+  status: string;
 
   // Case study template sections
   problem: {
@@ -52,14 +48,14 @@ export interface CaseStudy {
   keyFeatures: Array<{
     title: string;
     description: string;
-    tag?: string;
+    tag?: string | null;
   }>;
   testimonial?: {
     quote: string;
-    author: string;
-    role: string;
-    organization: string;
-  };
+    author: string | null;
+    role: string | null;
+    organization: string | null;
+  } | null;
 }
 
 export const projectCategories = [
@@ -120,26 +116,45 @@ export const projects: CaseStudy[] = [
         {
           step: "02",
           title: "Atomic Lock & Reservation",
-          description: "Database enforces row-level locking to prevent concurrent booking conflicts.",
+          description:
+            "Database enforces row-level locking to prevent concurrent booking conflicts.",
         },
         {
           step: "03",
           title: "Automated WhatsApp Confirmation",
-          description: "Instant booking confirmation and token number dispatched to patient's phone.",
+          description:
+            "Instant booking confirmation and token number dispatched to patient's phone.",
         },
         {
           step: "04",
           title: "Live Queue Dashboard",
-          description: "Clinic receptionist tracks check-ins and physician views live consultation queue.",
+          description:
+            "Clinic receptionist tracks check-ins and physician views live consultation queue.",
         },
       ],
     },
     results: {
       stats: [
-        { metric: "42%", label: "Wait Time Reduction", context: "Decrease in waiting room overcrowding" },
-        { metric: "0", label: "Double Bookings", context: "Atomic database locking eliminated all collisions" },
-        { metric: "70%+", label: "Phone Load Reduced", context: "Staff inquiry workload dropped during peak hours" },
-        { metric: "25+ hrs", label: "Weekly Time Saved", context: "Staff hours redirected from calls to in-clinic care" },
+        {
+          metric: "42%",
+          label: "Wait Time Reduction",
+          context: "Decrease in waiting room overcrowding",
+        },
+        {
+          metric: "0",
+          label: "Double Bookings",
+          context: "Atomic database locking eliminated all collisions",
+        },
+        {
+          metric: "70%+",
+          label: "Phone Load Reduced",
+          context: "Staff inquiry workload dropped during peak hours",
+        },
+        {
+          metric: "25+ hrs",
+          label: "Weekly Time Saved",
+          context: "Staff hours redirected from calls to in-clinic care",
+        },
       ],
       bullets: [
         "42% decrease in physical waiting room overcrowding and patient wait times",
@@ -151,22 +166,26 @@ export const projects: CaseStudy[] = [
     keyFeatures: [
       {
         title: "Atomic Slot Reservation",
-        description: "PostgreSQL row-level isolation preventing two patients from booking the same slot.",
+        description:
+          "PostgreSQL row-level isolation preventing two patients from booking the same slot.",
         tag: "Data Integrity",
       },
       {
         title: "Automated WhatsApp/SMS Alerts",
-        description: "Immediate token confirmation, location directions, and 2-hour pre-visit reminders.",
+        description:
+          "Immediate token confirmation, location directions, and 2-hour pre-visit reminders.",
         tag: "Notifications",
       },
       {
         title: "Physician Control Console",
-        description: "Real-time queue tracking, one-tap emergency freezes, and daily consultation counters.",
+        description:
+          "Real-time queue tracking, one-tap emergency freezes, and daily consultation counters.",
         tag: "Clinic Dashboard",
       },
       {
         title: "Mobile-First Patient UI",
-        description: "Accessible to patients of all ages on any smartphone without downloading an app.",
+        description:
+          "Accessible to patients of all ages on any smartphone without downloading an app.",
         tag: "Patient Experience",
       },
     ],
@@ -215,7 +234,14 @@ export const projects: CaseStudy[] = [
         "High-performance responsive portal with sub-second page loads and strict privacy protection",
       ],
     },
-    stack: ["React 19", "TypeScript", "Tailwind CSS", "Next.js / Node.js", "PostgreSQL", "REST API"],
+    stack: [
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "Next.js / Node.js",
+      "PostgreSQL",
+      "REST API",
+    ],
     architecture: {
       overview:
         "Server-rendered architecture built with React 19, TypeScript, and PostgreSQL. Client inquiry payloads are validated, structured, and securely delivered to the chamber's administrative portal with calendar synchronization.",
@@ -238,16 +264,33 @@ export const projects: CaseStudy[] = [
         {
           step: "04",
           title: "Consultation Confirmation",
-          description: "Client receives scheduled consultation details and conference instructions.",
+          description:
+            "Client receives scheduled consultation details and conference instructions.",
         },
       ],
     },
     results: {
       stats: [
-        { metric: "85%", label: "Scheduling Time Saved", context: "Reduction in initial consultation administrative coordination" },
-        { metric: "<0.8s", label: "Page Load Time", context: "Sub-second speed on mobile and desktop devices" },
-        { metric: "100%", label: "Confidential Intake", context: "Secure upfront briefs preserving legal privilege" },
-        { metric: "300+", label: "Monthly Inquiries", context: "Handled through structured digital intake" },
+        {
+          metric: "85%",
+          label: "Scheduling Time Saved",
+          context: "Reduction in initial consultation administrative coordination",
+        },
+        {
+          metric: "<0.8s",
+          label: "Page Load Time",
+          context: "Sub-second speed on mobile and desktop devices",
+        },
+        {
+          metric: "100%",
+          label: "Confidential Intake",
+          context: "Secure upfront briefs preserving legal privilege",
+        },
+        {
+          metric: "300+",
+          label: "Monthly Inquiries",
+          context: "Handled through structured digital intake",
+        },
       ],
       bullets: [
         "85% reduction in initial consultation administrative scheduling time",
@@ -259,7 +302,8 @@ export const projects: CaseStudy[] = [
     keyFeatures: [
       {
         title: "Confidential Case Intake Form",
-        description: "Captures jurisdiction, opposing parties, and factual background prior to first meeting.",
+        description:
+          "Captures jurisdiction, opposing parties, and factual background prior to first meeting.",
         tag: "Intake Workflow",
       },
       {
@@ -269,7 +313,8 @@ export const projects: CaseStudy[] = [
       },
       {
         title: "Institutional Practice Directory",
-        description: "Presents credentials and past litigation experience with institutional prestige.",
+        description:
+          "Presents credentials and past litigation experience with institutional prestige.",
         tag: "Branding",
       },
       {
@@ -352,10 +397,26 @@ export const projects: CaseStudy[] = [
     },
     results: {
       stats: [
-        { metric: "<5%", label: "Patient No-Show Rate", context: "Down from 15% via automated pre-visit reminders" },
-        { metric: "4 Mins", label: "Saved Per Consultation", context: "Pre-filled medical intake saves doctor time" },
-        { metric: "35%", label: "Consultation Growth", context: "Increase in verified monthly patient consultations" },
-        { metric: "<1 sec", label: "Record Retrieval", context: "Instantaneous access to appointment history" },
+        {
+          metric: "<5%",
+          label: "Patient No-Show Rate",
+          context: "Down from 15% via automated pre-visit reminders",
+        },
+        {
+          metric: "4 Mins",
+          label: "Saved Per Consultation",
+          context: "Pre-filled medical intake saves doctor time",
+        },
+        {
+          metric: "35%",
+          label: "Consultation Growth",
+          context: "Increase in verified monthly patient consultations",
+        },
+        {
+          metric: "<1 sec",
+          label: "Record Retrieval",
+          context: "Instantaneous access to appointment history",
+        },
       ],
       bullets: [
         "35% increase in verified monthly patient consultations through automated scheduling",

@@ -7,9 +7,12 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
-import { getAllProjects, projectCategories } from "@/lib/projects-data";
+import { projectCategories } from "@/lib/projects-data";
+import type { CmsCaseStudy } from "@/api/cms-client";
+import { filterProjectsByCategory, publicCms } from "@/lib/public-cms";
 
 export const Route = createFileRoute("/work/")({
+  loader: async () => ({ projects: (await publicCms.getProjects()).data }),
   head: () => ({
     meta: [
       { title: "Portfolio & Case Studies — Tech Agenz | Production Software & Automations" },
@@ -39,13 +42,7 @@ export const Route = createFileRoute("/work/")({
   component: WorkPortfolioPage,
 });
 
-function PortfolioRow({
-  project,
-  index,
-}: {
-  project: ReturnType<typeof getAllProjects>[number];
-  index: number;
-}) {
+function PortfolioRow({ project, index }: { project: CmsCaseStudy; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -101,12 +98,8 @@ function PortfolioRow({
 
 function WorkPortfolioPage() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const allProjects = getAllProjects();
-
-  const filteredProjects =
-    activeCategory === "All"
-      ? allProjects
-      : allProjects.filter((p) => p.category === activeCategory);
+  const { projects } = Route.useLoaderData();
+  const filteredProjects = filterProjectsByCategory(projects, activeCategory);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
@@ -185,7 +178,6 @@ function WorkPortfolioPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
               {/* Left Area: PORTFOLIO */}
               <div className="lg:col-span-8 flex flex-col">
                 <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
@@ -221,20 +213,22 @@ function WorkPortfolioPage() {
 
                   <div className="relative z-10 space-y-4">
                     <p className="text-sm sm:text-base font-medium leading-relaxed text-slate-100">
-                      &ldquo;Out of everyone who I got quotes from, they were the first ones to go, &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are very, very professional. I&apos;ll go for them again.&rdquo;
+                      &ldquo;Out of everyone who I got quotes from, they were the first ones to go,
+                      &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are
+                      very, very professional. I&apos;ll go for them again.&rdquo;
                     </p>
 
                     <Link
-                      to="/contact"
+                      to="/work/$slug"
+                      params={{ slug: "dr-iqbal-kharal" }}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 hover:bg-cyan-400 transition-colors shadow-lg"
                     >
-                      <span>Watch Testimonial</span>
+                      <span>Read Featured Case Study</span>
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Bottom Note */}
@@ -242,7 +236,10 @@ function WorkPortfolioPage() {
               <span className="text-slate-400">
                 Production-grade delivery in 3 to 5 weeks. No upfront lock-in.
               </span>
-              <Link to="/contact" className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1">
+              <Link
+                to="/contact"
+                className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1"
+              >
                 Schedule an engineering discovery call <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -261,9 +258,9 @@ function WorkPortfolioPage() {
               Ready to Solve Your Operational Bottleneck?
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Whether you need clinical appointment scheduling, automated WhatsApp queue alerts, or a
-              bespoke legal technology portal, we engineer production software designed around your
-              real operational workflows.
+              Whether you need clinical appointment scheduling, automated WhatsApp queue alerts, or
+              a bespoke legal technology portal, we engineer production software designed around
+              your real operational workflows.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <BouncyButton

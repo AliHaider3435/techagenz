@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  getTeamMembers,
-  fetchLiveCmsData,
-  CMS_UPDATE_EVENT,
-  AVATAR_PLACEHOLDER,
-  type TeamMember,
-} from "@/lib/cms-store";
+import { AVATAR_PLACEHOLDER, type TeamMember } from "@/lib/cms-store";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,7 +17,8 @@ const resolveMemberImage = (image?: string, id?: string, title?: string) => {
   if (image) {
     if (image.includes("team1")) return "/team-images/team1.webp";
     if (image.includes("team6")) return "/team-images/team6.jpg";
-    if (image.startsWith("data:") || image.startsWith("http") || image.startsWith("/")) return image;
+    if (image.startsWith("data:") || image.startsWith("http") || image.startsWith("/"))
+      return image;
   }
   return AVATAR_PLACEHOLDER;
 };
@@ -51,7 +46,7 @@ const handleMemberImageError = (
 };
 
 type ChromaGridProps = {
-  items?: TeamMember[];
+  items: TeamMember[];
   className?: string;
   columns?: number;
   rows?: number;
@@ -59,27 +54,10 @@ type ChromaGridProps = {
 
 export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: ChromaGridProps) => {
   const gridRef = useRef<HTMLDivElement | null>(null);
-  const [data, setData] = useState<TeamMember[]>(() => (items?.length ? items : getTeamMembers()));
+  const [data, setData] = useState<TeamMember[]>(items);
 
   useEffect(() => {
-    if (items?.length) {
-      setData(items);
-      return;
-    }
-
-    setData(getTeamMembers());
-    fetchLiveCmsData();
-
-    const handler = () => {
-      setData(getTeamMembers());
-    };
-
-    window.addEventListener(CMS_UPDATE_EVENT, handler);
-    window.addEventListener("storage", handler);
-    return () => {
-      window.removeEventListener(CMS_UPDATE_EVENT, handler);
-      window.removeEventListener("storage", handler);
-    };
+    setData(items);
   }, [items]);
 
   useEffect(() => {
@@ -206,24 +184,7 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
   );
 };
 
-export default function TeamSection() {
-  const [members, setMembers] = useState<TeamMember[]>(getTeamMembers);
-
-  useEffect(() => {
-    setMembers(getTeamMembers());
-
-    const updateHandler = () => {
-      setMembers(getTeamMembers());
-    };
-
-    window.addEventListener(CMS_UPDATE_EVENT, updateHandler);
-    window.addEventListener("storage", updateHandler);
-    return () => {
-      window.removeEventListener(CMS_UPDATE_EVENT, updateHandler);
-      window.removeEventListener("storage", updateHandler);
-    };
-  }, []);
-
+export default function TeamSection({ members }: { members: TeamMember[] }) {
   return (
     <section className="team-section">
       <style>{`

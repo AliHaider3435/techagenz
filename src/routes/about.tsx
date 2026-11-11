@@ -22,8 +22,10 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import workDev from "@/assets/work-dev.webp";
+import { publicCms } from "@/lib/public-cms";
 
 export const Route = createFileRoute("/about")({
+  loader: async () => ({ team: (await publicCms.getTeam()).data }),
   head: () => ({
     meta: [
       { title: "About Us — Tech Agenz | AI & Software House in Pakistan" },
@@ -104,6 +106,8 @@ const stats = [
 ];
 
 function AboutPage() {
+  const { team } = Route.useLoaderData();
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <TechCursor />
@@ -181,9 +185,7 @@ function AboutPage() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold">Headquartered in Pakistan</div>
-                    <div className="text-xs text-muted-foreground">
-                      Serving Clients Worldwide
-                    </div>
+                    <div className="text-xs text-muted-foreground">Serving Clients Worldwide</div>
                   </div>
                 </div>
               </div>
@@ -208,12 +210,12 @@ function AboutPage() {
                 workflows, with full source code ownership.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                From our engineering center in Pakistan, we combine cutting-edge web
-                frameworks (React 19, TypeScript, TanStack Start) with robust backend orchestrations
-                (Python, FastAPI, Temporal, ERPNext, and the official Meta WhatsApp Cloud API).
-                Whether deploying atomic doctor scheduling portals, law chamber client intake
-                platforms, or enterprise resource planning suites, we turn operational friction into
-                competitive leverage.
+                From our engineering center in Pakistan, we combine cutting-edge web frameworks
+                (React 19, TypeScript, TanStack Start) with robust backend orchestrations (Python,
+                FastAPI, Temporal, ERPNext, and the official Meta WhatsApp Cloud API). Whether
+                deploying atomic doctor scheduling portals, law chamber client intake platforms, or
+                enterprise resource planning suites, we turn operational friction into competitive
+                leverage.
               </p>
               <div className="pt-2">
                 <Link
@@ -249,25 +251,29 @@ function AboutPage() {
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
-                    <strong>Headquarters & Operations:</strong> Based in Pakistan (serving enterprise clients globally).
+                    <strong>Headquarters & Operations:</strong> Based in Pakistan (serving
+                    enterprise clients globally).
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
-                    <strong>Corporate & Tax Registration:</strong> Registered commercial technology consultancy in Pakistan with national tax compliance.
+                    <strong>Corporate & Tax Registration:</strong> Registered commercial technology
+                    consultancy in Pakistan with national tax compliance.
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
-                    <strong>Domestic Deployments:</strong> Production software active across specialist clinics, medical centers, and legal chambers.
+                    <strong>Domestic Deployments:</strong> Production software active across
+                    specialist clinics, medical centers, and legal chambers.
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-foreground/90">
                   <CheckCircle2 className="h-4 w-4 text-brand shrink-0" />
                   <span>
-                    <strong>Global Delivery:</strong> Overlapping collaboration hours with clients in the United States, United Kingdom, UAE, and Saudi Arabia.
+                    <strong>Global Delivery:</strong> Overlapping collaboration hours with clients
+                    in the United States, United Kingdom, UAE, and Saudi Arabia.
                   </span>
                 </div>
               </div>
@@ -385,7 +391,7 @@ function AboutPage() {
       {/* Leadership & Engineering Team */}
       <section className="relative py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <TeamSection />
+          <TeamSection members={team} />
         </div>
       </section>
 

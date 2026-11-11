@@ -1,0 +1,113 @@
+name = "techagenz-api"
+main = "src/index.ts"
+workers_dev = false
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# This base configuration is intentionally non-public and has no R2 binding.
+# Its placeholder D1 ID is not deployable; use the explicit dev environment.
+[[d1_databases]]
+binding = "DB"
+database_name = "techagenz-dev"
+database_id = "placeholder-replace-after-wrangler-d1-create"
+
+[[ratelimits]]
+name = "ENQUIRY_RATE_LIMITER"
+namespace_id = "2026110501"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110503"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
+# Dedicated development environment. Resource IDs are verified and must not be
+# replaced with newly created resources.
+[env.dev]
+name = "techagenz-api-dev"
+workers_dev = false
+preview_urls = false
+
+[[env.dev.routes]]
+pattern = "api-dev.techagenz.com"
+custom_domain = true
+
+[[env.dev.ratelimits]]
+name = "ENQUIRY_RATE_LIMITER"
+namespace_id = "2026110502"
+
+  [env.dev.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.dev.ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110504"
+
+  [env.dev.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "techagenz-dev-db"
+database_id = "c5c5385d-0677-4260-96be-7a8a36d84669"
+
+[[env.dev.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "techagenz-dev-assets"
+
+[env.dev.vars]
+ENVIRONMENT = "development"
+CF_ACCESS_TEAM_DOMAIN = "broad-voice-f670.cloudflareaccess.com"
+CF_ACCESS_AUD = "ae1b45165a6ef7d738e6ab419faef0a262409cef3ac6b0f11f21c7952c755f54"
+ADMIN_ALLOWED_EMAILS = "haider.ly5617@gmail.com"
+CF_ACCESS_API_HOST = "api-dev.techagenz.com"
+ADMIN_CMS_ENABLED = "true"
+
+# Dedicated production environment.
+# Target: https://api.techagenz.com
+[env.production]
+name = "techagenz-api"
+workers_dev = false
+preview_urls = false
+
+[[env.production.routes]]
+pattern = "api.techagenz.com"
+custom_domain = true
+
+[[env.production.ratelimits]]
+name = "ENQUIRY_RATE_LIMITER"
+namespace_id = "2026110505"
+
+  [env.production.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.production.ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110506"
+
+  [env.production.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "techagenz-prod-db"
+database_id = "65d6befc-2bdf-4f56-8795-5a08781a80bd"
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "techagenz-prod-assets"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+CF_ACCESS_API_HOST = "api.techagenz.com"
+ADMIN_CMS_ENABLED = "true"

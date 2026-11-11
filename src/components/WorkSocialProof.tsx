@@ -42,7 +42,10 @@ export function WorkSocialProof() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className="flex flex-col items-start border-l-2 border-brand/40 pl-4 sm:pl-5">
+              <div
+                key={stat.label}
+                className="flex flex-col items-start border-l-2 border-brand/40 pl-4 sm:pl-5"
+              >
                 <div className="flex items-center gap-2 text-brand">
                   <Icon className="h-4 w-4" />
                   <span className="font-mono text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -74,7 +77,9 @@ export function WorkSocialProof() {
               >
                 <span className="text-brand">✦</span>
                 <span className="font-medium">{c.name}</span>
-                <span className="text-[10px] text-muted-foreground hidden sm:inline">({c.label})</span>
+                <span className="text-[10px] text-muted-foreground hidden sm:inline">
+                  ({c.label})
+                </span>
               </div>
             ))}
           </div>
@@ -88,18 +93,26 @@ export function WorkSocialProof() {
           {[...Array(5)].map((_, i) => (
             <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
           ))}
-          <span className="ml-2 text-xs font-semibold text-foreground/80">Verified Client Feedback</span>
+          <span className="ml-2 text-xs font-semibold text-foreground/80">
+            Verified Client Feedback
+          </span>
         </div>
         <p className="font-display text-base sm:text-lg italic text-foreground/95 leading-relaxed">
-          &ldquo;Tech Agenz eliminated our clinic scheduling bottlenecks. Patients get their slot tokens before leaving home, waiting room congestion dropped by over 40%, and our front desk operates smoothly without double-bookings.&rdquo;
+          &ldquo;Tech Agenz eliminated our clinic scheduling bottlenecks. Patients get their slot
+          tokens before leaving home, waiting room congestion dropped by over 40%, and our front
+          desk operates smoothly without double-bookings.&rdquo;
         </p>
         <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4">
           <div>
             <div className="text-sm font-bold text-foreground">Clinical Operations Lead</div>
-            <div className="text-xs text-muted-foreground">Dr. Iqbal Ahmad Kharal Clinical Practice</div>
+            <div className="text-xs text-muted-foreground">
+              Dr. Iqbal Ahmad Kharal Clinical Practice
+            </div>
           </div>
           <div className="text-right">
-            <div className="font-mono text-xs font-semibold text-emerald-400">Production Verified</div>
+            <div className="font-mono text-xs font-semibold text-emerald-400">
+              Production Verified
+            </div>
             <div className="text-[11px] text-muted-foreground">Zero Booking Collisions</div>
           </div>
         </div>

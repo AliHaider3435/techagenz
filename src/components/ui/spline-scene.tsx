@@ -11,17 +11,41 @@ interface SplineSceneProps {
   onLoad?: (app: SplineApp) => void;
 }
 
+type ThreeNode = {
+  isMesh?: boolean;
+  material?: ThreeMaterial | ThreeMaterial[];
+  traverse?: (cb: (node: ThreeNode) => void) => void;
+};
+
+type ThreeMaterial = {
+  color?: { set?: (c: string) => void };
+  emissive?: { set?: (c: string) => void };
+  emissiveIntensity?: number;
+  metalness?: number;
+  roughness?: number;
+};
+
+type SplineInternal = {
+  scene?: ThreeNode;
+  canvas?: HTMLElement & { style: CSSStyleDeclaration };
+  _renderer?: {
+    setClearColor?: (c: number, a: number) => void;
+    setClearAlpha?: (a: number) => void;
+  };
+  _scene?: { activePage?: { background: null } };
+  setBackgroundColor?: (color: string) => void;
+};
+
 function applyThemeToSpline(app: SplineApp) {
-  // @ts-ignore — traverse is on the internal THREE scene
-  const threeScene = (app as any).scene;
+  const threeScene = (app as SplineInternal).scene;
   if (!threeScene || typeof threeScene.traverse !== "function") return;
 
   const accentColor = "#22d3ee";
   const accentGlow = "#4f46e5";
 
-  threeScene.traverse((node: any) => {
+  threeScene.traverse((node: ThreeNode) => {
     if (!node?.isMesh) return;
-    const applyMat = (mat: any) => {
+    const applyMat = (mat: ThreeMaterial | undefined) => {
       if (!mat) return;
       mat.color?.set?.(accentColor);
       mat.emissive?.set?.(accentGlow);
@@ -29,13 +53,17 @@ function applyThemeToSpline(app: SplineApp) {
       if (typeof mat.metalness === "number") mat.metalness = 0.8;
       if (typeof mat.roughness === "number") mat.roughness = 0.2;
     };
-    Array.isArray(node.material) ? node.material.forEach(applyMat) : applyMat(node.material);
+    if (Array.isArray(node.material)) {
+      node.material.forEach(applyMat);
+    } else {
+      applyMat(node.material);
+    }
   });
 }
 
 function makeTransparent(app: SplineApp) {
   try {
-    const a = app as any;
+    const a = app as SplineInternal;
     if (a.canvas) {
       a.canvas.style.background = "transparent";
       a.canvas.style.backgroundColor = "transparent";

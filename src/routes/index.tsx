@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import Nav from "@/components/Nav";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { submitEnquiry } from "@/api/send-enquiry";
+import type { EnquiryEmailNotificationStatus } from "@/api/send-enquiry";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
@@ -38,9 +41,8 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import { getBlogs, fetchLiveCmsData, CMS_UPDATE_EVENT } from "@/lib/cms-store";
-import { getAllProjects, getFeaturedProjects } from "@/lib/projects-data";
-import ProjectCard from "@/components/ProjectCard";
+import { getFeaturedHomepageProjects, publicCms } from "@/lib/public-cms";
+import type { CmsBlogListPost, CmsCaseStudy } from "@/api/cms-client";
 import WorkSocialProof from "@/components/WorkSocialProof";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
@@ -57,6 +59,18 @@ import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
 import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const [team, projects, blogs] = await Promise.all([
+      publicCms.getTeam(),
+      publicCms.getProjects(),
+      publicCms.getBlogs(),
+    ]);
+    return {
+      team: team.data,
+      projects: getFeaturedHomepageProjects(projects.data),
+      blogs: blogs.data.slice(0, 3),
+    };
+  },
   head: () => ({
     meta: [
       { title: "Tech Agenz — AI-Powered Software House in Pakistan" },
@@ -91,6 +105,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { team, projects, blogs } = Route.useLoaderData();
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <TechCursor />
@@ -114,16 +130,16 @@ function Index() {
         </RevealSection>
         <RevealSection>
           <div id="team"></div>
-          <TeamSection />
+          <TeamSection members={team} />
         </RevealSection>
         <RevealSection>
-          <Portfolio />
+          <Portfolio projects={projects} />
         </RevealSection>
         <RevealSection>
           <Testimonials />
         </RevealSection>
         <RevealSection>
-          <BlogsTeaser />
+          <BlogsTeaser posts={blogs} />
         </RevealSection>
         <RevealSection>
           <CTA />
@@ -380,7 +396,6 @@ function Marquee() {
 }
 function AIVision() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const hasPlayedRef = useRef(false);
   const unlockTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -393,19 +408,10 @@ function AIVision() {
   };
 
   // Trigger once when the section comes into view:
-  // 1) play the video from the start (once, no scroll link)
-  // 2) run the 3s word-reveal animation with a matching scroll lock
+  // Run the 3s word-reveal animation with a matching scroll lock
   useEffect(() => {
     if (!isInView || hasPlayedRef.current) return;
     hasPlayedRef.current = true;
-
-    const video = videoRef.current;
-    if (video) {
-      video.currentTime = 0;
-      video.play().catch(() => {
-        // autoplay might be blocked until user interacts once — safe to ignore
-      });
-    }
 
     document.body.style.overflow = "hidden";
     unlockTimeoutRef.current = setTimeout(unlockScroll, 30);
@@ -448,7 +454,6 @@ function AIVision() {
   return (
     <section ref={sectionRef} className="relative h-screen">
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* No autoPlay — starts only when isInView triggers video.play() above */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/30 to-background/65" />
         <div
           className="pointer-events-none absolute inset-0 opacity-20"
@@ -913,9 +918,7 @@ function StatCard({
 
 export { About, StatCard };
 
-function Portfolio() {
-  const allProjects = getAllProjects();
-
+function Portfolio({ projects }: { projects: CmsCaseStudy[] }) {
   return (
     <section id="portfolio" className="relative py-24">
       {/* Anchor for backward compatibility */}
@@ -929,21 +932,21 @@ function Portfolio() {
             Real Systems with <span className="text-gradient-brand">Verifiable Numbers</span>
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-            Every project below represents a live production system in active daily use. Built with transparent architectures, countable metrics, and rapid 3-to-5-week delivery timelines.
+            Every project below represents a live production system in active daily use. Built with
+            transparent architectures, countable metrics, and rapid 3-to-5-week delivery timelines.
           </p>
         </div>
 
         {/* Card Container */}
         <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl p-5 sm:p-8 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            
             {/* Left Area: PORTFOLIO Projects */}
             <div className="lg:col-span-8 flex flex-col">
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 pb-2 border-b border-white/5">
                 Portfolio
               </h3>
               <div className="divide-y divide-white/5 flex-1 flex flex-col justify-around">
-                {allProjects.map((project) => (
+                {projects.map((project) => (
                   <Link
                     key={project.slug}
                     to="/work/$slug"
@@ -1006,9 +1009,11 @@ function Portfolio() {
 
                 <div className="relative z-10 space-y-4">
                   <p className="text-sm sm:text-base font-medium leading-relaxed text-slate-100">
-                    &ldquo;Out of everyone who I got quotes from, they were the first ones to go, &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are very, very professional. I&apos;ll go for them again.&rdquo;
+                    &ldquo;Out of everyone who I got quotes from, they were the first ones to go,
+                    &lsquo;Hey, let&apos;s develop a proof of concept for you.&rsquo; ... They are
+                    very, very professional. I&apos;ll go for them again.&rdquo;
                   </p>
-                  
+
                   <Link
                     to="/work"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 hover:bg-cyan-400 transition-colors shadow-lg"
@@ -1019,7 +1024,6 @@ function Portfolio() {
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* Footer note */}
@@ -1027,7 +1031,10 @@ function Portfolio() {
             <span className="text-slate-400">
               Production-grade delivery in 3 to 5 weeks. No upfront lock-in.
             </span>
-            <Link to="/work" className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1">
+            <Link
+              to="/work"
+              className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1"
+            >
               Explore full case studies &amp; architectures <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -1058,21 +1065,7 @@ function Testimonials() {
   );
 }
 
-function BlogsTeaser() {
-  const [posts, setPosts] = useState(() => getBlogs().slice(0, 3));
-
-  useEffect(() => {
-    setPosts(getBlogs().slice(0, 3));
-    fetchLiveCmsData();
-    const handler = () => setPosts(getBlogs().slice(0, 3));
-    window.addEventListener(CMS_UPDATE_EVENT, handler);
-    window.addEventListener("storage", handler);
-    return () => {
-      window.removeEventListener(CMS_UPDATE_EVENT, handler);
-      window.removeEventListener("storage", handler);
-    };
-  }, []);
-
+function BlogsTeaser({ posts }: { posts: CmsBlogListPost[] }) {
   return (
     <section id="blogs" className="relative py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -1152,7 +1145,12 @@ function CTA() {
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [emailNotification, setEmailNotification] = useState<EnquiryEmailNotificationStatus | null>(
+    null,
+  );
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetSignal, setTurnstileResetSignal] = useState(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -1163,59 +1161,23 @@ function CTA() {
     e.preventDefault();
     setStatus("sending");
     setErrorMessage("");
+    setEmailNotification(null);
 
-    let success = false;
-
-    // 1. Primary: Send through server endpoint
     try {
-      const res = await fetch("/api/send-enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        success = true;
-      }
-    } catch {
-      // Endpoint unreachable, continue to fallback
-    }
-
-    // 2. Direct client fallback: FormSubmit directly to info@techagenz.com
-    if (!success) {
-      try {
-        const fallbackRes = await fetch("https://formsubmit.co/ajax/info@techagenz.com", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            company: formData.company || "Not specified",
-            message: formData.message,
-            _subject: `New Enquiry from ${formData.name}`,
-            _replyto: formData.email,
-          }),
-        });
-
-        if (fallbackRes.ok) {
-          success = true;
-        }
-      } catch {
-        // Fallback failed
-      }
-    }
-
-    if (success) {
+      const result = await submitEnquiry(formData, turnstileToken);
+      setEmailNotification(result.emailNotification);
       setStatus("sent");
       setFormData({ name: "", email: "", company: "", message: "" });
-    } else {
+    } catch (error) {
       setStatus("error");
       setErrorMessage(
-        "Something went wrong — please try again or email info@techagenz.com directly.",
+        error instanceof Error
+          ? error.message
+          : "Unable to deliver enquiry. Please contact info@techagenz.com or WhatsApp directly.",
       );
+    } finally {
+      setTurnstileToken("");
+      setTurnstileResetSignal((signal) => signal + 1);
     }
   };
 
@@ -1272,6 +1234,8 @@ function CTA() {
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      minLength={2}
+                      maxLength={100}
                       className="w-full rounded-xl border border-border/60 bg-card/70 px-3 py-2 text-sm text-foreground outline-none ring-0 focus:border-brand"
                       placeholder="Your name"
                     />
@@ -1284,6 +1248,7 @@ function CTA() {
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      maxLength={254}
                       className="w-full rounded-xl border border-border/60 bg-card/70 px-3 py-2 text-sm text-foreground outline-none ring-0 focus:border-brand"
                       placeholder="you@company.com"
                     />
@@ -1295,6 +1260,7 @@ function CTA() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
+                    maxLength={100}
                     className="w-full rounded-xl border border-border/60 bg-card/70 px-3 py-2 text-sm text-foreground outline-none ring-0 focus:border-brand"
                     placeholder="Your company"
                   />
@@ -1306,15 +1272,25 @@ function CTA() {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    minLength={10}
+                    maxLength={3000}
                     rows={4}
                     className="w-full rounded-xl border border-border/60 bg-card/70 px-3 py-2 text-sm text-foreground outline-none ring-0 focus:border-brand"
                     placeholder="Tell us about your idea, timeline, or goals..."
                   />
                 </label>
+                <TurnstileWidget
+                  onToken={setTurnstileToken}
+                  onError={() =>
+                    setErrorMessage("Secure verification could not be loaded. Please try again.")
+                  }
+                  resetSignal={turnstileResetSignal}
+                />
+
                 <div className="pt-1">
                   <button
                     type="submit"
-                    disabled={status === "sending"}
+                    disabled={status === "sending" || !turnstileToken}
                     className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100"
                   >
                     {status === "sending" ? "Sending..." : "Send enquiry"}{" "}
@@ -1324,7 +1300,9 @@ function CTA() {
 
                 {status === "sent" && (
                   <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
-                    ✓ Thanks — your message has been sent. We'll get back to you within 24 hours.
+                    {emailNotification === "accepted"
+                      ? "✓ Your enquiry was saved, and the team notification was accepted by our email provider. We’ll follow up within 24 hours."
+                      : "✓ Your enquiry was saved, but the team notification email could not be sent. Please also contact info@techagenz.com or WhatsApp us to ensure we see your request."}
                   </p>
                 )}
                 {status === "error" && (

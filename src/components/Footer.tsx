@@ -16,9 +16,9 @@ function Footer() {
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground leading-relaxed">
-            AI-powered software house based in Pakistan engineering intelligent solutions,
-            WhatsApp business automation, ERPNext systems, and custom web platforms for ambitious
-            teams worldwide.
+            AI-powered software house based in Pakistan engineering intelligent solutions, WhatsApp
+            business automation, ERPNext systems, and custom web platforms for ambitious teams
+            worldwide.
           </p>
           <div className="mt-3 text-xs text-brand font-medium">
             Based in Pakistan • Serving Clients Globally
@@ -138,7 +138,10 @@ function Footer() {
               </Link>
             </li>
             <li className="pt-2 border-t border-border/30">
-              <Link to="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium flex items-center gap-1.5">
+              <Link
+                to="/login"
+                className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium flex items-center gap-1.5"
+              >
                 <span>🔐 Team Portal Login</span>
               </Link>
             </li>

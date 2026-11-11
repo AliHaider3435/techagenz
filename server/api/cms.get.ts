@@ -15,7 +15,7 @@ async function fetchRawJson(url: string, token?: string): Promise<CmsPayload | n
       },
     });
     if (!res.ok) return null;
-    const json = await res.json() as CmsPayload;
+    const json = (await res.json()) as CmsPayload;
     return json;
   } catch {
     return null;
@@ -58,7 +58,8 @@ export default defineEventHandler(async (event) => {
 
   // 3. Return whichever is newer so Admin Panel changes always survive VS Code pushes
   const best = newerData(
-    cmsDataBranchJson && (Array.isArray(cmsDataBranchJson.team) || Array.isArray(cmsDataBranchJson.blogs))
+    cmsDataBranchJson &&
+      (Array.isArray(cmsDataBranchJson.team) || Array.isArray(cmsDataBranchJson.blogs))
       ? cmsDataBranchJson
       : null,
     mainBranchJson && (Array.isArray(mainBranchJson.team) || Array.isArray(mainBranchJson.blogs))

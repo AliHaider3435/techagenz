@@ -16,11 +16,16 @@ Official web platform for [Tech Agenz](https://www.techagenz.com) engineering in
 - npm or pnpm
 
 ### 2. Environment Variables
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory with the public Cloudflare Worker
+API URL and Turnstile site key:
 ```env
-RESEND_API_KEY=re_your_api_key_here
+VITE_API_BASE_URL=https://techagenz-api-dev.haider-ly5617.workers.dev
+VITE_CF_TURNSTILE_SITE_KEY=your_public_turnstile_site_key
 ```
-> In Vercel, add `RESEND_API_KEY` under **Project Settings > Environment Variables**.
+The enquiry forms submit directly to the Cloudflare Worker and require a valid
+Turnstile token. Configure the Worker-only `RESEND_API_KEY` and
+`CF_TURNSTILE_SECRET_KEY` as Cloudflare secrets; never expose them in Vite
+variables.
 
 ### 3. Install Dependencies
 ```bash
@@ -42,6 +47,6 @@ npm run build
 - `src/routes/` — File-based routes (`/` home, `/work` portfolio, `__root.tsx` root layout & SEO)
 - `src/components/` — Modular UI components (Nav, Hero, Impact, Team, Footer, WhatsApp chat)
 - `src/assets/` — Optimized graphics and WebP team & project assets
-- `api/send-enquiry.ts` — Vercel Serverless Function handling contact form enquiries
-- `server/api/` — Nitro backend API route handler
+- `api/send-enquiry.ts` — retired endpoint returning HTTP 410
+- `server/api/` — Nitro API routes; the legacy enquiry endpoint is retired
 - `public/` — Static files, `robots.txt`, and canonical XML sitemaps

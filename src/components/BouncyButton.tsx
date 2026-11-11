@@ -1,5 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface BouncyButtonProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface BouncyButtonProps {
   target?: string;
   rel?: string;
 }
+
+const MotionLink = motion.create(Link);
 
 function BouncyButton({
   children,
@@ -28,6 +31,15 @@ function BouncyButton({
   };
 
   if (href) {
+    const isInternal = href.startsWith("/") && !href.startsWith("//");
+    if (isInternal) {
+      return (
+        <MotionLink to={href} target={target} rel={rel} {...motionProps}>
+          {children}
+        </MotionLink>
+      );
+    }
+
     return (
       <motion.a href={href} target={target} rel={rel} {...motionProps}>
         {children}

@@ -23,15 +23,19 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
 import ProjectCard from "@/components/ProjectCard";
-import { getProjectBySlug, getRelatedProjects } from "@/lib/projects-data";
+import { getRelatedCmsProjects, publicCms, resolveCmsImageUrl } from "@/lib/public-cms";
 
 export const Route = createFileRoute("/work/$slug")({
   loader: async ({ params }) => {
-    const project = getProjectBySlug(params.slug);
+    const [projectResult, projectsResult] = await Promise.all([
+      publicCms.getProject(params.slug),
+      publicCms.getProjects(),
+    ]);
+    const project = projectResult.data;
     if (!project) {
       throw notFound();
     }
-    const related = getRelatedProjects(params.slug, 2);
+    const related = getRelatedCmsProjects(projectsResult.data, params.slug, 2);
     return { project, related };
   },
   head: ({ loaderData }) => {
@@ -48,7 +52,7 @@ export const Route = createFileRoute("/work/$slug")({
         { name: "description", content: project.formulaSummary },
         { property: "og:title", content: `${project.title} — Tech Agenz` },
         { property: "og:description", content: project.formulaSummary },
-        { property: "og:image", content: project.coverImage },
+        { property: "og:image", content: resolveCmsImageUrl(project.coverImage) },
         { property: "og:type", content: "article" },
         { property: "og:url", content: `https://techagenz.com/work/${project.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
@@ -153,9 +157,7 @@ function CaseStudyDetailPage() {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Engineering
               </div>
-              <div className="mt-1 text-xs sm:text-sm font-semibold text-brand">
-                Tech Agenz
-              </div>
+              <div className="mt-1 text-xs sm:text-sm font-semibold text-brand">Tech Agenz</div>
             </div>
           </div>
 
@@ -258,7 +260,8 @@ function CaseStudyDetailPage() {
               Chosen for Stability, Latency & Long-Term Maintainability
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-              Zero bloatware. Every tool in this stack was selected for guaranteed uptime, instant concurrency, and low maintenance overhead.
+              Zero bloatware. Every tool in this stack was selected for guaranteed uptime, instant
+              concurrency, and low maintenance overhead.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -293,9 +296,7 @@ function CaseStudyDetailPage() {
                   key={step.step}
                   className="relative rounded-2xl border border-border/70 bg-background/50 p-4 transition-all hover:border-brand/40"
                 >
-                  <div className="font-mono text-2xl font-black text-brand/40">
-                    {step.step}
-                  </div>
+                  <div className="font-mono text-2xl font-black text-brand/40">{step.step}</div>
                   <h3 className="mt-2 text-xs sm:text-sm font-bold text-foreground">
                     {step.title}
                   </h3>
@@ -402,7 +403,9 @@ function CaseStudyDetailPage() {
                 </p>
                 <div className="mt-3 text-xs">
                   <strong className="text-foreground">{project.testimonial.author}</strong> —{" "}
-                  <span className="text-muted-foreground">{project.testimonial.role}, {project.testimonial.organization}</span>
+                  <span className="text-muted-foreground">
+                    {project.testimonial.role}, {project.testimonial.organization}
+                  </span>
                 </div>
               </div>
             )}
@@ -414,7 +417,8 @@ function CaseStudyDetailPage() {
               Want Similar Results for Your Business?
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              We engineer custom software, WhatsApp bots, and ERPNext systems designed around your real operational bottlenecks. Typical turnaround is 3 to 5 weeks.
+              We engineer custom software, WhatsApp bots, and ERPNext systems designed around your
+              real operational bottlenecks. Typical turnaround is 3 to 5 weeks.
             </p>
 
             <div className="mt-8 flex flex-wrap justify-center gap-4">

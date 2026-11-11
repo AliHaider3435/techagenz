@@ -88,7 +88,9 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
       <div className="border-t border-border/50 p-6 pt-4 flex items-center justify-between shrink-0 mt-auto">
         <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
           <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-          <span>{project.results.stats[1]?.metric} {project.results.stats[1]?.label}</span>
+          <span>
+            {project.results.stats[1]?.metric} {project.results.stats[1]?.label}
+          </span>
         </div>
 
         <Link
