@@ -30,6 +30,25 @@ export interface Env {
   CF_ACCESS_API_HOST?: string;
   /** Set to "true" to enable live Admin CMS operations and R2 writes. */
   ADMIN_CMS_ENABLED?: string;
+
+  // ── Production Shared Team Authentication (Secrets & Config) ─────────────
+  /** Shared team admin username (production only). */
+  ADMIN_SHARED_USERNAME?: string;
+  /** Shared team admin password hash (production only, PBKDF2 format). */
+  ADMIN_SHARED_PASSWORD_HASH?: string;
+  /** Session TTL in hours (default: "8"). */
+  ADMIN_SESSION_TTL_HOURS?: string;
+  /** Optional Cloudflare rate limiter binding for admin login attempts. */
+  ADMIN_LOGIN_RATE_LIMITER?: RateLimit;
+}
+
+// ─── Unified Administrator Principal ──────────────────────────────────────────
+
+export interface AdminPrincipal {
+  authType: "cloudflare_access" | "session";
+  username?: string;
+  email?: string;
+  sessionId?: string;
 }
 
 // ─── Shared response shapes ───────────────────────────────────────────────────

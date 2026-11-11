@@ -88,3 +88,141 @@ test("unexpected responses and network errors do not claim authorization", async
   assert.deepEqual(await serverError.verifyAccess(), { state: "unavailable" });
   assert.deepEqual(await networkError.verifyAccess(), { state: "unavailable" });
 });
+
+test("admin client login sends credentials with credentials: 'include'", async () => {
+  let capturedUrl;
+  let capturedInit;
+
+  const client = createAdminApiClient(apiBaseUrl, async (url, init) => {
+    capturedUrl = String(url);
+    capturedInit = init;
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: {
+          authenticated: true,
+          username: "admin",
+          authType: "session",
+          expiresAt: "2026-11-12T00:00:00Z",
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+
+  const res = await client.login("admin", "secret123");
+  assert.equal(capturedUrl, `${apiBaseUrl}/api/auth/login`);
+  assert.equal(capturedInit.method, "POST");
+  assert.equal(capturedInit.credentials, "include");
+  assert.equal(JSON.parse(capturedInit.body).username, "admin");
+  assert.equal(res.username, "admin");
+  assert.equal(res.authType, "session");
+});
+
+test("admin client logout sends POST /api/auth/logout with credentials: 'include'", async () => {
+  let capturedUrl;
+  let capturedInit;
+
+  const client = createAdminApiClient(apiBaseUrl, async (url, init) => {
+    capturedUrl = String(url);
+    capturedInit = init;
+    return new Response(JSON.stringify({ ok: true, data: { loggedOut: true } }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+
+  await client.logout();
+  assert.equal(capturedUrl, `${apiBaseUrl}/api/auth/logout`);
+  assert.equal(capturedInit.method, "POST");
+  assert.equal(capturedInit.credentials, "include");
+});
+
+test("admin client logout throws AdminApiClientError on HTTP failure", async () => {
+  const client = createAdminApiClient(apiBaseUrl, async () => {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error: {
+          code: "DATABASE_ERROR",
+          message: "Unable to complete logout. Please try again.",
+        },
+      }),
+      { status: 503, headers: { "Content-Type": "application/json" } },
+    );
+  });
+
+  await assert.rejects(
+    async () => {
+      await client.logout();
+    },
+    (err) => {
+      assert.equal(err.status, 503);
+      assert.equal(err.code, "DATABASE_ERROR");
+      assert.equal(err.message, "Unable to complete logout. Please try again.");
+      return true;
+    },
+  );
+});
+
+test("admin client logout throws AdminApiClientError on network failure", async () => {
+  const client = createAdminApiClient(apiBaseUrl, async () => {
+    throw new Error("Connection terminated");
+  });
+
+  await assert.rejects(
+    async () => {
+      await client.logout();
+    },
+    (err) => {
+      assert.ok(err.message.includes("Connection terminated"));
+      return true;
+    },
+  );
+});
+
+test("admin client getSession calls GET /api/auth/session and maps response", async () => {
+  let capturedUrl;
+
+  const client = createAdminApiClient(apiBaseUrl, async (url) => {
+    capturedUrl = String(url);
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: {
+          authenticated: true,
+          username: "admin",
+          authType: "session",
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+
+  const res = await client.getSession();
+  assert.equal(capturedUrl, `${apiBaseUrl}/api/auth/session`);
+  assert.equal(res.state, "authorized");
+  assert.equal(res.username, "admin");
+  assert.equal(res.authType, "session");
+});
+
+test("verifyAccess maps production session response with username and authType", async () => {
+  const client = createAdminApiClient(apiBaseUrl, async () => {
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: {
+          status: "authorized",
+          username: "superadmin",
+          authType: "session",
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  });
+
+  const res = await client.verifyAccess();
+  assert.equal(res.state, "authorized");
+  assert.equal(res.username, "superadmin");
+  assert.equal(res.authType, "session");
+});

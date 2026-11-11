@@ -12,6 +12,8 @@ export type AdminApiAccessState =
 export interface AdminApiAccessResult {
   state: Exclude<AdminApiAccessState, "checking">;
   email?: string;
+  username?: string;
+  authType?: "cloudflare_access" | "session";
 }
 
 export interface EnquiryDto {
@@ -69,6 +71,17 @@ export class AdminApiClientError extends Error {
 export interface AdminApiClient {
   accessUrl: string | null;
   verifyAccess(): Promise<AdminApiAccessResult>;
+  login(
+    credentialsOrUsername: { username: string; password: string } | string,
+    password?: string,
+  ): Promise<{
+    success: boolean;
+    username?: string;
+    authType?: "session";
+    user?: { username: string };
+  }>;
+  logout(): Promise<void>;
+  getSession(): Promise<AdminApiAccessResult>;
 
   // Team
   listTeam(): Promise<TeamMemberDto[]>;
@@ -229,7 +242,12 @@ export function createAdminApiClient(
           const body = (await response.json()) as Record<string, unknown>;
           if (body && body.ok === true) {
             const data = body.data as Record<string, unknown> | undefined;
-            return { state: "authorized", email: data?.email as string | undefined };
+            return {
+              state: "authorized",
+              email: data?.email as string | undefined,
+              username: data?.username as string | undefined,
+              authType: data?.authType as "cloudflare_access" | "session" | undefined,
+            };
           }
         } catch {
           return { state: "unavailable" };
@@ -257,6 +275,139 @@ export function createAdminApiClient(
       }
 
       return { state: "unavailable" };
+    },
+
+    async login(
+      credentialsOrUsername: { username: string; password: string } | string,
+      maybePassword?: string,
+    ): Promise<{
+      success: boolean;
+      username?: string;
+      authType?: "session";
+      user?: { username: string };
+    }> {
+      if (!resolvedBaseUrl) {
+        throw new AdminApiClientError("Admin API base URL is not configured.");
+      }
+
+      const payload =
+        typeof credentialsOrUsername === "string"
+          ? { username: credentialsOrUsername, password: maybePassword || "" }
+          : credentialsOrUsername;
+
+      const url = `${resolvedBaseUrl}/api/auth/login`;
+      let response: Response;
+      try {
+        response = await fetcher(url, {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        throw new AdminApiClientError(
+          err instanceof Error ? err.message : "Network error contacting Admin API.",
+        );
+      }
+
+      let body: Record<string, unknown> | null = null;
+      try {
+        body = (await response.json()) as Record<string, unknown>;
+      } catch {
+        // non-JSON response handled below
+      }
+
+      if (!response.ok) {
+        const errObj = body?.error as Record<string, unknown> | undefined;
+        const msg =
+          errObj?.message ||
+          (response.status === 401
+            ? "Invalid username or password"
+            : `Login failed with status ${response.status}`);
+        const code =
+          (errObj?.code as string) ||
+          (response.status === 401 ? "INVALID_CREDENTIALS" : "LOGIN_FAILED");
+        throw new AdminApiClientError(String(msg), response.status, code);
+      }
+
+      const data = body?.data as Record<string, unknown> | undefined;
+      const resolvedUsername = data?.username ? String(data.username) : payload.username;
+      return {
+        success: true,
+        username: resolvedUsername,
+        authType: "session",
+        user: { username: resolvedUsername },
+      };
+    },
+
+    async logout(): Promise<void> {
+      if (!resolvedBaseUrl) {
+        throw new AdminApiClientError("Admin API base URL is not configured.");
+      }
+      let response: Response;
+      try {
+        response = await fetcher(`${resolvedBaseUrl}/api/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+          cache: "no-store",
+          headers: { Accept: "application/json" },
+        });
+      } catch (err) {
+        throw new AdminApiClientError(
+          err instanceof Error ? err.message : "Network error contacting Admin API.",
+        );
+      }
+
+      let body: Record<string, unknown> | null = null;
+      try {
+        body = (await response.json()) as Record<string, unknown>;
+      } catch {
+        // non-JSON handled below
+      }
+
+      if (!response.ok || body?.ok === false) {
+        const errObj = body?.error as Record<string, unknown> | undefined;
+        const msg =
+          errObj?.message ||
+          (body?.error as string) ||
+          `Logout failed with status ${response.status}`;
+        const code =
+          (errObj?.code as string) || (response.status === 403 ? "FORBIDDEN" : "LOGOUT_FAILED");
+        throw new AdminApiClientError(String(msg), response.status, code);
+      }
+    },
+
+    async getSession(): Promise<AdminApiAccessResult> {
+      if (!resolvedBaseUrl) return { state: "unconfigured" };
+      try {
+        const res = await fetcher(`${resolvedBaseUrl}/api/auth/session`, {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store",
+          headers: { Accept: "application/json" },
+        });
+        if (res.status === 200) {
+          const body = (await res.json()) as Record<string, unknown>;
+          if (body && body.ok === true) {
+            const data = body.data as Record<string, unknown> | undefined;
+            return {
+              state: "authorized",
+              email: data?.email as string | undefined,
+              username: data?.username as string | undefined,
+              authType: data?.authType as "cloudflare_access" | "session" | undefined,
+            };
+          }
+        }
+        if (res.status === 401) return { state: "session-required" };
+        if (res.status === 403) return { state: "forbidden" };
+        return { state: "unavailable" };
+      } catch {
+        return { state: "unavailable" };
+      }
     },
 
     // ── Team ────────────────────────────────────────────────────────────────

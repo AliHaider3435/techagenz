@@ -43,7 +43,7 @@ function expandIpv6(address: string): string[] | null {
   return groups.map((group) => group.padStart(4, "0"));
 }
 
-function normalizeClientIp(address: string): string | null {
+export function normalizeClientIp(address: string): string | null {
   const ipv4 = parseIpv4(address);
   if (ipv4) return `ipv4:${ipv4.join(".")}`;
   if (!address.includes(":")) return null;
@@ -66,6 +66,14 @@ export function getEnquiryRateLimitKey(request: Request): string | null {
 
   const normalizedIp = normalizeClientIp(clientIp);
   return normalizedIp ? `public-enquiries:${normalizedIp}` : null;
+}
+
+export function getLoginRateLimitKey(request: Request): string | null {
+  const clientIp = request.headers.get("CF-Connecting-IP")?.trim();
+  if (!clientIp) return null;
+
+  const normalizedIp = normalizeClientIp(clientIp);
+  return normalizedIp ? `admin-login:${normalizedIp}` : null;
 }
 
 export async function checkEnquiryRateLimit(

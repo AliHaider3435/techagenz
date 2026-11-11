@@ -9,6 +9,12 @@ RESEND_API_KEY=re_your_resend_api_key_here
 # Cloudflare Turnstile (bot protection for public forms)
 CF_TURNSTILE_SECRET_KEY=your_turnstile_secret_key_here
 
-# Cloudflare Access (admin JWT verification — Phase 3)
+# Cloudflare Access (admin JWT verification — Development)
 CF_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
 CF_ACCESS_AUD=your_cloudflare_access_audience_tag_here
+
+# Production Admin Shared Authentication (Session-based)
+# Set via `wrangler secret put ADMIN_SHARED_USERNAME` and `wrangler secret put ADMIN_SHARED_PASSWORD_HASH`
+ADMIN_SHARED_USERNAME=admin_placeholder
+ADMIN_SHARED_PASSWORD_HASH=pbkdf2_sha256$100000$salt_placeholder$hash_placeholder
+ADMIN_SESSION_TTL_HOURS=8

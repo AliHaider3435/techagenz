@@ -1,12 +1,7 @@
-import { Env } from "../types";
+import { AdminPrincipal, Env } from "../types";
 import { errorResponse, jsonResponse } from "../middleware/error";
 import { requireAdminOrigin } from "../middleware/cors";
-import {
-  forbiddenResponse,
-  requireAdmin,
-  unauthorizedResponse,
-  AccessPayload,
-} from "../middleware/auth";
+import { forbiddenResponse, requireAdmin, unauthorizedResponse } from "../middleware/auth";
 
 /**
  * R2 asset management routes — protected by Cloudflare Access JWT.
@@ -71,11 +66,11 @@ export async function getAsset(_request: Request, env: Env, assetPath: string): 
  * Admin only — protected by requireAdmin().
  */
 export async function uploadAsset(request: Request, env: Env): Promise<Response> {
-  if (!requireAdminOrigin(request)) {
+  if (!requireAdminOrigin(request, env)) {
     return errorResponse("Forbidden: invalid or missing request Origin", 403, "FORBIDDEN");
   }
 
-  let admin: AccessPayload;
+  let admin: AdminPrincipal;
   try {
     admin = await requireAdmin(request, env);
   } catch (err) {
@@ -201,7 +196,16 @@ export async function uploadAsset(request: Request, env: Env): Promise<Response>
            alt_text = COALESCE(excluded.alt_text, media_assets.alt_text),
            uploaded_by = excluded.uploaded_by`,
       )
-        .bind(r2Path, fileName, mimeType, sizeBytes, altText, entityType, entityId, admin.email)
+        .bind(
+          r2Path,
+          fileName,
+          mimeType,
+          sizeBytes,
+          altText,
+          entityType,
+          entityId,
+          admin.email || admin.username || "admin",
+        )
         .run();
     } catch (dbErr) {
       console.warn("[R2 Upload] Note: media_assets catalog write skipped/failed:", dbErr);
@@ -215,7 +219,7 @@ export async function uploadAsset(request: Request, env: Env): Promise<Response>
       fileName,
       contentType: mimeType,
       sizeBytes,
-      uploadedBy: admin.email,
+      uploadedBy: admin.email || admin.username || "admin",
     },
     201,
   );
@@ -230,7 +234,7 @@ export async function deleteAsset(
   env: Env,
   assetPath: string,
 ): Promise<Response> {
-  if (!requireAdminOrigin(request)) {
+  if (!requireAdminOrigin(request, env)) {
     return errorResponse("Forbidden: invalid or missing request Origin", 403, "FORBIDDEN");
   }
 

@@ -188,6 +188,44 @@ tested, and R2 MIME/extension/content checks, safe key generation, and size
 limits are complete. Public CMS endpoints remain read-only and do not require
 Access.
 
+## Production Admin Authentication & Provisioning
+
+In production (`ENVIRONMENT=production`), the Admin Console uses server-side sessions rather than Cloudflare Access JWTs. Authentication is strictly separated by environment:
+
+- `ENVIRONMENT=development`: Cloudflare Access JWT assertions (`Cf-Access-Jwt-Assertion`) checked against Access JWKS and `ADMIN_ALLOWED_EMAILS`.
+- `ENVIRONMENT=production`: Shared team credentials with PBKDF2-SHA256 password verification and HttpOnly server-side session cookies.
+
+### Operator Secrets Provisioning
+
+For production deployments, the operator provisions the shared administrator credentials securely via Wrangler secrets (never stored in repository files):
+
+```bash
+wrangler secret put ADMIN_SHARED_USERNAME
+wrangler secret put ADMIN_SHARED_PASSWORD_HASH
+```
+
+Password hashes use the format `pbkdf2_sha256$<iterations>$<salt_hex>$<hash_hex>` with 100,000 iterations of SHA-256 and a 16-byte random salt.
+
+To generate a hash locally without committing it:
+
+```bash
+node -e '
+const crypto = require("crypto");
+const salt = crypto.randomBytes(16).toString("hex");
+const hash = crypto.pbkdf2Sync("YOUR_PASSWORD", Buffer.from(salt, "hex"), 100000, 32, "sha256").toString("hex");
+console.log(`pbkdf2_sha256$100000$${salt}$${hash}`);
+'
+```
+
+### Security Properties
+
+- **Rate Limiting:** `ADMIN_LOGIN_RATE_LIMITER` limits login attempts to 5 per 60 seconds per IP.
+- **Timing Attack Defense:** Constant-time comparison is used for username matching, password verification, and dummy derivation when the user does not exist.
+- **Session Tokens:** 32-byte cryptographically secure random session tokens (256-bit entropy).
+- **Storage:** Only the SHA-256 hash of the session token is stored in the D1 `admin_sessions` table; plaintext tokens are never stored.
+- **Cookies:** Session cookies are set with `HttpOnly`, `SameSite=Strict`, `Secure`, `Path=/`, and host-only (no `Domain` attribute).
+- **CSRF Defense:** State-changing requests (`POST`, `PUT`, `PATCH`, `DELETE`) require an exact match against the configured Admin origin (`https://admin.techagenz.com` in production, `https://admin-dev.techagenz.com` in development).
+
 ## Database and migration safety
 
 Migration scripts explicitly target `--env dev`. Do not run remote migrations

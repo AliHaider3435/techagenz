@@ -1,5 +1,5 @@
-import { Env } from "../../types";
-import { requireAdmin, unauthorizedResponse, AccessPayload } from "../../middleware/auth";
+import { AdminPrincipal, Env } from "../../types";
+import { requireAdmin, unauthorizedResponse } from "../../middleware/auth";
 import { errorResponse, jsonResponse } from "../../middleware/error";
 import { requireAdminOrigin } from "../../middleware/cors";
 import {
@@ -24,11 +24,14 @@ export async function handleAdminRequest(
   pathname: string,
 ): Promise<Response> {
   // Require the exact trusted admin Origin for every state-changing request.
-  if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method) && !requireAdminOrigin(request)) {
+  if (
+    ["POST", "PUT", "PATCH", "DELETE"].includes(request.method) &&
+    !requireAdminOrigin(request, env)
+  ) {
     return errorResponse("Forbidden: invalid or missing request Origin", 403, "FORBIDDEN");
   }
 
-  let admin: AccessPayload;
+  let admin: AdminPrincipal;
   try {
     admin = await requireAdmin(request, env);
   } catch (err) {
@@ -46,7 +49,9 @@ export async function handleAdminRequest(
     }
     return jsonResponse({
       authorized: true,
+      authType: admin.authType,
       email: admin.email,
+      username: admin.username,
       cmsEnabled: true,
     });
   }

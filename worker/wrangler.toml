@@ -19,6 +19,14 @@ namespace_id = "2026110501"
   limit = 5
   period = 60
 
+[[ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110503"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
 # Dedicated development environment. Resource IDs are verified and must not be
 # replaced with newly created resources.
 [env.dev]
@@ -33,6 +41,14 @@ custom_domain = true
 [[env.dev.ratelimits]]
 name = "ENQUIRY_RATE_LIMITER"
 namespace_id = "2026110502"
+
+  [env.dev.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.dev.ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110504"
 
   [env.dev.ratelimits.simple]
   limit = 5
@@ -53,4 +69,45 @@ CF_ACCESS_TEAM_DOMAIN = "broad-voice-f670.cloudflareaccess.com"
 CF_ACCESS_AUD = "ae1b45165a6ef7d738e6ab419faef0a262409cef3ac6b0f11f21c7952c755f54"
 ADMIN_ALLOWED_EMAILS = "haider.ly5617@gmail.com"
 CF_ACCESS_API_HOST = "api-dev.techagenz.com"
+ADMIN_CMS_ENABLED = "true"
+
+# Dedicated production environment.
+# Target: https://api.techagenz.com
+[env.production]
+name = "techagenz-api"
+workers_dev = false
+preview_urls = false
+
+[[env.production.routes]]
+pattern = "api.techagenz.com"
+custom_domain = true
+
+[[env.production.ratelimits]]
+name = "ENQUIRY_RATE_LIMITER"
+namespace_id = "2026110505"
+
+  [env.production.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.production.ratelimits]]
+name = "ADMIN_LOGIN_RATE_LIMITER"
+namespace_id = "2026110506"
+
+  [env.production.ratelimits.simple]
+  limit = 5
+  period = 60
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "techagenz-prod-db"
+database_id = "65d6befc-2bdf-4f56-8795-5a08781a80bd"
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "techagenz-prod-assets"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+CF_ACCESS_API_HOST = "api.techagenz.com"
 ADMIN_CMS_ENABLED = "true"

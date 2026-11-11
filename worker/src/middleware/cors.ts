@@ -1,6 +1,15 @@
 import { Env } from "../types";
 
-const ADMIN_ORIGIN = "https://admin-dev.techagenz.com";
+export const DEV_ADMIN_ORIGIN = "https://admin-dev.techagenz.com";
+export const PROD_ADMIN_ORIGIN = "https://admin.techagenz.com";
+
+export function getAdminOrigin(env?: Env): string {
+  if (env?.ENVIRONMENT === "production") {
+    return PROD_ADMIN_ORIGIN;
+  }
+  return DEV_ADMIN_ORIGIN;
+}
+
 const PUBLIC_ORIGINS = new Set([
   "https://techagenz.com",
   "https://www.techagenz.com",
@@ -23,15 +32,18 @@ function isAdminApiRequest(request: Request): boolean {
   return (
     pathname === "/api/admin" ||
     pathname.startsWith("/api/admin/") ||
+    pathname === "/api/auth" ||
+    pathname.startsWith("/api/auth/") ||
     (pathname === "/api/r2/upload" && method === "POST") ||
     (pathname.startsWith("/api/r2/") && method === "DELETE")
   );
 }
 
-function allowedOrigins(request: Request): Set<string> {
+function allowedOrigins(request: Request, env?: Env): Set<string> {
+  const adminOrigin = getAdminOrigin(env);
   return isAdminApiRequest(request)
-    ? new Set([ADMIN_ORIGIN])
-    : new Set([...PUBLIC_ORIGINS, ADMIN_ORIGIN]);
+    ? new Set([adminOrigin])
+    : new Set([...PUBLIC_ORIGINS, adminOrigin]);
 }
 
 function appendVary(headers: Headers, values: string[]): void {
@@ -46,10 +58,11 @@ function appendVary(headers: Headers, values: string[]): void {
   headers.set("Vary", [...varyValues].join(", "));
 }
 
-function corsHeadersForOrigin(origin: string): Headers {
+function corsHeadersForOrigin(origin: string, env?: Env): Headers {
   const headers = new Headers();
   headers.set("Access-Control-Allow-Origin", origin);
-  if (origin === ADMIN_ORIGIN) {
+  const adminOrigin = getAdminOrigin(env);
+  if (origin === adminOrigin) {
     headers.set("Access-Control-Allow-Credentials", "true");
   }
   return headers;
@@ -74,34 +87,36 @@ function parseRequestedHeaders(value: string | null): string[] | null {
 
 /**
  * Validate browser origins independently of authentication. This is a CORS
- * boundary only; protected handlers still verify Access and administrator
+ * boundary only; protected handlers still verify Access or session
  * authorization for every actual request.
  */
-export function isAllowedRequestOrigin(request: Request): boolean {
+export function isAllowedRequestOrigin(request: Request, env?: Env): boolean {
   const origin = request.headers.get("Origin");
-  return !origin || allowedOrigins(request).has(origin);
+  return !origin || allowedOrigins(request, env).has(origin);
 }
 
 /**
  * Handle CORS preflight requests before routing. A successful response does
  * not authenticate the subsequent request or authorize any operation.
  */
-export function handleCors(request: Request, _env: Env): Response | null {
+export function handleCors(request: Request, env: Env): Response | null {
   const origin = request.headers.get("Origin");
   if (request.method !== "OPTIONS") {
-    return origin && !isAllowedRequestOrigin(request) ? rejectedCorsResponse() : null;
+    return origin && !isAllowedRequestOrigin(request, env) ? rejectedCorsResponse() : null;
   }
 
-  if (!origin || !allowedOrigins(request).has(origin)) {
+  const origins = allowedOrigins(request, env);
+  if (!origin || !origins.has(origin)) {
     return rejectedCorsResponse();
   }
 
+  const adminOrigin = getAdminOrigin(env);
   const requestedMethod = request.headers.get("Access-Control-Request-Method");
-  const methods = origin === ADMIN_ORIGIN ? ADMIN_METHODS : PUBLIC_METHODS;
+  const methods = origin === adminOrigin ? ADMIN_METHODS : PUBLIC_METHODS;
   const requestedHeaders = parseRequestedHeaders(
     request.headers.get("Access-Control-Request-Headers"),
   );
-  const headersAllowList = origin === ADMIN_ORIGIN ? ADMIN_HEADERS : PUBLIC_HEADERS;
+  const headersAllowList = origin === adminOrigin ? ADMIN_HEADERS : PUBLIC_HEADERS;
 
   if (
     !requestedMethod ||
@@ -112,7 +127,7 @@ export function handleCors(request: Request, _env: Env): Response | null {
     return rejectedCorsResponse();
   }
 
-  const headers = corsHeadersForOrigin(origin);
+  const headers = corsHeadersForOrigin(origin, env);
   appendVary(headers, ["Origin"]);
   headers.set("Access-Control-Allow-Methods", requestedMethod);
   if (requestedHeaders.length > 0) {
@@ -130,20 +145,21 @@ export function handleCors(request: Request, _env: Env): Response | null {
  * Attach CORS response headers only to requests from explicitly allowed
  * origins. Protected API paths are readable only by the admin frontend.
  */
-export function withCors(response: Response, request: Request, _env: Env): Response {
+export function withCors(response: Response, request: Request, env: Env): Response {
   const origin = request.headers.get("Origin");
-  if (!origin || !allowedOrigins(request).has(origin)) {
+  if (!origin || !allowedOrigins(request, env).has(origin)) {
     const newResponse = new Response(response.body, response);
     appendVary(newResponse.headers, ["Origin"]);
     return newResponse;
   }
 
   const newResponse = new Response(response.body, response);
-  corsHeadersForOrigin(origin).forEach((value, key) => newResponse.headers.set(key, value));
+  corsHeadersForOrigin(origin, env).forEach((value, key) => newResponse.headers.set(key, value));
   appendVary(newResponse.headers, ["Origin"]);
   return newResponse;
 }
 
-export function requireAdminOrigin(request: Request): boolean {
-  return request.headers.get("Origin") === ADMIN_ORIGIN;
+export function requireAdminOrigin(request: Request, env?: Env): boolean {
+  const origin = request.headers.get("Origin");
+  return origin === getAdminOrigin(env);
 }

@@ -24,6 +24,7 @@ import { getTeam, getTeamMember, getBlogs, getBlog, getProjects, getProject } fr
 import { submitEnquiry } from "./routes/enquiries";
 import { handleAdminRequest } from "./routes/admin/index";
 import { getAsset, uploadAsset, deleteAsset } from "./routes/r2";
+import { handleLogin, handleGetSession, handleLogout } from "./routes/auth";
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
@@ -90,7 +91,18 @@ export default {
         if (method === "DELETE") return deleteAsset(request, env, assetPath);
       }
 
-      // ── Admin (all protected — 401 in Phase 2) ─────────────────────────
+      // ── Authentication (Production Shared Sessions & Session Probe) ─────
+      if (pathname === "/api/auth/login" && method === "POST") {
+        return handleLogin(request, env);
+      }
+      if (pathname === "/api/auth/session" && method === "GET") {
+        return handleGetSession(request, env);
+      }
+      if (pathname === "/api/auth/logout" && method === "POST") {
+        return handleLogout(request, env);
+      }
+
+      // ── Admin (all protected) ───────────────────────────────────────────
       if (pathname === "/api/admin" || pathname.startsWith("/api/admin/")) {
         return handleAdminRequest(request, env, pathname);
       }

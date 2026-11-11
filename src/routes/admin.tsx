@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
@@ -89,6 +89,8 @@ function AdminDashboardPage() {
     adminApiClient.accessUrl ? "checking" : "unconfigured",
   );
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminUsername, setAdminUsername] = useState<string | null>(null);
+  const [authType, setAuthType] = useState<"cloudflare_access" | "session" | null>(null);
 
   // General state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -233,6 +235,8 @@ function AdminDashboardPage() {
       if (active) {
         setAdminApiAccessState(result.state);
         if (result.email) setAdminEmail(result.email);
+        if (result.username) setAdminUsername(result.username);
+        if (result.authType) setAuthType(result.authType);
       }
     });
 
@@ -242,31 +246,7 @@ function AdminDashboardPage() {
   }, [adminApiClient, adminApiCheckVersion]);
 
   // ── Initial Data Loading ────────────────────────────────────────────────
-  const loadLiveContent = async () => {
-    try {
-      const [teamData, blogData, projectData, enquiryData, mediaData] = await Promise.allSettled([
-        adminApiClient.listTeam(),
-        adminApiClient.listBlogs(),
-        adminApiClient.listProjects(),
-        adminApiClient.listEnquiries(),
-        adminApiClient.listMedia(),
-      ]);
-
-      if (teamData.status === "fulfilled") setTeamMembers(teamData.value);
-      if (blogData.status === "fulfilled") setBlogs(blogData.value);
-      if (projectData.status === "fulfilled") setProjects(projectData.value);
-      if (enquiryData.status === "fulfilled") {
-        setEnquiries(enquiryData.value.enquiries);
-        setEnquiryCounts(enquiryData.value.counts);
-      }
-      if (mediaData.status === "fulfilled") setMediaAssets(mediaData.value.assets);
-    } catch {
-      // Fallback to local data
-      loadLocalFallback();
-    }
-  };
-
-  const loadLocalFallback = () => {
+  const loadLocalFallback = useCallback(() => {
     const localTeam = getTeamMembers().map((m, idx) => ({
       id: m.id,
       name: m.title,
@@ -321,7 +301,31 @@ function AdminDashboardPage() {
         : null,
     }));
     setProjects(localProjects);
-  };
+  }, []);
+
+  const loadLiveContent = useCallback(async () => {
+    try {
+      const [teamData, blogData, projectData, enquiryData, mediaData] = await Promise.allSettled([
+        adminApiClient.listTeam(),
+        adminApiClient.listBlogs(),
+        adminApiClient.listProjects(),
+        adminApiClient.listEnquiries(),
+        adminApiClient.listMedia(),
+      ]);
+
+      if (teamData.status === "fulfilled") setTeamMembers(teamData.value);
+      if (blogData.status === "fulfilled") setBlogs(blogData.value);
+      if (projectData.status === "fulfilled") setProjects(projectData.value);
+      if (enquiryData.status === "fulfilled") {
+        setEnquiries(enquiryData.value.enquiries);
+        setEnquiryCounts(enquiryData.value.counts);
+      }
+      if (mediaData.status === "fulfilled") setMediaAssets(mediaData.value.assets);
+    } catch {
+      // Fallback to local data
+      loadLocalFallback();
+    }
+  }, [adminApiClient, loadLocalFallback]);
 
   useEffect(() => {
     if (adminApiAccessState === "authorized" || adminApiAccessState === "authorized-read-only") {
@@ -329,16 +333,25 @@ function AdminDashboardPage() {
     } else {
       loadLocalFallback();
     }
-  }, [adminApiAccessState]);
+  }, [adminApiAccessState, loadLiveContent, loadLocalFallback]);
 
-  const handleLogout = () => {
-    navigate({ to: "/login" });
+  const handleLogout = async () => {
+    try {
+      await adminApiClient.logout();
+      navigate({ to: "/login" });
+    } catch (err) {
+      showToast(
+        err instanceof Error
+          ? `Logout failed: ${err.message}`
+          : "Unable to sign out from server session. Please try again.",
+      );
+    }
   };
 
   const requireWriteAuth = (): boolean => {
     if (adminApiAccessState !== "authorized") {
       showToast(
-        "Access Required: Please sign in via Cloudflare Access at admin-dev.techagenz.com.",
+        "Administrator authentication required: Please sign in to perform write operations.",
       );
       return false;
     }
@@ -772,9 +785,9 @@ function AdminDashboardPage() {
                     : "Content Preview Mode"}
                 </span>
               </span>
-              {adminEmail && (
+              {(adminUsername || adminEmail) && (
                 <span className="text-xs text-slate-400">
-                  User: <strong className="text-cyan-300">{adminEmail}</strong>
+                  User: <strong className="text-cyan-300">{adminUsername || adminEmail}</strong>
                 </span>
               )}
             </div>
@@ -821,8 +834,8 @@ function AdminDashboardPage() {
               onClick={handleLogout}
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-300 hover:border-cyan-500/40 hover:text-white transition cursor-pointer"
             >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span>Access guidance</span>
+              <Lock className="h-3.5 w-3.5" />
+              <span>Sign out</span>
             </button>
           </div>
         </div>
@@ -832,15 +845,17 @@ function AdminDashboardPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                Cloudflare Access & Zero-Trust Session
+                {authType === "session"
+                  ? "Production Administrator Session"
+                  : "Cloudflare Access & Zero-Trust Session"}
               </p>
               <p className="mt-1 text-sm text-slate-300 font-mono">
                 {adminApiAccessState === "authorized"
-                  ? "✓ Active administrator session. Full D1 and R2 write access enabled."
+                  ? `✓ Active administrator session (${authType === "session" ? "Production Team Session" : "Cloudflare Access"}). Full D1 and R2 write access enabled.`
                   : adminApiAccessState === "authorized-read-only"
                     ? "✓ Authorized Access token detected. Admin CMS operates in read-only mode."
                     : adminApiAccessState === "session-required"
-                      ? "⚠ Cloudflare Access session required to perform database writes."
+                      ? "⚠ Administrator session required to perform database writes."
                       : adminApiAccessState === "forbidden"
                         ? "✕ Forbidden: Your account is not on the administrator allow-list."
                         : "Checking session..."}

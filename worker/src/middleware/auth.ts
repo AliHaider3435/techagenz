@@ -1,6 +1,7 @@
 import { decodeProtectedHeader, importJWK, jwtVerify, type JWTHeaderParameters } from "jose";
 
-import { Env } from "../types";
+import { AdminPrincipal, Env } from "../types";
+import { hashSessionToken } from "../lib/crypto";
 
 const ACCESS_ASSERTION_HEADER = "Cf-Access-Jwt-Assertion";
 const JWKS_CACHE_TTL_MS = 5 * 60 * 1000;
@@ -309,13 +310,62 @@ export function forbiddenResponse(message = "Forbidden"): Response {
   );
 }
 
+export const ADMIN_SESSION_COOKIE_NAME = "techagenz_admin_session";
+
+export function parseSessionCookie(cookieHeader: string | null): string | null {
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(/(?:^|;\s*)techagenz_admin_session=([^;]+)/);
+  if (!match) return null;
+  const token = decodeURIComponent(match[1].trim());
+  return token.length > 0 ? token : null;
+}
+
 export async function requireAuth(request: Request, env: Env): Promise<AccessPayload> {
   const payload = await verifyAccessJwt(request, env);
   if (!payload) throw unauthorizedResponse();
   return payload;
 }
 
-export async function requireAdmin(request: Request, env: Env): Promise<AccessPayload> {
+export async function requireAdmin(request: Request, env: Env): Promise<AdminPrincipal> {
+  if (env.ENVIRONMENT === "production") {
+    const configuredApiHost = (env.CF_ACCESS_API_HOST || "api.techagenz.com").trim().toLowerCase();
+    const url = new URL(request.url);
+    if (url.hostname.toLowerCase() !== configuredApiHost) {
+      throw forbiddenResponse("Forbidden: invalid API hostname");
+    }
+
+    const token = parseSessionCookie(request.headers.get("Cookie"));
+    if (!token) {
+      throw unauthorizedResponse("Session required");
+    }
+
+    const tokenHash = await hashSessionToken(token);
+    const session = await env.DB.prepare(
+      "SELECT id, username, expires_at, revoked_at FROM admin_sessions WHERE token_hash = ?",
+    )
+      .bind(tokenHash)
+      .first<{ id: string; username: string; expires_at: string; revoked_at: string | null }>();
+
+    if (!session) {
+      throw unauthorizedResponse("Invalid session");
+    }
+
+    if (session.revoked_at !== null) {
+      throw unauthorizedResponse("Session has been revoked");
+    }
+
+    const expiresTime = new Date(session.expires_at).getTime();
+    if (Number.isNaN(expiresTime) || expiresTime <= Date.now()) {
+      throw unauthorizedResponse("Session has expired");
+    }
+
+    return {
+      authType: "session",
+      username: session.username,
+      sessionId: session.id,
+    };
+  }
+
   const payload = await requireAuth(request, env);
   const configuredApiHost = env.CF_ACCESS_API_HOST?.trim().toLowerCase();
   if (
@@ -325,5 +375,8 @@ export async function requireAdmin(request: Request, env: Env): Promise<AccessPa
   ) {
     throw forbiddenResponse();
   }
-  return payload;
+  return {
+    ...payload,
+    authType: "cloudflare_access",
+  };
 }
