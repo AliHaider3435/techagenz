@@ -40,6 +40,8 @@ export interface Env {
   ADMIN_SESSION_TTL_HOURS?: string;
   /** Optional Cloudflare rate limiter binding for admin login attempts. */
   ADMIN_LOGIN_RATE_LIMITER?: RateLimit;
+  /** Expected Turnstile hostname for public enquiry requests outside production. */
+  TURNSTILE_ENQUIRY_HOSTNAME?: string;
 }
 
 // ─── Unified Administrator Principal ──────────────────────────────────────────

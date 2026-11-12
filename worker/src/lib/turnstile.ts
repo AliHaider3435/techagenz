@@ -21,19 +21,26 @@ interface TurnstileVerifyResponse {
 /**
  * Verifies a Turnstile token against the Cloudflare siteverify API.
  *
- * @param token     - The token from the user's browser (from widget callback)
- * @param secretKey - CF_TURNSTILE_SECRET_KEY (injected via wrangler secret)
- * @param ip        - Optional visitor IP (CF-Connecting-IP header) for extra validation
- * @returns true if the token is valid, false otherwise
+ * @param token            - The token from the user's browser (from widget callback)
+ * @param secretKey        - CF_TURNSTILE_SECRET_KEY (injected via wrangler secret)
+ * @param expectedHostname - The explicitly configured hostname that must match Siteverify.
+ *                           Do NOT pass a client-supplied value here.
+ * @param ip               - Optional visitor IP (CF-Connecting-IP header) for extra validation
+ * @returns true if the token is valid and hostname matches, false otherwise (fail-closed)
  */
 export async function validateTurnstile(
   token: string,
   secretKey: string,
+  expectedHostname: string,
   ip?: string,
 ): Promise<boolean> {
-  if (!token) return false;
-  if (!secretKey) {
+  if (!token.trim()) return false;
+  if (!secretKey.trim()) {
     console.error("[Turnstile] CF_TURNSTILE_SECRET_KEY is not set — rejecting validation");
+    return false;
+  }
+  if (!expectedHostname.trim()) {
+    console.error("[Turnstile] Expected hostname is not configured — rejecting validation");
     return false;
   }
 
@@ -55,13 +62,21 @@ export async function validateTurnstile(
 
     const result = await response.json<TurnstileVerifyResponse>();
 
-    if (!result.success) {
+    if (result.success !== true) {
       console.warn("[Turnstile] Verification failed:", result["error-codes"]);
+      return false;
     }
 
-    return result.success === true;
-  } catch (err) {
-    console.error("[Turnstile] Network error during verification:", err);
+    if (result.hostname !== expectedHostname) {
+      console.warn(
+        `[Turnstile] Hostname mismatch: expected "${expectedHostname}", got "${result.hostname ?? "(missing)"}"`,
+      );
+      return false;
+    }
+
+    return true;
+  } catch {
+    console.error("[Turnstile] Siteverify request failed — rejecting validation");
     return false;
   }
 }

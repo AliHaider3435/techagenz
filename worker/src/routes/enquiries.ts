@@ -51,8 +51,18 @@ export async function submitEnquiry(request: Request, env: Env): Promise<Respons
   const budget = typeof body.budget === "string" ? body.budget.trim() : null;
 
   // ── Turnstile server-side verification ─────────────────────────────────────
+  const expectedHostname =
+    env.ENVIRONMENT === "production"
+      ? "techagenz.com"
+      : env.TURNSTILE_ENQUIRY_HOSTNAME?.trim() || "techagenz.com";
+
   const ip = request.headers.get("CF-Connecting-IP") ?? undefined;
-  const turnstileValid = await validateTurnstile(turnstileToken, env.CF_TURNSTILE_SECRET_KEY, ip);
+  const turnstileValid = await validateTurnstile(
+    turnstileToken,
+    env.CF_TURNSTILE_SECRET_KEY,
+    expectedHostname,
+    ip,
+  );
   if (!turnstileValid) {
     return errorResponse("Bot protection check failed. Please try again.", 422);
   }

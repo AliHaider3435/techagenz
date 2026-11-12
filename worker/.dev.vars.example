@@ -8,6 +8,8 @@ RESEND_API_KEY=re_your_resend_api_key_here
 
 # Cloudflare Turnstile (bot protection for public forms)
 CF_TURNSTILE_SECRET_KEY=your_turnstile_secret_key_here
+# Local frontend hostname used by Siteverify when running the public form locally.
+TURNSTILE_ENQUIRY_HOSTNAME=localhost
 
 # Cloudflare Access (admin JWT verification — Development)
 CF_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com

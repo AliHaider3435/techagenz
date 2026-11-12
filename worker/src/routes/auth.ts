@@ -17,6 +17,7 @@ import {
 import { requireAdminOrigin } from "../middleware/cors";
 import { errorResponse, jsonResponse } from "../middleware/error";
 import { getLoginRateLimitKey } from "../lib/enquiry-rate-limit";
+import { validateTurnstile } from "../lib/turnstile";
 import { Env } from "../types";
 
 export { validateSessionTtlHours } from "../lib/crypto";
@@ -124,6 +125,7 @@ export async function handleLogin(request: Request, env: Env): Promise<Response>
 
   const rawUsername = body.username;
   const rawPassword = body.password;
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken.trim() : "";
 
   if (typeof rawUsername !== "string" || typeof rawPassword !== "string") {
     return errorResponse("Username and password are required", 400, "BAD_REQUEST");
@@ -142,6 +144,24 @@ export async function handleLogin(request: Request, env: Env): Promise<Response>
 
   if (password.length > 1024) {
     return errorResponse("Password must not exceed 1024 characters", 400, "BAD_REQUEST");
+  }
+
+  if (!turnstileToken) {
+    return errorResponse("Turnstile token is required", 400, "BAD_REQUEST");
+  }
+
+  const turnstileValid = await validateTurnstile(
+    turnstileToken,
+    env.CF_TURNSTILE_SECRET_KEY,
+    "admin.techagenz.com",
+    request.headers.get("CF-Connecting-IP") ?? undefined,
+  );
+  if (!turnstileValid) {
+    return errorResponse(
+      "Bot verification failed. Please try again.",
+      422,
+      "BOT_VERIFICATION_FAILED",
+    );
   }
 
   const expectedUsername = env.ADMIN_SHARED_USERNAME?.trim();

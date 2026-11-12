@@ -27,6 +27,8 @@ function request(body, ip = "192.0.2.10") {
 function testEnvironment({
   rateLimitSuccess = true,
   turnstileSecret = "test-secret",
+  environment = "test",
+  turnstileHostname = "techagenz.com",
   resendApiKey = "",
 } = {}) {
   let writes = 0;
@@ -52,7 +54,8 @@ function testEnvironment({
       },
     },
     ASSETS: {},
-    ENVIRONMENT: "test",
+    ENVIRONMENT: environment,
+    TURNSTILE_ENQUIRY_HOSTNAME: turnstileHostname,
     RESEND_API_KEY: resendApiKey,
     CF_ACCESS_TEAM_DOMAIN: "",
     CF_ACCESS_AUD: "",
@@ -70,7 +73,9 @@ async function withEmailFetch(resendResponse, callback) {
   let emailRequests = 0;
   globalThis.fetch = async (input) => {
     if (String(input).includes("challenges.cloudflare.com")) {
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
+      return new Response(JSON.stringify({ success: true, hostname: "techagenz.com" }), {
+        status: 200,
+      });
     }
     if (String(input).includes("api.resend.com")) {
       emailRequests += 1;
@@ -136,6 +141,66 @@ test("Worker enquiry endpoint rejects invalid Turnstile verification without a D
     assert.equal(body.error.code, "REQUEST_ERROR");
     assert.equal(body.error.message, "Bot protection check failed. Please try again.");
     assert.equal(environment.writes, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("production enquiry verification requires the fixed public hostname", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(JSON.stringify({ success: true, hostname: "admin-dev.techagenz.com" }), {
+      status: 200,
+    });
+  try {
+    const environment = testEnvironment({
+      environment: "production",
+      turnstileHostname: "admin-dev.techagenz.com",
+    });
+    const response = await submitEnquiry(
+      request({ ...validFields, turnstileToken: "test-token" }),
+      environment.env,
+    );
+
+    assert.equal(response.status, 422);
+    assert.equal(environment.writes, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("production enquiry accepts Siteverify hostname techagenz.com", async () => {
+  await withEmailFetch(new Response("{}", { status: 200 }), async () => {
+    const environment = testEnvironment({
+      environment: "production",
+      turnstileHostname: "admin-dev.techagenz.com",
+    });
+    const response = await submitEnquiry(
+      request({ ...validFields, turnstileToken: "test-token" }),
+      environment.env,
+    );
+
+    assert.equal(response.status, 201);
+    assert.equal(environment.writes, 1);
+  });
+});
+
+test("development enquiry honors an explicitly configured localhost hostname", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(JSON.stringify({ success: true, hostname: "localhost" }), { status: 200 });
+  try {
+    const environment = testEnvironment({
+      environment: "development",
+      turnstileHostname: "localhost",
+    });
+    const response = await submitEnquiry(
+      request({ ...validFields, turnstileToken: "test-token" }),
+      environment.env,
+    );
+
+    assert.equal(response.status, 201);
+    assert.equal(environment.writes, 1);
   } finally {
     globalThis.fetch = originalFetch;
   }

@@ -151,6 +151,46 @@ test("approved development administrator is authorized but admin CRUD remains di
   });
 });
 
+test("development session probe requires Cloudflare Access and authorizes approved assertions", async () => {
+  const unauthenticated = await request("/api/auth/session");
+  assert.equal(unauthenticated.status, 401);
+  await assertErrorEnvelope(unauthenticated, "UNAUTHORIZED", "Cloudflare Access session required");
+
+  const authenticated = await request("/api/auth/session", { token: await tokenFor() });
+  assert.equal(authenticated.status, 200);
+  assert.deepEqual((await authenticated.json()).data, {
+    authenticated: true,
+    authType: "cloudflare_access",
+    email: developmentAdmin,
+  });
+});
+
+test("development password login remains disabled", async () => {
+  const response = await worker.fetch(
+    new Request(`https://${apiHost}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://admin-dev.techagenz.com",
+      },
+      body: JSON.stringify({
+        username: "test-user",
+        password: "test-password",
+        turnstileToken: "test-token",
+      }),
+    }),
+    env(),
+    {},
+  );
+
+  assert.equal(response.status, 403);
+  await assertErrorEnvelope(
+    response,
+    "AUTH_METHOD_NOT_SUPPORTED",
+    "Password authentication is disabled in development. Please use Cloudflare Access.",
+  );
+});
+
 test("R2 write endpoints require auth and remain disabled after authorization", async () => {
   const runtimeEnv = env();
   const uploadUnauthorized = await request("/api/r2/upload?path=team/photo.webp", {

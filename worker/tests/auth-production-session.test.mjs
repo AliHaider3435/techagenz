@@ -32,7 +32,45 @@ const TEST_PASSWORD = "CorrectHorseBatteryStaple123!";
 const TEST_PASSWORD_HASH = await hashPassword(TEST_PASSWORD);
 const PROD_ORIGIN = "https://admin.techagenz.com";
 const PROD_API_HOST = "api.techagenz.com";
+const PROD_TURNSTILE_HOSTNAME = "admin.techagenz.com";
 const DEFAULT_CLIENT_IP = "198.51.100.1";
+const TEST_TURNSTILE_TOKEN = "test-turnstile-token";
+
+let siteverifyResult = { success: true, hostname: PROD_TURNSTILE_HOSTNAME };
+let siteverifyNetworkFailure = false;
+let siteverifyRequests = 0;
+globalThis.fetch = async (input) => {
+  assert.equal(
+    String(input),
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    "Authentication tests must not make non-Siteverify network requests",
+  );
+  siteverifyRequests += 1;
+  if (siteverifyNetworkFailure) throw new Error("mock Siteverify network failure");
+  return new Response(JSON.stringify(siteverifyResult), { status: 200 });
+};
+
+function validLoginPayload(fields = {}) {
+  return {
+    username: TEST_USERNAME,
+    password: TEST_PASSWORD,
+    turnstileToken: TEST_TURNSTILE_TOKEN,
+    ...fields,
+  };
+}
+
+async function withSiteverifyState(state, callback) {
+  const previousResult = siteverifyResult;
+  const previousNetworkFailure = siteverifyNetworkFailure;
+  siteverifyResult = state.result ?? { success: true, hostname: PROD_TURNSTILE_HOSTNAME };
+  siteverifyNetworkFailure = state.networkFailure ?? false;
+  try {
+    return await callback();
+  } finally {
+    siteverifyResult = previousResult;
+    siteverifyNetworkFailure = previousNetworkFailure;
+  }
+}
 
 function createMockD1(options = {}) {
   const sessions = new Map(); // tokenHash -> session record
@@ -131,6 +169,7 @@ function createProdEnv(overrides = {}) {
     ADMIN_SHARED_USERNAME: TEST_USERNAME,
     ADMIN_SHARED_PASSWORD_HASH: TEST_PASSWORD_HASH,
     ADMIN_SESSION_TTL_HOURS: "8",
+    CF_TURNSTILE_SECRET_KEY: "test-secret",
     DB: db,
     ADMIN_LOGIN_RATE_LIMITER: rateLimiter,
     ENQUIRY_RATE_LIMITER: {
@@ -220,14 +259,12 @@ test("1. Successful production login sets HttpOnly, SameSite=Strict cookie and r
       Origin: PROD_ORIGIN,
       "CF-Connecting-IP": DEFAULT_CLIENT_IP,
     },
-    body: JSON.stringify({
-      username: TEST_USERNAME,
-      password: TEST_PASSWORD,
-    }),
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
   assert.equal(res.status, 200);
+  assert.ok(siteverifyRequests > 0, "Turnstile verification must precede credential verification");
 
   const body = await res.json();
   assert.equal(body.ok, true);
@@ -245,9 +282,93 @@ test("1. Successful production login sets HttpOnly, SameSite=Strict cookie and r
   assert.ok(!setCookie.includes("Domain="), "Must be host-only (no Domain attribute)");
 });
 
+test("production login rejects a missing Turnstile token without a Siteverify request or session", async () => {
+  const mockDb = createMockD1();
+  const env = createProdEnv({ DB: mockDb });
+  const previousSiteverifyRequests = siteverifyRequests;
+  const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+  });
+
+  const response = await worker.fetch(req, env, {});
+  assert.equal(response.status, 400);
+  assert.equal(siteverifyRequests, previousSiteverifyRequests);
+  assert.equal(mockDb.sessions.size, 0);
+  assert.equal(response.headers.get("Set-Cookie"), null);
+});
+
+for (const [description, state, envOverrides] of [
+  [
+    "invalid Turnstile token",
+    { result: { success: false, "error-codes": ["invalid-input-response"] } },
+    {},
+  ],
+  ["unsuccessful Siteverify response", { result: { success: false } }, {}],
+  ["missing Turnstile secret", {}, { CF_TURNSTILE_SECRET_KEY: "" }],
+  ["Siteverify network failure", { networkFailure: true }, {}],
+  [
+    "production hostname mismatch",
+    { result: { success: true, hostname: "admin-dev.techagenz.com" } },
+    {},
+  ],
+  ["missing Siteverify hostname", { result: { success: true } }, {}],
+]) {
+  test(`production login fails closed for ${description} without creating a session`, async () => {
+    await withSiteverifyState(state, async () => {
+      const mockDb = createMockD1();
+      const env = createProdEnv({ DB: mockDb, ...envOverrides });
+      const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: PROD_ORIGIN,
+          "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+        },
+        body: JSON.stringify(validLoginPayload()),
+      });
+
+      const response = await worker.fetch(req, env, {});
+      assert.equal(response.status, 422);
+      assert.equal(mockDb.sessions.size, 0);
+      assert.equal(response.headers.get("Set-Cookie"), null);
+    });
+  });
+}
+
+test("production login accepts a successful Siteverify result for admin.techagenz.com", async () => {
+  await withSiteverifyState(
+    { result: { success: true, hostname: PROD_TURNSTILE_HOSTNAME } },
+    async () => {
+      const mockDb = createMockD1();
+      const env = createProdEnv({ DB: mockDb });
+      const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: PROD_ORIGIN,
+          "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+        },
+        body: JSON.stringify(validLoginPayload()),
+      });
+
+      const response = await worker.fetch(req, env, {});
+      assert.equal(response.status, 200);
+      assert.equal(mockDb.sessions.size, 1);
+      assert.ok(response.headers.get("Set-Cookie"));
+    },
+  );
+});
+
 test("2. Invalid username returns 401 with generic message, no session created", async () => {
   const mockDb = createMockD1();
   const env = createProdEnv({ DB: mockDb });
+  const previousSiteverifyRequests = siteverifyRequests;
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
@@ -256,14 +377,12 @@ test("2. Invalid username returns 401 with generic message, no session created",
       Origin: PROD_ORIGIN,
       "CF-Connecting-IP": DEFAULT_CLIENT_IP,
     },
-    body: JSON.stringify({
-      username: "nonexistent_user",
-      password: TEST_PASSWORD,
-    }),
+    body: JSON.stringify(validLoginPayload({ username: "nonexistent_user" })),
   });
 
   const res = await worker.fetch(req, env, {});
   assert.equal(res.status, 401);
+  assert.ok(siteverifyRequests > previousSiteverifyRequests);
 
   const body = await res.json();
   assert.equal(body.ok, false);
@@ -275,6 +394,7 @@ test("2. Invalid username returns 401 with generic message, no session created",
 test("3. Invalid password returns 401 with generic message, no session created", async () => {
   const mockDb = createMockD1();
   const env = createProdEnv({ DB: mockDb });
+  const previousSiteverifyRequests = siteverifyRequests;
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
@@ -283,14 +403,12 @@ test("3. Invalid password returns 401 with generic message, no session created",
       Origin: PROD_ORIGIN,
       "CF-Connecting-IP": DEFAULT_CLIENT_IP,
     },
-    body: JSON.stringify({
-      username: TEST_USERNAME,
-      password: "completelyWrongPassword!",
-    }),
+    body: JSON.stringify(validLoginPayload({ password: "completelyWrongPassword!" })),
   });
 
   const res = await worker.fetch(req, env, {});
   assert.equal(res.status, 401);
+  assert.ok(siteverifyRequests > previousSiteverifyRequests);
 
   const body = await res.json();
   assert.equal(body.ok, false);
@@ -304,16 +422,24 @@ test("4. Error messages for invalid user and invalid password are identical", as
 
   const reqUser = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: "wrong_user", password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload({ username: "wrong_user" })),
   });
   const resUser = await worker.fetch(reqUser, env, {});
   const bodyUser = await resUser.json();
 
   const reqPass = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: "wrong_password" }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload({ password: "wrong_password" })),
   });
   const resPass = await worker.fetch(reqPass, env, {});
   const bodyPass = await resPass.json();
@@ -333,10 +459,7 @@ test("5. Login rate limiting returns 429 when rate limiter fails", async () => {
       Origin: PROD_ORIGIN,
       "CF-Connecting-IP": DEFAULT_CLIENT_IP,
     },
-    body: JSON.stringify({
-      username: TEST_USERNAME,
-      password: TEST_PASSWORD,
-    }),
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
@@ -353,8 +476,12 @@ test("6. Successful session verification GET /api/auth/session returns 200 with 
   // 1. Login
   const loginReq = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
   const loginRes = await worker.fetch(loginReq, env, {});
   const setCookie = loginRes.headers.get("Set-Cookie");
@@ -434,7 +561,11 @@ test("9. Revoked session returns 401 on GET /api/auth/session", async () => {
 
   const res = await worker.fetch(
     new Request(`https://${PROD_API_HOST}/api/auth/session`, {
-      headers: { Cookie: `techagenz_admin_session=${rawToken}`, Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+      headers: {
+        Cookie: `techagenz_admin_session=${rawToken}`,
+        Origin: PROD_ORIGIN,
+        "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+      },
     }),
     env,
     {},
@@ -449,8 +580,12 @@ test("10. Logout revocation POST /api/auth/logout sets revoked_at in D1 and clea
   // 1. Login
   const loginReq = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
   const loginRes = await worker.fetch(loginReq, env, {});
   const cookieValue = loginRes.headers.get("Set-Cookie").split(";")[0];
@@ -488,8 +623,12 @@ test("11. Cookie attributes strictly enforce security (HttpOnly, SameSite=Strict
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
   const res = await worker.fetch(req, env, {});
   const setCookie = res.headers.get("Set-Cookie");
@@ -508,8 +647,12 @@ test("12. Only session token hash is stored in D1, not raw plaintext token", asy
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
   const res = await worker.fetch(req, env, {});
   const setCookie = res.headers.get("Set-Cookie");
@@ -539,8 +682,11 @@ test("14. Unauthorized admin POST/PUT/PATCH/DELETE returns 401 in production", a
   for (const method of ["POST", "PUT", "PATCH", "DELETE"]) {
     const req = new Request(`https://${PROD_API_HOST}/api/admin/blogs`, {
       method,
-      headers: { Origin: PROD_ORIGIN,
-      "CF-Connecting-IP": DEFAULT_CLIENT_IP, "Content-Type": "application/json" },
+      headers: {
+        Origin: PROD_ORIGIN,
+        "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+        "Content-Type": "application/json",
+      },
       body: method !== "DELETE" ? JSON.stringify({ title: "Test" }) : undefined,
     });
     const res = await worker.fetch(req, env, {});
@@ -553,8 +699,11 @@ test("15. Unauthorized R2 upload returns 401 in production", async () => {
 
   const req = new Request(`https://${PROD_API_HOST}/api/r2/upload`, {
     method: "POST",
-    headers: { Origin: PROD_ORIGIN,
-      "CF-Connecting-IP": DEFAULT_CLIENT_IP, "Content-Type": "multipart/form-data; boundary=---boundary" },
+    headers: {
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+      "Content-Type": "multipart/form-data; boundary=---boundary",
+    },
     body: '---boundary\r\nContent-Disposition: form-data; name="folder"\r\n\r\ntest\r\n---boundary--\r\n',
   });
   const res = await worker.fetch(req, env, {});
@@ -579,8 +728,12 @@ test("17. Invalid Origin on state-changing requests returns 403 (CSRF defense)",
   // 1. Valid login to obtain session cookie
   const loginReq = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
   const loginRes = await worker.fetch(loginReq, env, {});
   const cookieValue = loginRes.headers.get("Set-Cookie").split(";")[0];
@@ -632,8 +785,12 @@ test("18. Missing ADMIN_LOGIN_RATE_LIMITER returns safe 503 configuration error"
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
@@ -649,8 +806,12 @@ test("19. Thrown error in ADMIN_LOGIN_RATE_LIMITER returns safe 503 error withou
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
@@ -667,8 +828,12 @@ test("20. Custom valid session TTL sets matching database expires_at and cookie 
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
@@ -689,8 +854,12 @@ test("21. Invalid session TTL returns 500 error and creates no session", async (
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
-    body: JSON.stringify({ username: TEST_USERNAME, password: TEST_PASSWORD }),
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
+    body: JSON.stringify(validLoginPayload()),
   });
 
   const res = await worker.fetch(req, env, {});
@@ -768,14 +937,22 @@ test("24. Repeated logout succeeds without error", async () => {
 
   const req1 = new Request(`https://${PROD_API_HOST}/api/auth/logout`, {
     method: "POST",
-    headers: { Cookie: `techagenz_admin_session=${rawToken}`, Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      Cookie: `techagenz_admin_session=${rawToken}`,
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
   });
   const res1 = await worker.fetch(req1, env, {});
   assert.equal(res1.status, 200);
 
   const req2 = new Request(`https://${PROD_API_HOST}/api/auth/logout`, {
     method: "POST",
-    headers: { Cookie: `techagenz_admin_session=${rawToken}`, Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      Cookie: `techagenz_admin_session=${rawToken}`,
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
   });
   const res2 = await worker.fetch(req2, env, {});
   assert.equal(res2.status, 200);
@@ -812,7 +989,11 @@ test("26. Username exceeding 128 characters returns 400 Bad Request", async () =
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
     body: JSON.stringify({
       username: "u".repeat(129), // 129 chars > 128
       password: TEST_PASSWORD,
@@ -831,7 +1012,11 @@ test("27. Password exceeding 1024 characters returns 400 Bad Request", async () 
 
   const req = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
     body: JSON.stringify({
       username: TEST_USERNAME,
       password: "P".repeat(1025), // 1025 chars > 1024
@@ -850,7 +1035,11 @@ test("28. Empty username or password returns 400 Bad Request", async () => {
 
   const reqEmptyUser = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
     body: JSON.stringify({ username: "   ", password: TEST_PASSWORD }),
   });
   const resEmptyUser = await worker.fetch(reqEmptyUser, env, {});
@@ -858,7 +1047,11 @@ test("28. Empty username or password returns 400 Bad Request", async () => {
 
   const reqEmptyPass = new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Origin: PROD_ORIGIN, "CF-Connecting-IP": DEFAULT_CLIENT_IP },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: PROD_ORIGIN,
+      "CF-Connecting-IP": DEFAULT_CLIENT_IP,
+    },
     body: JSON.stringify({ username: TEST_USERNAME, password: "" }),
   });
   const resEmptyPass = await worker.fetch(reqEmptyPass, env, {});
