@@ -16,16 +16,26 @@ Official web platform for [Tech Agenz](https://www.techagenz.com) engineering in
 - npm or pnpm
 
 ### 2. Environment Variables
-Create a `.env` file in the root directory with the public Cloudflare Worker
-API URL and Turnstile site key:
+Create a `.env` file in the root directory with the development API origins and
+public Turnstile site key:
 ```env
-VITE_API_BASE_URL=https://techagenz-api-dev.haider-ly5617.workers.dev
+VITE_API_BASE_URL=https://api-dev.techagenz.com
+VITE_ADMIN_API_BASE_URL=https://api-dev.techagenz.com
 VITE_CF_TURNSTILE_SITE_KEY=your_public_turnstile_site_key
 ```
-The enquiry forms submit directly to the Cloudflare Worker and require a valid
-Turnstile token. Configure the Worker-only `RESEND_API_KEY` and
-`CF_TURNSTILE_SECRET_KEY` as Cloudflare secrets; never expose them in Vite
-variables.
+`VITE_API_BASE_URL` is used by public enquiry forms,
+`VITE_ADMIN_API_BASE_URL` is used for admin authentication and API requests,
+and `VITE_CF_TURNSTILE_SITE_KEY` is the public browser key used by Turnstile
+widgets. Production frontend deployments use `https://api.techagenz.com` for
+both API origins. These `VITE_` values are public and must never contain
+secrets.
+
+The enquiry forms and production admin login require server-side Turnstile
+validation. Configure `CF_TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, and
+production shared-admin credentials as Worker-only secrets; never put them in
+Vite variables. For local Worker development, set
+`TURNSTILE_ENQUIRY_HOSTNAME=localhost` in `worker/.dev.vars` when testing from
+a local frontend.
 
 ### 3. Install Dependencies
 ```bash

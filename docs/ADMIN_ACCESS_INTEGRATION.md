@@ -2,37 +2,29 @@
 
 ## Status and scope
 
-The frontend now has a typed, read-only Admin API authorization probe. It does
-not implement CMS CRUD, uploads, deletes, or application-level authentication.
-The API base remains intentionally unset in `.env.example` until the custom
-hostname, Worker attachment, and API Access application audience are verified.
-This repository change does not configure Cloudflare, Vercel, DNS, or deploy
-anything.
+Production admin login uses the shared-admin Worker session and requires
+server-verified Turnstile before credentials are checked. The `/admin` route
+renders protected content only after the Worker confirms an active session.
+Development admin authentication remains Cloudflare Access-based; the browser
+does not construct or store Access assertions.
 
-The admin page continues to render local preview data. Seeing `/admin`, the
-login guidance page, or a Cloudflare redirect is not by itself proof that an
-administrator is authorized. The frontend displays only the outcome of an
-API request and does not store or display an email, Access assertion, cookie,
-or JWT.
+This repository change does not configure Cloudflare, Vercel, DNS, or deploy
+anything. The frontend does not store authentication proof in local storage.
 
 ## Request flow
 
-1. A user opens the frontend at `https://admin-dev.techagenz.com`. The
-   Cloudflare Access application for that hostname must enforce the approved
-   administrator policy at the edge.
-2. The browser begins an API Access session through a top-level navigation to
-   `https://api-dev.techagenz.com/api/admin`. The user must authenticate to the
-   API Access application separately if it has no session. The response is a
-   read-only `501 Not implemented` while admin API operations remain disabled.
-3. The admin page calls `GET {VITE_ADMIN_API_BASE_URL}/api/admin` with
-   `credentials: "include"`, `cache: "no-store"`, and no caller-supplied Access
-   headers. The browser sends eligible API-origin cookies; Cloudflare Access
-   validates its session and supplies the assertion to the Worker.
-4. The Worker independently validates the assertion, issuer, audience,
-   administrator allow-list, and protected API hostname. It then returns the
-   existing authorized `501` placeholder. This status means the current
-   authorization chain accepted this request, not that any CMS operation is
-   available.
+1. Production login sends username, password, and the token from the reusable
+   Turnstile widget to `POST /api/auth/login`. The Worker verifies the token
+   against Siteverify and requires the `admin.techagenz.com` hostname before it
+   verifies credentials or creates a session.
+2. The Worker issues an HttpOnly, Secure, SameSite=Strict session cookie only
+   after successful Turnstile and credential checks. The browser sends that
+   cookie to the configured admin API origin with `credentials: "include"`.
+3. `/admin` requests `GET /api/auth/session` through the configured API client
+   and renders the dashboard only after the Worker confirms the session.
+4. In development, the Worker continues to validate Cloudflare Access
+   assertions, issuer, audience, administrator allow-list, and protected API
+   hostname. The development password-login route remains disabled.
 
 The browser must never construct, read, persist, or forward
 `Cf-Access-Jwt-Assertion` itself. A frontend-side state, email, query parameter,
@@ -40,20 +32,24 @@ or redirect is not an authorization credential.
 
 ## Frontend configuration and behavior
 
-- `VITE_API_BASE_URL` remains the public enquiry API setting; this change does
-  not redirect public enquiry traffic.
-- `VITE_ADMIN_API_BASE_URL` is a separate, optional admin-only API origin.
-  Leave it empty until the custom API hostname and the API Access application
-  have been verified. Do not configure it to a `workers.dev` hostname.
+- `VITE_API_BASE_URL` is the public enquiry API origin.
+- `VITE_ADMIN_API_BASE_URL` is the admin authentication and API origin.
+- `VITE_CF_TURNSTILE_SITE_KEY` is the public site key used by frontend
+  Turnstile widgets. None of these variables are secrets.
 - The client permits HTTPS origins (and localhost HTTP for local development),
   rejects URL credentials, path/query/fragment components, and workers.dev
   hosts.
 - The API status is reported as unconfigured, checking, session required,
-  forbidden, authorized read-only, or unavailable. Errors do not imply
-  authorization.
-- The `/login` route is guidance only. It has no password form and links to the
-  development admin hostname; it does not authenticate or establish an Access
-  session.
+  forbidden, authorized, or unavailable. Errors do not imply authorization,
+  and protected content remains hidden until server-confirmed.
+- The `/login` route uses Turnstile for production shared-admin sign-in.
+  Development Cloudflare Access guidance is shown only in development builds.
+- Production admin tokens must report the `admin.techagenz.com` hostname, and
+  production public enquiry tokens must report `techagenz.com`. Development
+  enquiry verification can use the Worker-only `TURNSTILE_ENQUIRY_HOSTNAME`
+  setting; use `localhost` in `worker/.dev.vars` for local frontend testing.
+  Otherwise it expects the public site hostname. The production hostname is
+  fixed in Worker code and does not fall back to development settings.
 - The browser's same-origin admin hostname session and API hostname session
   are distinct. A top-level API navigation may be required to establish the
   latter. Test this in the target browsers because third-party cookie and

@@ -25,6 +25,14 @@ const PROD_API_HOST = "api.techagenz.com";
 const TEST_USERNAME = "superadmin";
 const TEST_PASSWORD = "CorrectHorseBatteryStaple123!";
 const TEST_PASSWORD_HASH = await hashPassword(TEST_PASSWORD);
+const TEST_TURNSTILE_TOKEN = "test-turnstile-token";
+
+globalThis.fetch = async (input) => {
+  assert.equal(String(input), "https://challenges.cloudflare.com/turnstile/v0/siteverify");
+  return new Response(JSON.stringify({ success: true, hostname: "admin.techagenz.com" }), {
+    status: 200,
+  });
+};
 
 function createMockD1() {
   const sessions = new Map();
@@ -51,6 +59,7 @@ function createProdEnv(overrides = {}) {
     ENVIRONMENT: "production",
     ADMIN_SHARED_USERNAME: TEST_USERNAME,
     ADMIN_SHARED_PASSWORD_HASH: TEST_PASSWORD_HASH,
+    CF_TURNSTILE_SECRET_KEY: "test-secret",
     ADMIN_LOGIN_RATE_LIMITER: {
       async limit() {
         return { success: true };
@@ -61,7 +70,14 @@ function createProdEnv(overrides = {}) {
   };
 }
 
-function loginRequest(headers = {}, body = { username: TEST_USERNAME, password: TEST_PASSWORD }) {
+function loginRequest(
+  headers = {},
+  body = {
+    username: TEST_USERNAME,
+    password: TEST_PASSWORD,
+    turnstileToken: TEST_TURNSTILE_TOKEN,
+  },
+) {
   return new Request(`https://${PROD_API_HOST}/api/auth/login`, {
     method: "POST",
     headers: {

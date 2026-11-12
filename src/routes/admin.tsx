@@ -37,17 +37,12 @@ import {
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { TechCursor } from "@/components/TechCursor";
-import {
-  getTeamMembers,
-  getBlogs,
-  exportCmsData,
-  AVATAR_PLACEHOLDER,
-  type TeamMember,
-} from "@/lib/cms-store";
+import { exportCmsData, AVATAR_PLACEHOLDER, type TeamMember } from "@/lib/cms-store";
 import { blogCategories, type BlogPost } from "@/lib/blogs-data";
 import { projects as defaultProjects, type CaseStudy } from "@/lib/projects-data";
 import {
   createAdminApiClient,
+  isDevelopmentAdminApi,
   type AdminApiAccessState,
   type EnquiryDto,
   type MediaAssetDto,
@@ -74,6 +69,10 @@ const COLOR_PRESETS = [
   { name: "Purple Neon", hex: "#8B5CF6" },
 ];
 
+const isDevelopmentAccessBuild =
+  import.meta.env.MODE === "development" &&
+  import.meta.env.VITE_ADMIN_API_BASE_URL === "https://api-dev.techagenz.com";
+
 function AdminDashboardPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
@@ -85,6 +84,8 @@ function AdminDashboardPage() {
     () => createAdminApiClient(import.meta.env.VITE_ADMIN_API_BASE_URL),
     [],
   );
+  const isDevelopmentAccess =
+    isDevelopmentAccessBuild && isDevelopmentAdminApi(adminApiClient.accessUrl);
   const [adminApiAccessState, setAdminApiAccessState] = useState<AdminApiAccessState>(
     adminApiClient.accessUrl ? "checking" : "unconfigured",
   );
@@ -231,109 +232,59 @@ function AdminDashboardPage() {
     }
 
     setAdminApiAccessState("checking");
-    void adminApiClient.verifyAccess().then((result) => {
-      if (active) {
-        setAdminApiAccessState(result.state);
-        if (result.email) setAdminEmail(result.email);
-        if (result.username) setAdminUsername(result.username);
-        if (result.authType) setAuthType(result.authType);
-      }
-    });
+    setAdminEmail(null);
+    setAdminUsername(null);
+    setAuthType(null);
+    void adminApiClient
+      .getSession()
+      .then((result) => {
+        if (active) {
+          setAdminApiAccessState(result.state);
+          if (result.email) setAdminEmail(result.email);
+          if (result.username) setAdminUsername(result.username);
+          if (result.authType) setAuthType(result.authType);
+        }
+      })
+      .catch(() => {
+        if (active) setAdminApiAccessState("unavailable");
+      });
 
     return () => {
       active = false;
     };
   }, [adminApiClient, adminApiCheckVersion]);
 
-  // ── Initial Data Loading ────────────────────────────────────────────────
-  const loadLocalFallback = useCallback(() => {
-    const localTeam = getTeamMembers().map((m, idx) => ({
-      id: m.id,
-      name: m.title,
-      role: m.subtitle,
-      image: m.image,
-      borderColor: m.borderColor || "#22D3EE",
-      gradient: m.gradient || "",
-      sortOrder: idx + 1,
-    }));
-    setTeamMembers(localTeam);
-
-    const localBlogs = getBlogs().map((b) => ({
-      ...b,
-      featured: Boolean(b.featured),
-      keywords: b.keywords || [],
-      keyTakeaways: b.keyTakeaways || [],
-      content: b.content || [],
-    }));
-    setBlogs(localBlogs);
-
-    const localProjects = defaultProjects.map((p) => ({
-      ...p,
-      problem: {
-        ...p.problem,
-        painPoints: p.problem.painPoints || [],
-      },
-      solution: {
-        ...p.solution,
-        keyDeliverables: p.solution.keyDeliverables || [],
-      },
-      stack: p.stack || [],
-      architecture: {
-        ...p.architecture,
-        flowSteps: p.architecture.flowSteps || [],
-      },
-      results: {
-        ...p.results,
-        stats: p.results.stats || [],
-        bullets: p.results.bullets || [],
-      },
-      keyFeatures: (p.keyFeatures || []).map((kf) => ({
-        ...kf,
-        tag: kf.tag || null,
-      })),
-      testimonial: p.testimonial
-        ? {
-            quote: p.testimonial.quote,
-            author: p.testimonial.author || null,
-            role: p.testimonial.role || null,
-            organization: p.testimonial.organization || null,
-          }
-        : null,
-    }));
-    setProjects(localProjects);
-  }, []);
-
-  const loadLiveContent = useCallback(async () => {
-    try {
-      const [teamData, blogData, projectData, enquiryData, mediaData] = await Promise.allSettled([
-        adminApiClient.listTeam(),
-        adminApiClient.listBlogs(),
-        adminApiClient.listProjects(),
-        adminApiClient.listEnquiries(),
-        adminApiClient.listMedia(),
-      ]);
-
-      if (teamData.status === "fulfilled") setTeamMembers(teamData.value);
-      if (blogData.status === "fulfilled") setBlogs(blogData.value);
-      if (projectData.status === "fulfilled") setProjects(projectData.value);
-      if (enquiryData.status === "fulfilled") {
-        setEnquiries(enquiryData.value.enquiries);
-        setEnquiryCounts(enquiryData.value.counts);
-      }
-      if (mediaData.status === "fulfilled") setMediaAssets(mediaData.value.assets);
-    } catch {
-      // Fallback to local data
-      loadLocalFallback();
+  useEffect(() => {
+    if (adminApiAccessState === "session-required" && !isDevelopmentAccess) {
+      void navigate({ to: "/login", replace: true });
     }
-  }, [adminApiClient, loadLocalFallback]);
+  }, [adminApiAccessState, isDevelopmentAccess, navigate]);
+
+  // ── Initial Data Loading ────────────────────────────────────────────────
+  const loadLiveContent = useCallback(async () => {
+    const [teamData, blogData, projectData, enquiryData, mediaData] = await Promise.allSettled([
+      adminApiClient.listTeam(),
+      adminApiClient.listBlogs(),
+      adminApiClient.listProjects(),
+      adminApiClient.listEnquiries(),
+      adminApiClient.listMedia(),
+    ]);
+
+    if (teamData.status === "fulfilled") setTeamMembers(teamData.value);
+    if (blogData.status === "fulfilled") setBlogs(blogData.value);
+    if (projectData.status === "fulfilled") setProjects(projectData.value);
+    if (enquiryData.status === "fulfilled") {
+      setEnquiries(enquiryData.value.enquiries);
+      setEnquiryCounts(enquiryData.value.counts);
+    }
+    if (mediaData.status === "fulfilled") setMediaAssets(mediaData.value.assets);
+  }, [adminApiClient]);
 
   useEffect(() => {
     if (adminApiAccessState === "authorized" || adminApiAccessState === "authorized-read-only") {
       void loadLiveContent();
-    } else {
-      loadLocalFallback();
     }
-  }, [adminApiAccessState, loadLiveContent, loadLocalFallback]);
+  }, [adminApiAccessState, loadLiveContent]);
 
   const handleLogout = async () => {
     try {
@@ -746,6 +697,78 @@ function AdminDashboardPage() {
     return matchesFolder && matchesSearch;
   });
 
+  const isAuthorized =
+    adminApiAccessState === "authorized" || adminApiAccessState === "authorized-read-only";
+
+  if (!isAuthorized) {
+    const message =
+      adminApiAccessState === "checking"
+        ? "Verifying administrator session..."
+        : adminApiAccessState === "session-required"
+          ? isDevelopmentAccess
+            ? "Cloudflare Access authentication is required for the development API."
+            : "A sign-in is required. Redirecting to the login page..."
+          : adminApiAccessState === "forbidden"
+            ? "This account is not authorized to access the administrator console."
+            : adminApiAccessState === "unconfigured"
+              ? "Administrator access is not configured for this application."
+              : "Administrator access could not be verified. Please try again.";
+
+    return (
+      <div className="relative min-h-screen bg-background text-foreground flex flex-col justify-between">
+        <Nav />
+        <main className="flex flex-1 items-center justify-center px-4 py-28">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950/80 p-8 text-center shadow-2xl">
+            <ShieldCheck className="mx-auto h-8 w-8 text-cyan-400" />
+            <h1 className="mt-4 text-xl font-bold text-white">Admin access required</h1>
+            <p className="mt-2 text-sm text-slate-400" role="status">
+              {message}
+            </p>
+            {adminApiAccessState === "session-required" && isDevelopmentAccess && (
+              <div className="mt-5 space-y-3">
+                <a
+                  href={adminApiClient.accessUrl ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
+                >
+                  Sign in with Cloudflare Access
+                </a>
+                <p className="text-xs text-slate-500">
+                  Complete Access authentication in the new tab, return here, and retry session
+                  verification.
+                </p>
+              </div>
+            )}
+            {(adminApiAccessState === "unavailable" ||
+              (adminApiAccessState === "session-required" && isDevelopmentAccess)) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminApiAccessState("checking");
+                  setAdminApiCheckVersion((version) => version + 1);
+                }}
+                className="mt-5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-300 hover:bg-cyan-500/20"
+              >
+                Retry session verification
+              </button>
+            )}
+            {adminApiAccessState !== "checking" &&
+              (adminApiAccessState !== "session-required" || isDevelopmentAccess) &&
+              !isDevelopmentAccess && (
+                <div className="mt-5">
+                  <Link to="/login" className="text-sm text-cyan-400 hover:underline">
+                    Go to sign in
+                  </Link>
+                </div>
+              )}
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen bg-background text-foreground flex flex-col justify-between">
       <TechCursor />
@@ -865,8 +888,10 @@ function AdminDashboardPage() {
               {adminApiClient.accessUrl && (
                 <button
                   type="button"
-                  onClick={() => setAdminApiCheckVersion((v) => v + 1)}
-                  disabled={adminApiAccessState === "checking"}
+                  onClick={() => {
+                    setAdminApiAccessState("checking");
+                    setAdminApiCheckVersion((v) => v + 1);
+                  }}
                   className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
                 >
                   <RefreshCw className="h-3.5 w-3.5" />
@@ -1540,7 +1565,7 @@ function AdminDashboardPage() {
         {/* ════════════════════════════════════════════════════════════ */}
         {/* TAB 6: SETTINGS & SYSTEM STATUS                              */}
         {/* ════════════════════════════════════════════════════════════ */}
-        {activeTab === "settings" && (
+        {import.meta.env.DEV && activeTab === "settings" && (
           <div className="mt-8 space-y-8">
             <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-b from-slate-950/90 to-slate-900/90 p-6 sm:p-8 backdrop-blur-sm shadow-[0_0_30px_rgba(34,211,238,0.1)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">

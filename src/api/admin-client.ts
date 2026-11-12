@@ -70,11 +70,7 @@ export class AdminApiClientError extends Error {
 
 export interface AdminApiClient {
   accessUrl: string | null;
-  verifyAccess(): Promise<AdminApiAccessResult>;
-  login(
-    credentialsOrUsername: { username: string; password: string } | string,
-    password?: string,
-  ): Promise<{
+  login(credentials: { username: string; password: string; turnstileToken: string }): Promise<{
     success: boolean;
     username?: string;
     authType?: "session";
@@ -146,6 +142,10 @@ export function resolveAdminApiBaseUrl(value: string | undefined): string | null
   }
 }
 
+export function isDevelopmentAdminApi(accessUrl: string | null): boolean {
+  return accessUrl === "https://api-dev.techagenz.com/api/admin";
+}
+
 export function createAdminApiClient(
   baseUrl: string | undefined,
   fetcher: typeof fetch = fetch,
@@ -213,74 +213,11 @@ export function createAdminApiClient(
   return {
     accessUrl,
 
-    async verifyAccess(): Promise<AdminApiAccessResult> {
-      if (!accessUrl) return { state: "unconfigured" };
-
-      let response: Response;
-      try {
-        response = await fetcher(accessUrl, {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store",
-          redirect: "manual",
-          headers: { Accept: "application/json" },
-        });
-      } catch {
-        return { state: "unavailable" };
-      }
-
-      if (response.type === "opaqueredirect" || response.status === 0) {
-        return { state: "session-required" };
-      }
-      if (response.status === 401 || (response.status >= 300 && response.status < 400)) {
-        return { state: "session-required" };
-      }
-      if (response.status === 403) return { state: "forbidden" };
-
-      if (response.status === 200) {
-        try {
-          const body = (await response.json()) as Record<string, unknown>;
-          if (body && body.ok === true) {
-            const data = body.data as Record<string, unknown> | undefined;
-            return {
-              state: "authorized",
-              email: data?.email as string | undefined,
-              username: data?.username as string | undefined,
-              authType: data?.authType as "cloudflare_access" | "session" | undefined,
-            };
-          }
-        } catch {
-          return { state: "unavailable" };
-        }
-      }
-
-      if (response.status === 501) {
-        try {
-          const body: unknown = await response.json();
-          if (
-            body &&
-            typeof body === "object" &&
-            "ok" in body &&
-            body.ok === false &&
-            "error" in body &&
-            body.error === "Not implemented" &&
-            "status" in body &&
-            body.status === 501
-          ) {
-            return { state: "authorized-read-only" };
-          }
-        } catch {
-          return { state: "unavailable" };
-        }
-      }
-
-      return { state: "unavailable" };
-    },
-
-    async login(
-      credentialsOrUsername: { username: string; password: string } | string,
-      maybePassword?: string,
-    ): Promise<{
+    async login(credentials: {
+      username: string;
+      password: string;
+      turnstileToken: string;
+    }): Promise<{
       success: boolean;
       username?: string;
       authType?: "session";
@@ -289,11 +226,6 @@ export function createAdminApiClient(
       if (!resolvedBaseUrl) {
         throw new AdminApiClientError("Admin API base URL is not configured.");
       }
-
-      const payload =
-        typeof credentialsOrUsername === "string"
-          ? { username: credentialsOrUsername, password: maybePassword || "" }
-          : credentialsOrUsername;
 
       const url = `${resolvedBaseUrl}/api/auth/login`;
       let response: Response;
@@ -306,7 +238,7 @@ export function createAdminApiClient(
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(credentials),
         });
       } catch (err) {
         throw new AdminApiClientError(
@@ -335,7 +267,7 @@ export function createAdminApiClient(
       }
 
       const data = body?.data as Record<string, unknown> | undefined;
-      const resolvedUsername = data?.username ? String(data.username) : payload.username;
+      const resolvedUsername = data?.username ? String(data.username) : credentials.username;
       return {
         success: true,
         username: resolvedUsername,
@@ -388,8 +320,12 @@ export function createAdminApiClient(
           method: "GET",
           credentials: "include",
           cache: "no-store",
+          redirect: "manual",
           headers: { Accept: "application/json" },
         });
+        if (res.type === "opaqueredirect" || res.status === 0) {
+          return { state: "session-required" };
+        }
         if (res.status === 200) {
           const body = (await res.json()) as Record<string, unknown>;
           if (body && body.ok === true) {
@@ -402,7 +338,9 @@ export function createAdminApiClient(
             };
           }
         }
-        if (res.status === 401) return { state: "session-required" };
+        if (res.status === 401 || (res.status >= 300 && res.status < 400)) {
+          return { state: "session-required" };
+        }
         if (res.status === 403) return { state: "forbidden" };
         return { state: "unavailable" };
       } catch {
@@ -542,5 +480,3 @@ export function createAdminApiClient(
     },
   };
 }
-
-export const adminApiClient = createAdminApiClient(import.meta.env?.VITE_ADMIN_API_BASE_URL);

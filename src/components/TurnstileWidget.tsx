@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface TurnstileApi {
   render(
@@ -64,16 +64,21 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
   const containerRef = useRef<HTMLDivElement>(null);
   const onTokenRef = useRef(onToken);
   const onErrorRef = useRef(onError);
+  const [isLoading, setIsLoading] = useState(true);
   const siteKey = import.meta.env.VITE_CF_TURNSTILE_SITE_KEY?.trim() ?? "";
 
   onTokenRef.current = onToken;
   onErrorRef.current = onError;
 
   useEffect(() => {
-    if (!siteKey || !containerRef.current) return;
+    if (!siteKey || !containerRef.current) {
+      setIsLoading(false);
+      return;
+    }
 
     let disposed = false;
     let widgetId: string | undefined;
+    setIsLoading(true);
 
     loadTurnstile()
       .then(() => {
@@ -87,9 +92,13 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
             onErrorRef.current();
           },
         });
+        setIsLoading(false);
       })
       .catch(() => {
-        if (!disposed) onErrorRef.current();
+        if (!disposed) {
+          setIsLoading(false);
+          onErrorRef.current();
+        }
       });
 
     return () => {
@@ -107,5 +116,14 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
     );
   }
 
-  return <div ref={containerRef} aria-label="Cloudflare Turnstile verification" />;
+  return (
+    <div>
+      {isLoading && (
+        <p className="mb-2 text-sm text-slate-400" role="status">
+          Loading secure verification...
+        </p>
+      )}
+      <div ref={containerRef} aria-label="Cloudflare Turnstile verification" />
+    </div>
+  );
 }
