@@ -1,0 +1,137 @@
+{
+    "slug":  "garwan-law-chamber",
+    "title":  "Garwan Law Chamber: Modernizing Legal Intake \u0026 Attorney Portals",
+    "shortTitle":  "Garwan Law Chamber Practice Portal",
+    "formulaSummary":  "An authoritative digital legal practice portal built with React 19, TypeScript, and PostgreSQL for Garwan Law Chamber, achieving an 85% reduction in initial consultation administrative scheduling time, sub-second load times, and confidential upfront case brief management.",
+    "clientType":  "Corporate \u0026 Civil Law Practice",
+    "clientName":  "Garwan Law Chamber",
+    "category":  "Legal Tech",
+    "coverImage":  "/project-images/garwan-law-chamber.webp",
+    "tags":  [
+                 "React 19",
+                 "TypeScript",
+                 "Tailwind CSS",
+                 "PostgreSQL",
+                 "Legal Tech"
+             ],
+    "featuredOnHome":  true,
+    "order":  2,
+    "timeline":  "Live in Production",
+    "status":  "Live in Production",
+    "problem":  {
+                    "heading":  "Unstructured Case Inquiries \u0026 Manual Advocate Coordination",
+                    "description":  "Garwan Law Chamber handled high-stakes civil and corporate inquiries primarily through informal messaging and walk-ins. Prospective clients lacked a unified platform to review practice credentials, verify attorney jurisdictions, and submit confidential case briefs. Administrative staff spent hours daily sorting unvetted inquiries and coordinating lawyer schedules manually.",
+                    "painPoints":  [
+                                       "Prospective litigants submitted incomplete case details, wasting senior attorney consultation time",
+                                       "Staff manually coordinated schedules across multiple advocates via phone and messaging",
+                                       "No centralized digital directory showcasing practice area expertise and jurisdictional credentials",
+                                       "International and corporate clients lacked a seamless consultation scheduling channel"
+                                   ]
+                },
+    "solution":  {
+                     "heading":  "Structured Case Intake \u0026 Advocate Consultation Management",
+                     "description":  "Tech Agenz designed and engineered a bespoke, secure legal technology portal tailored to the chamber\u0027s practice hierarchy. The platform incorporates structured case intake forms with preliminary fact gathering, automated appointment booking synced to advocate calendars, and authoritative practice directories that present credentials with institutional prestige. Deployed on modern server-rendered infrastructure with sub-second page loads and strict privacy protocols.",
+                     "keyDeliverables":  [
+                                             "Structured digital intake questionnaires capturing jurisdiction and essential facts prior to meetings",
+                                             "Advocate consultation booking synced to attorney calendars to eliminate scheduling conflicts",
+                                             "Authoritative practice directory outlining Corporate, Civil, Constitutional, and Appellate practice areas",
+                                             "High-performance responsive portal with sub-second page loads and strict privacy protection"
+                                         ]
+                 },
+    "stack":  [
+                  "React 19",
+                  "TypeScript",
+                  "Tailwind CSS",
+                  "Next.js / Node.js",
+                  "PostgreSQL",
+                  "REST API"
+              ],
+    "architecture":  {
+                         "overview":  "Server-rendered architecture built with React 19, TypeScript, and PostgreSQL. Client inquiry payloads are validated, structured, and securely delivered to the chamber\u0027s administrative portal with calendar synchronization.",
+                         "flowSteps":  [
+                                           {
+                                               "step":  "01",
+                                               "title":  "Client Intake Submission",
+                                               "description":  "Prospective litigant selects legal domain and submits case details."
+                                           },
+                                           {
+                                               "step":  "02",
+                                               "title":  "Advocate Availability Check",
+                                               "description":  "System verifies advocate availability and avoids scheduling overlaps."
+                                           },
+                                           {
+                                               "step":  "03",
+                                               "title":  "Confidential Case Brief",
+                                               "description":  "Case summary organized into attorney calendar with preliminary facts."
+                                           },
+                                           {
+                                               "step":  "04",
+                                               "title":  "Consultation Confirmation",
+                                               "description":  "Client receives scheduled consultation details and conference instructions."
+                                           }
+                                       ]
+                     },
+    "results":  {
+                    "stats":  [
+                                  {
+                                      "metric":  "85%",
+                                      "label":  "Scheduling Time Saved",
+                                      "context":  "Reduction in initial consultation administrative coordination"
+                                  },
+                                  {
+                                      "metric":  "\u003c0.8s",
+                                      "label":  "Page Load Time",
+                                      "context":  "Sub-second speed on mobile and desktop devices"
+                                  },
+                                  {
+                                      "metric":  "100%",
+                                      "label":  "Confidential Intake",
+                                      "context":  "Secure upfront briefs preserving legal privilege"
+                                  },
+                                  {
+                                      "metric":  "300+",
+                                      "label":  "Monthly Inquiries",
+                                      "context":  "Handled through structured digital intake"
+                                  }
+                              ],
+                    "bullets":  [
+                                    "85% reduction in initial consultation administrative scheduling time",
+                                    "Confidential upfront case intake capturing critical jurisdiction details",
+                                    "Significant increase in corporate client conversion from international and local referrals",
+                                    "Sub-second load times and 100% mobile responsive experience for prospective litigants"
+                                ]
+                },
+    "keyFeatures":  [
+                        {
+                            "title":  "Confidential Case Intake Form",
+                            "description":  "Captures jurisdiction, opposing parties, and factual background prior to first meeting.",
+                            "tag":  "Intake Workflow"
+                        },
+                        {
+                            "title":  "Advocate Calendar Sync",
+                            "description":  "Prevents double-bookings and organizes attorney schedules automatically.",
+                            "tag":  "Calendar"
+                        },
+                        {
+                            "title":  "Institutional Practice Directory",
+                            "description":  "Presents credentials and past litigation experience with institutional prestige.",
+                            "tag":  "Branding"
+                        },
+                        {
+                            "title":  "Mobile-Optimized Security",
+                            "description":  "Encrypted data transmission and responsive layout on all devices.",
+                            "tag":  "Security"
+                        }
+                    ],
+    "testimonial":  {
+                        "quote":  "The portal gave our law chamber a modern, authoritative digital presence. Initial consultation intake is now structured and efficient, saving our advocates valuable time.",
+                        "author":  "Senior Advocate",
+                        "role":  "Partner",
+                        "organization":  "Garwan Law Chamber"
+                    },
+    "seo":  {
+                "title":  "Garwan Law Chamber: Modernizing Legal Intake & Attorney Portals — Case Study | Tech Agenz",
+                "description":  "An authoritative digital legal practice portal built with React 19, TypeScript, and PostgreSQL for Garwan Law Chamber, achieving an 85% reduction in initial consultation administrative scheduling time, sub-second load times, and confidential upfront case brief management."
+            },
+    "coverImageAlt":  "Garwan Law Chamber Practice Portal"
+}

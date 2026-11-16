@@ -1,0 +1,37 @@
+{
+    "id":  "cloud-migration-services-software-house",
+    "title":  "Cloud Migration Services: How Software Houses Move Legacy Systems to AWS and Azure",
+    "category":  "Enterprise ERP",
+    "readTime":  "8 min read",
+    "date":  "October 12, 2026",
+    "publishDateIso":  "2026-10-12",
+    "author":  "Tech Agenz Team",
+    "image":  "/blog-images/cloud-migration-services-software-house.webp",
+    "excerpt":  "A practical roadmap for migrating on-premise enterprise applications to AWS or Azure — covering assessment, re-platforming strategies, and zero-downtime cutover techniques.",
+    "featured":  false,
+    "keywords":  [
+                     "cloud migration services",
+                     "AWS migration",
+                     "Azure migration",
+                     "legacy system modernization",
+                     "lift and shift",
+                     "cloud-native architecture"
+                 ],
+    "keyTakeaways":  [
+                         "The 6 R\u0027s framework (Rehost, Re-platform, Refactor, Repurchase, Retire, Retain) helps prioritize which workloads to migrate first for maximum ROI.",
+                         "Zero-downtime migration using blue-green deployments and database replication eliminates the dreaded \u0027maintenance window\u0027 that halts business operations.",
+                         "Post-migration cost optimization through reserved instances, auto-scaling policies, and right-sizing can reduce cloud spend by 30-45%."
+                     ],
+    "content":  [
+                    "Over 60% of mid-market enterprises still run mission-critical workloads on aging on-premise servers. Hardware refresh cycles, security patching, and capacity planning consume IT budgets that could be redirected toward innovation.",
+                    "Tech Agenz\u0027s cloud migration practice follows a structured four-phase approach: Discovery \u0026 Assessment, Architecture Design, Iterative Migration, and Optimization. Each phase has clearly defined exit criteria so stakeholders always know where the project stands.",
+                    "For database migrations, we use AWS DMS or Azure Database Migration Service to replicate data in near real-time, running source and target systems in parallel until validation confirms zero data loss. The final cutover typically takes under 15 minutes.",
+                    "After migration, our FinOps analysts review usage patterns monthly, implementing Savings Plans, spot instances for batch workloads, and storage tiering policies that keep cloud bills predictable and lean."
+                ],
+    "seo":  {
+                "title":  "Cloud Migration Services: How Software Houses Move Legacy Systems to AWS and Azure — Tech Agenz",
+                "description":  "A practical roadmap for migrating on-premise enterprise applications to AWS or Azure — covering assessment, re-platforming strategies, and zero-downtime cutover techniques.",
+                "keywords":  "cloud migration services, AWS migration, Azure migration, legacy system modernization, lift and shift, cloud-native architecture"
+            },
+    "imageAlt":  "Cloud Migration Services: How Software Houses Move Legacy Systems to AWS and Azure"
+}

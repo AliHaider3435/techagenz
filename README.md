@@ -16,24 +16,20 @@ Official web platform for [Tech Agenz](https://www.techagenz.com) engineering in
 - npm or pnpm
 
 ### 2. Environment Variables
-Create a `.env` file in the root directory with the development API origins and
+For local development, create a `.env` file with the enquiry API origin and
 public Turnstile site key:
 ```env
 VITE_API_BASE_URL=https://api-dev.techagenz.com
-VITE_ADMIN_API_BASE_URL=https://api-dev.techagenz.com
 VITE_CF_TURNSTILE_SITE_KEY=your_public_turnstile_site_key
 ```
-`VITE_API_BASE_URL` is used by public enquiry forms,
-`VITE_ADMIN_API_BASE_URL` is used for admin authentication and API requests,
-and `VITE_CF_TURNSTILE_SITE_KEY` is the public browser key used by Turnstile
-widgets. Production frontend deployments use `https://api.techagenz.com` for
-both API origins. These `VITE_` values are public and must never contain
-secrets.
+`VITE_API_BASE_URL` is used only to submit public enquiries to the Cloudflare
+Worker. Production uses `https://api.techagenz.com`. The Turnstile site key is
+public; never put secrets in Vite variables.
 
-The enquiry forms and production admin login require server-side Turnstile
-validation. Configure `CF_TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, and
-production shared-admin credentials as Worker-only secrets; never put them in
-Vite variables. For local Worker development, set
+The Worker verifies enquiries with `CF_TURNSTILE_SECRET_KEY`, applies
+Cloudflare rate limiting, stores submissions in D1, and sends notifications
+through Resend. Configure the Turnstile secret and `RESEND_API_KEY` as
+Worker-only secrets. For local Worker development, set
 `TURNSTILE_ENQUIRY_HOSTNAME=localhost` in `worker/.dev.vars` when testing from
 a local frontend.
 
@@ -53,10 +49,32 @@ npx tsc --noEmit
 npm run build
 ```
 
+## Managing Website Content
+Public content is version-controlled in `src/content/` and `public/`:
+
+- `src/content/team.ts` — team profiles and local portrait paths.
+- `src/content/blogs/*.json` — one complete article per file, including its
+  existing slug, publication date, keywords, takeaways, body, image, and SEO
+  fields. Use `## ` or `### ` at the start of a body string for a heading.
+- `src/content/projects/*.json` — one complete case study per file.
+- `src/content/services.ts` and `src/content/testimonials.ts` — service and
+  testimonial copy.
+- `src/content/site.ts` — shared business details, social links, and default
+  SEO configuration.
+- `public/team-images/`, `public/blog-images/`, and `public/project-images/` —
+  website images referenced by local paths.
+
+Keep existing blog IDs and project slugs to preserve their public URLs. After
+editing, run the typecheck and build, then commit and push to `main`; Vercel
+builds the checked-in content with the website. Do not put credentials or
+private enquiry data in content files.
+
 ## Project Structure
-- `src/routes/` — File-based routes (`/` home, `/work` portfolio, `__root.tsx` root layout & SEO)
-- `src/components/` — Modular UI components (Nav, Hero, Impact, Team, Footer, WhatsApp chat)
-- `src/assets/` — Optimized graphics and WebP team & project assets
-- `api/send-enquiry.ts` — retired endpoint returning HTTP 410
-- `server/api/` — Nitro API routes; the legacy enquiry endpoint is retired
-- `public/` — Static files, `robots.txt`, and canonical XML sitemaps
+- `src/routes/` — File-based public routes and SEO metadata.
+- `src/content/` — GitHub-managed team, blog, project, service, testimonial,
+  and site configuration data.
+- `src/components/` — Shared responsive UI components and animations.
+- `src/assets/` — Bundled interface graphics and illustrations.
+- `public/` — Local content images, static files, and sitemap.
+- `worker/` — Cloudflare Worker backend retained for protected enquiry
+  submission, Turnstile verification, rate limiting, D1 persistence, and email.

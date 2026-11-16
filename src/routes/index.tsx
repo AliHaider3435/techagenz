@@ -41,36 +41,18 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
-import { getFeaturedHomepageProjects, publicCms } from "@/lib/public-cms";
-import type { CmsBlogListPost, CmsCaseStudy } from "@/api/cms-client";
 import WorkSocialProof from "@/components/WorkSocialProof";
-import workDev from "@/assets/work-dev.webp";
-import workDevCard from "@/assets/work-dev-card.webp";
-import workSaas from "@/assets/work-saas.webp";
-import workSaasCard from "@/assets/work-saas-card.webp";
-import workData from "@/assets/work-data.webp";
-import workDataCard from "@/assets/work-data-card.webp";
 import robotHero from "@/assets/robot-hero.png";
-// secure-ai.webp was removed — alias to workDev for the WhatsApp automation card
-const secureAi = workDev;
-const secureAiCard = workDevCard;
-import garwanLawChamber from "@/assets/garwan-law-chamber.webp";
-import drIqbalKharal from "@/assets/dr-iqbal-kharal.webp";
-import drSajidSohail from "@/assets/dr-sajid-sohail.webp";
+import workDev from "@/assets/work-dev.webp";
+import { blogPosts, getFeaturedHomepageProjects, homeServices, projects, teamMembers } from "@/content";
+import type { BlogPost, CaseStudy } from "@/content";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
-    const [team, projects, blogs] = await Promise.all([
-      publicCms.getTeam(),
-      publicCms.getProjects(),
-      publicCms.getBlogs(),
-    ]);
-    return {
-      team: team.data,
-      projects: getFeaturedHomepageProjects(projects.data),
-      blogs: blogs.data.slice(0, 3),
-    };
-  },
+  loader: () => ({
+    team: teamMembers,
+    projects: getFeaturedHomepageProjects(projects),
+    blogs: blogPosts.slice(0, 3),
+  }),
   head: () => ({
     meta: [
       { title: "Tech Agenz — AI-Powered Software House in Pakistan" },
@@ -518,62 +500,7 @@ function RevealWord({
   );
 }
 function Services() {
-  const services = [
-    {
-      icon: Cpu,
-      tag: "Process Automation",
-      title: "Smart Business Automation & AI Solutions",
-      desc: "Streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications reducing manual workloads.",
-      img: workSaas,
-      imgWidth: 900,
-      cardImg: workSaasCard,
-    },
-    {
-      icon: MessageSquare,
-      tag: "Customer Communication",
-      title: "WhatsApp Automation for Business",
-      desc: "Automated messaging workflows for appointment reminders, customer inquiries, lead follow-ups, order updates, and FAQs with consistent service.",
-      img: secureAi,
-      imgWidth: 600,
-      cardImg: secureAiCard,
-    },
-    {
-      icon: Brain,
-      tag: "24/7 Intelligent Support",
-      title: "AI Chatbot Development",
-      desc: "Chatbots connected with business knowledge bases, customer support workflows, and applications to guide visitors and provide round-the-clock answers.",
-      img: workDev,
-      imgWidth: 900,
-      cardImg: workDevCard,
-    },
-    {
-      icon: Code2,
-      tag: "Tailored Platforms",
-      title: "Custom Software Development in Pakistan",
-      desc: "Applications tailored to your workflows, users, and scaling targets — from internal management portals to complete enterprise business platforms.",
-      img: workData,
-      imgWidth: 900,
-      cardImg: workDataCard,
-    },
-    {
-      icon: Rocket,
-      tag: "Modern Web Platforms",
-      title: "Web Development Company in Pakistan",
-      desc: "Modern, responsive, and functional web applications prioritizing usability, performance, security, and scalability for high conversion.",
-      img: workDev,
-      imgWidth: 900,
-      cardImg: workDevCard,
-    },
-    {
-      icon: Database,
-      tag: "Enterprise Integration",
-      title: "ERPNext Implementation",
-      desc: "Bring accounting, inventory, sales, purchasing, and operations into an integrated platform with complete visibility and consistent workflows.",
-      img: workSaas,
-      imgWidth: 900,
-      cardImg: workSaasCard,
-    },
-  ];
+  const services = homeServices;
   return (
     <section id="services" className="relative pt-16 pb-20">
       <div className="mx-auto max-w-6xl px-8 lg:px-16">
@@ -918,7 +845,7 @@ function StatCard({
 
 export { About, StatCard };
 
-function Portfolio({ projects }: { projects: CmsCaseStudy[] }) {
+function Portfolio({ projects }: { projects: CaseStudy[] }) {
   return (
     <section id="portfolio" className="relative py-24">
       {/* Anchor for backward compatibility */}
@@ -1065,7 +992,7 @@ function Testimonials() {
   );
 }
 
-function BlogsTeaser({ posts }: { posts: CmsBlogListPost[] }) {
+function BlogsTeaser({ posts }: { posts: BlogPost[] }) {
   return (
     <section id="blogs" className="relative py-20">
       <div className="mx-auto max-w-7xl px-6">

@@ -20,19 +20,15 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import { getRelatedCmsBlogs, publicCms, resolveCmsImageUrl } from "@/lib/public-cms";
+import { getBlogBySlug, getRelatedBlogPosts, siteConfig } from "@/content";
 
 export const Route = createFileRoute("/blogs/$slug")({
-  loader: async ({ params }) => {
-    const [postResult, blogsResult] = await Promise.all([
-      publicCms.getBlog(params.slug),
-      publicCms.getBlogs(),
-    ]);
-    const post = postResult.data;
+  loader: ({ params }) => {
+    const post = getBlogBySlug(params.slug);
     if (!post) {
       throw notFound();
     }
-    return { post, relatedPosts: getRelatedCmsBlogs(blogsResult.data, post, 3) };
+    return { post, relatedPosts: getRelatedBlogPosts(post, 3) };
   },
   head: ({ loaderData }) => {
     const post = loaderData?.post;
@@ -42,8 +38,8 @@ export const Route = createFileRoute("/blogs/$slug")({
       };
     }
 
-    const postUrl = `https://techagenz.com/blogs/${post.id}`;
-    const imageUrl = resolveCmsImageUrl(post.image);
+    const postUrl = `${siteConfig.url}/blogs/${post.id}`;
+    const imageUrl = new URL(post.image, siteConfig.url).toString();
 
     const articleSchema = {
       "@context": "https://schema.org",
@@ -101,9 +97,9 @@ export const Route = createFileRoute("/blogs/$slug")({
 
     return {
       meta: [
-        { title: `${post.title} — Tech Agenz` },
-        { name: "description", content: post.excerpt },
-        { name: "keywords", content: post.keywords.join(", ") },
+        { title: post.seo?.title || `${post.title} — Tech Agenz` },
+        { name: "description", content: post.seo?.description || post.excerpt },
+        { name: "keywords", content: post.seo?.keywords || post.keywords.join(", ") },
         { name: "author", content: post.author },
         { property: "og:title", content: post.title },
         { property: "og:description", content: post.excerpt },
@@ -270,13 +266,10 @@ function BlogPostDetail() {
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border/70 shadow-2xl bg-slate-950">
             <img
               src={post.image}
-              alt={post.title}
+              alt={post.imageAlt || post.title}
               width={1200}
               height={675}
               fetchPriority="high"
-              onError={(e) => {
-                e.currentTarget.src = "/blog-images/ai-software-house-pakistan.webp";
-              }}
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />

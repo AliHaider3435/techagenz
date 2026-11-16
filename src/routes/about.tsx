@@ -22,10 +22,10 @@ import { TechCursor } from "@/components/TechCursor";
 import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import workDev from "@/assets/work-dev.webp";
-import { publicCms } from "@/lib/public-cms";
+import { teamMembers } from "@/content";
 
 export const Route = createFileRoute("/about")({
-  loader: async () => ({ team: (await publicCms.getTeam()).data }),
+  loader: () => ({ team: teamMembers }),
   head: () => ({
     meta: [
       { title: "About Us — Tech Agenz | AI & Software House in Pakistan" },

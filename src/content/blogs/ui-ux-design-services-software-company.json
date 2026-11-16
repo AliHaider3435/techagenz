@@ -1,0 +1,37 @@
+{
+    "id":  "ui-ux-design-services-software-company",
+    "title":  "UI/UX Design Services: How Software Companies Create Products Users Actually Love",
+    "category":  "Custom Software",
+    "readTime":  "8 min read",
+    "date":  "September 24, 2026",
+    "publishDateIso":  "2026-09-24",
+    "author":  "Tech Agenz Team",
+    "image":  "/blog-images/ui-ux-design-services-software-company.webp",
+    "excerpt":  "The design-engineering workflow that produces intuitive, accessible, and visually stunning software products — from user research and wireframes to pixel-perfect implementation.",
+    "featured":  false,
+    "keywords":  [
+                     "UI UX design services",
+                     "product design company",
+                     "user experience design",
+                     "design system development",
+                     "Figma to code",
+                     "interface design software house"
+                 ],
+    "keyTakeaways":  [
+                         "User research and usability testing before writing code reduces post-launch feature rework by up to 50%, saving both time and budget.",
+                         "A shared design system with tokenized components ensures visual consistency and cuts UI development time by 30-40% across projects.",
+                         "Accessibility compliance (WCAG 2.2 AA) is not just ethical — it expands your addressable market by 15-20% and mitigates legal risk."
+                     ],
+    "content":  [
+                    "Beautiful interfaces that are unusable, or usable interfaces that are ugly — neither wins in today's competitive software market. The best products nail both form and function, and that requires a design process deeply integrated with engineering.",
+                    "At Tech Agenz, design starts with research, not pixels. We conduct user interviews, competitive audits, and task-flow analysis before opening Figma. This evidence-based approach ensures that every screen solves a validated user problem rather than reflecting internal assumptions.",
+                    "Our design system library, built as a shared Figma component library mirrored in Tailwind CSS and React components, eliminates the designer-developer handoff gap. Tokens for color, spacing, typography, and motion are defined once and consumed everywhere, guaranteeing visual consistency across web and mobile.",
+                    "Every interface we ship meets WCAG 2.2 AA accessibility standards: proper color contrast ratios, keyboard navigation support, screen reader compatibility, and focus indicators. Inclusive design is not an add-on — it is part of our quality baseline."
+                ],
+    "seo":  {
+                "title":  "UI/UX Design Services: How Software Companies Create Products Users Actually Love — Tech Agenz",
+                "description":  "The design-engineering workflow that produces intuitive, accessible, and visually stunning software products — from user research and wireframes to pixel-perfect implementation.",
+                "keywords":  "UI UX design services, product design company, user experience design, design system development, Figma to code, interface design software house"
+            },
+    "imageAlt":  "UI/UX Design Services: How Software Companies Create Products Users Actually Love"
+}

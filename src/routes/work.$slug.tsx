@@ -23,20 +23,15 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
 import ProjectCard from "@/components/ProjectCard";
-import { getRelatedCmsProjects, publicCms, resolveCmsImageUrl } from "@/lib/public-cms";
+import { getProjectBySlug, getRelatedProjects, siteConfig } from "@/content";
 
 export const Route = createFileRoute("/work/$slug")({
-  loader: async ({ params }) => {
-    const [projectResult, projectsResult] = await Promise.all([
-      publicCms.getProject(params.slug),
-      publicCms.getProjects(),
-    ]);
-    const project = projectResult.data;
+  loader: ({ params }) => {
+    const project = getProjectBySlug(params.slug);
     if (!project) {
       throw notFound();
     }
-    const related = getRelatedCmsProjects(projectsResult.data, params.slug, 2);
-    return { project, related };
+    return { project, related: getRelatedProjects(params.slug, 2) };
   },
   head: ({ loaderData }) => {
     const project = loaderData?.project;
@@ -48,11 +43,11 @@ export const Route = createFileRoute("/work/$slug")({
 
     return {
       meta: [
-        { title: `${project.title} — Case Study | Tech Agenz` },
-        { name: "description", content: project.formulaSummary },
+        { title: project.seo?.title || `${project.title} — Case Study | Tech Agenz` },
+        { name: "description", content: project.seo?.description || project.formulaSummary },
         { property: "og:title", content: `${project.title} — Tech Agenz` },
         { property: "og:description", content: project.formulaSummary },
-        { property: "og:image", content: resolveCmsImageUrl(project.coverImage) },
+        { property: "og:image", content: new URL(project.coverImage, siteConfig.url).toString() },
         { property: "og:type", content: "article" },
         { property: "og:url", content: `https://techagenz.com/work/${project.slug}` },
         { name: "twitter:card", content: "summary_large_image" },

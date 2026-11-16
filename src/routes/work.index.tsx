@@ -7,12 +7,11 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import BouncyButton from "@/components/BouncyButton";
-import { projectCategories } from "@/lib/projects-data";
-import type { CmsCaseStudy } from "@/api/cms-client";
-import { filterProjectsByCategory, publicCms } from "@/lib/public-cms";
+import { filterProjectsByCategory, projectCategories, projects } from "@/content";
+import type { CaseStudy } from "@/content";
 
 export const Route = createFileRoute("/work/")({
-  loader: async () => ({ projects: (await publicCms.getProjects()).data }),
+  loader: () => ({ projects }),
   head: () => ({
     meta: [
       { title: "Portfolio & Case Studies — Tech Agenz | Production Software & Automations" },
@@ -42,7 +41,7 @@ export const Route = createFileRoute("/work/")({
   component: WorkPortfolioPage,
 });
 
-function PortfolioRow({ project, index }: { project: CmsCaseStudy; index: number }) {
+function PortfolioRow({ project, index }: { project: CaseStudy; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -60,7 +59,7 @@ function PortfolioRow({ project, index }: { project: CmsCaseStudy; index: number
         <div className="shrink-0 w-16 h-14 sm:w-20 sm:h-16 rounded-lg overflow-hidden bg-slate-900 border border-white/10 group-hover:border-cyan-400/50 transition-colors">
           <img
             src={project.coverImage}
-            alt={project.shortTitle}
+            alt={project.coverImageAlt || project.shortTitle}
             width={80}
             height={64}
             loading="lazy"

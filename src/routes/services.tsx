@@ -2,10 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Brain,
-  Cpu,
-  Code2,
-  Database,
   ArrowUpRight,
   Sparkles,
   CheckCircle2,
@@ -14,8 +10,6 @@ import {
   Zap,
   Activity,
   Terminal,
-  MessageSquare,
-  Rocket,
   ChevronDown,
   HelpCircle,
 } from "lucide-react";
@@ -24,15 +18,7 @@ import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import workDev from "@/assets/work-dev.webp";
-import workDevCard from "@/assets/work-dev-card.webp";
-import workSaas from "@/assets/work-saas.webp";
-import workSaasCard from "@/assets/work-saas-card.webp";
-import workData from "@/assets/work-data.webp";
-import workDataCard from "@/assets/work-data-card.webp";
-// secureAi was removed — reuse workDev for WhatsApp automation service card
-const secureAi = workDev;
-const secureAiCard = workDevCard;
+import { serviceDetails as serviceList } from "@/content";
 
 const servicesFaqSchema = {
   "@context": "https://schema.org",
@@ -206,111 +192,6 @@ export const Route = createFileRoute("/services")({
   }),
   component: ServicesPage,
 });
-
-const serviceList = [
-  {
-    id: "business-automation",
-    icon: Cpu,
-    tag: "Business Process Automation",
-    title: "Smart Business Automation & AI Solutions",
-    lead: "Modern businesses need more than traditional software to remain competitive. Tech Agenz helps organizations streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications.",
-    img: workSaas,
-    imgWidth: 900,
-    cardImg: workSaasCard,
-    capabilities: [
-      "Streamlining everyday operations and reducing manual workloads",
-      "Automating customer communication and connecting core business tools",
-      "Custom workflow automation for clinics managing patient appointments",
-      "Tailored inquiry intake and document workflows for law firms",
-    ],
-    techStack: ["Python", "FastAPI", "Temporal", "LangGraph", "Redis", "Celery"],
-  },
-  {
-    id: "whatsapp-automation",
-    icon: MessageSquare,
-    tag: "Customer Communication",
-    title: "WhatsApp Automation for Business",
-    lead: "Improve customer communication with WhatsApp automation for business. Automated messaging workflows help businesses communicate more efficiently while maintaining a consistent customer experience.",
-    img: secureAi,
-    imgWidth: 600,
-    cardImg: secureAiCard,
-    capabilities: [
-      "Automated appointment booking and clinic confirmation reminders",
-      "Customer inquiry routing and intelligent lead follow-ups",
-      "Real-time order updates, shipment notices, and receipt delivery",
-      "Instant 24/7 answers to frequently asked questions (FAQs)",
-    ],
-    techStack: ["WhatsApp Cloud API", "Node.js", "Webhooks", "PostgreSQL", "Docker"],
-  },
-  {
-    id: "ai-chatbots",
-    icon: Brain,
-    tag: "Intelligent Support",
-    title: "AI Chatbot Development",
-    lead: "Our AI chatbot development solutions help businesses respond to customer questions, guide website visitors, and provide relevant information around the clock with context-aware interactions.",
-    img: workDev,
-    imgWidth: 900,
-    cardImg: workDevCard,
-    capabilities: [
-      "Connect chatbots directly with proprietary business knowledge bases",
-      "Integrate with customer support desks and CRM workflows",
-      "Context-aware, multi-turn conversational agents with sentiment tracking",
-      "Escalation to human agents when complex assistance is required",
-    ],
-    techStack: ["PyTorch", "LangChain", "Qdrant", "OpenAI", "vLLM", "Next.js"],
-  },
-  {
-    id: "custom-software",
-    icon: Code2,
-    tag: "Tailored Platforms",
-    title: "Custom Software Development in Pakistan",
-    lead: "Through custom software development in Pakistan, Tech Agenz helps organizations build applications tailored to their workflows, users, and growth plans, addressing operational gaps off-the-shelf tools cannot resolve.",
-    img: workData,
-    imgWidth: 900,
-    cardImg: workDataCard,
-    capabilities: [
-      "Internal management tools and centralized administrative dashboards",
-      "Integrated business platforms unifying fragmented software stacks",
-      "Role-based access control, security compliance, and auditing",
-      "Architectures engineered specifically for unique operational logic",
-    ],
-    techStack: ["TypeScript", "React", "Node.js", "PostgreSQL", "Tailwind CSS", "Docker"],
-  },
-  {
-    id: "web-dev",
-    icon: Rocket,
-    tag: "High-Performance Web",
-    title: "Web Development Company in Pakistan",
-    lead: "As a web development company in Pakistan, Tech Agenz focuses on building modern, responsive, and functional web applications that support business objectives with top performance and usability.",
-    img: workDev,
-    imgWidth: 900,
-    cardImg: workDevCard,
-    capabilities: [
-      "Conversion-focused business websites and customer portals",
-      "Web-based management systems with sub-second load times",
-      "SEO-engineered architectures and 95+ Core Web Vitals guarantees",
-      "Responsive, mobile-first design across all device screen sizes",
-    ],
-    techStack: ["React 19", "TanStack Start", "TypeScript", "Tailwind CSS", "Vite", "REST/GraphQL"],
-  },
-  {
-    id: "erpnext",
-    icon: Database,
-    tag: "Enterprise Integration",
-    title: "ERPNext Implementation",
-    lead: "Managing accounting, inventory, sales, purchasing, and other business functions across disconnected systems creates complexity. With ERPNext implementation, businesses bring key processes into an integrated platform.",
-    img: workSaas,
-    imgWidth: 900,
-    cardImg: workSaasCard,
-    capabilities: [
-      "Centralized accounting, sales pipeline, and purchasing workflows",
-      "Real-time inventory tracking and multi-warehouse coordination",
-      "Cross-departmental visibility and customized executive reporting",
-      "Configured precisely to each organization's operational requirements",
-    ],
-    techStack: ["ERPNext", "Frappe Framework", "Python", "MariaDB", "Redis", "Linux"],
-  },
-];
 
 const processSteps = [
   {

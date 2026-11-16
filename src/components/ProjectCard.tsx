@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, CheckCircle2, Layers } from "lucide-react";
-import type { CaseStudy } from "@/lib/projects-data";
+import type { CaseStudy } from "@/content";
 
 interface ProjectCardProps {
   project: CaseStudy;
@@ -18,7 +18,7 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
         <div className="relative aspect-video w-full overflow-hidden bg-slate-950 shrink-0">
           <img
             src={project.coverImage}
-            alt={project.title}
+            alt={project.coverImageAlt || project.title}
             width={720}
             height={405}
             loading={priority ? "eager" : "lazy"}

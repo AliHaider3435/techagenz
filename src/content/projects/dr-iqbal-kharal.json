@@ -1,0 +1,137 @@
+{
+    "slug":  "dr-iqbal-kharal",
+    "title":  "Dr. Iqbal Ahmad Kharal: Real-Time Patient Scheduling \u0026 Queue Management System",
+    "shortTitle":  "Dr. Iqbal Ahmad Kharal Booking System",
+    "formulaSummary":  "A real-time appointment booking and queue management system built with React, Node.js, and WhatsApp Cloud API for Dr. Iqbal Ahmad Kharal\u0027s specialist clinic, achieving a 42% decrease in waiting room congestion, zero double-booking incidents, and saving 25+ hours of front-desk scheduling work per week.",
+    "clientType":  "Specialist Clinical Practice",
+    "clientName":  "Dr. Iqbal Ahmad Kharal Clinic",
+    "category":  "Booking Systems \u0026 Automation",
+    "coverImage":  "/project-images/dr-iqbal-kharal.webp",
+    "tags":  [
+                 "WhatsApp Cloud API",
+                 "Patient Queue",
+                 "Node.js",
+                 "PostgreSQL",
+                 "Docker"
+             ],
+    "featuredOnHome":  true,
+    "order":  1,
+    "timeline":  "Live in Production",
+    "status":  "Live in Production",
+    "problem":  {
+                    "heading":  "Waiting Room Congestion \u0026 Manual Reception Overload",
+                    "description":  "Handling up to 80 daily consultations through phone calls and physical reception desk registers created severe waiting room congestion. Patients frequently waited 2 to 3 hours past their estimated time. Double-bookings during surge hours frustrated patients, and clinic staff had no automated way to notify patients when appointments were delayed due to emergency procedures.",
+                    "painPoints":  [
+                                       "Receptionists overwhelmed with non-stop phone calls coordinating daily consultation slots",
+                                       "Patients waiting 2 to 3 hours beyond their estimated appointment times",
+                                       "Paper registers causing accidental double-bookings during peak clinical hours",
+                                       "No automated notifications when emergency hospital surgeries delayed the clinic schedule"
+                                   ]
+                },
+    "solution":  {
+                     "heading":  "Atomic Slot Allocation \u0026 Real-Time Queue Monitoring",
+                     "description":  "Tech Agenz engineered a high-concurrency patient appointment booking platform. We implemented atomic slot reservation to eliminate double bookings, a mobile-first appointment booking interface requiring zero app installation, and automated WhatsApp/SMS webhooks that confirm booking details. The doctor\u0027s administrative dashboard gives immediate control over session capacity, emergency slot freezes, and real-time patient queue monitoring.",
+                     "keyDeliverables":  [
+                                             "Mobile-first patient self-booking workflow with zero app download required",
+                                             "Atomic database slot reservation completely preventing conflicting bookings",
+                                             "Automated WhatsApp/SMS alerts for appointment confirmations and time reminders",
+                                             "Doctor and reception control dashboard for queue monitoring and emergency session freezes"
+                                         ]
+                 },
+    "stack":  [
+                  "React",
+                  "Node.js",
+                  "PostgreSQL",
+                  "Calendar Webhooks",
+                  "WhatsApp Cloud API",
+                  "Docker"
+              ],
+    "architecture":  {
+                         "overview":  "Patients reserve slots through a mobile-optimized portal or WhatsApp webhook. The system validates slot availability against PostgreSQL with atomic row-level locks, transmits instant confirmation alerts, and logs the patient into the clinic\u0027s real-time queue monitor.",
+                         "flowSteps":  [
+                                           {
+                                               "step":  "01",
+                                               "title":  "Slot Selection",
+                                               "description":  "Patient selects available consultation slot from real-time calendar."
+                                           },
+                                           {
+                                               "step":  "02",
+                                               "title":  "Atomic Lock \u0026 Reservation",
+                                               "description":  "Database enforces row-level locking to prevent concurrent booking conflicts."
+                                           },
+                                           {
+                                               "step":  "03",
+                                               "title":  "Automated WhatsApp Confirmation",
+                                               "description":  "Instant booking confirmation and token number dispatched to patient\u0027s phone."
+                                           },
+                                           {
+                                               "step":  "04",
+                                               "title":  "Live Queue Dashboard",
+                                               "description":  "Clinic receptionist tracks check-ins and physician views live consultation queue."
+                                           }
+                                       ]
+                     },
+    "results":  {
+                    "stats":  [
+                                  {
+                                      "metric":  "42%",
+                                      "label":  "Wait Time Reduction",
+                                      "context":  "Decrease in waiting room overcrowding"
+                                  },
+                                  {
+                                      "metric":  "0",
+                                      "label":  "Double Bookings",
+                                      "context":  "Atomic database locking eliminated all collisions"
+                                  },
+                                  {
+                                      "metric":  "70%+",
+                                      "label":  "Phone Load Reduced",
+                                      "context":  "Staff inquiry workload dropped during peak hours"
+                                  },
+                                  {
+                                      "metric":  "25+ hrs",
+                                      "label":  "Weekly Time Saved",
+                                      "context":  "Staff hours redirected from calls to in-clinic care"
+                                  }
+                              ],
+                    "bullets":  [
+                                    "42% decrease in physical waiting room overcrowding and patient wait times",
+                                    "Near-zero missed appointments via automated WhatsApp/SMS reminders",
+                                    "Atomic database locking eliminating double-booking incidents completely",
+                                    "Staff phone inquiry workload reduced by over 70% during peak clinical hours"
+                                ]
+                },
+    "keyFeatures":  [
+                        {
+                            "title":  "Atomic Slot Reservation",
+                            "description":  "PostgreSQL row-level isolation preventing two patients from booking the same slot.",
+                            "tag":  "Data Integrity"
+                        },
+                        {
+                            "title":  "Automated WhatsApp/SMS Alerts",
+                            "description":  "Immediate token confirmation, location directions, and 2-hour pre-visit reminders.",
+                            "tag":  "Notifications"
+                        },
+                        {
+                            "title":  "Physician Control Console",
+                            "description":  "Real-time queue tracking, one-tap emergency freezes, and daily consultation counters.",
+                            "tag":  "Clinic Dashboard"
+                        },
+                        {
+                            "title":  "Mobile-First Patient UI",
+                            "description":  "Accessible to patients of all ages on any smartphone without downloading an app.",
+                            "tag":  "Patient Experience"
+                        }
+                    ],
+    "testimonial":  {
+                        "quote":  "The automated booking system transformed our daily clinic flow. Waiting room congestion dropped dramatically, and patients arrive on time with their token numbers in hand.",
+                        "author":  "Clinical Administrator",
+                        "role":  "Operations Lead",
+                        "organization":  "Dr. Iqbal Ahmad Kharal Clinic"
+                    },
+    "seo":  {
+                "title":  "Dr. Iqbal Ahmad Kharal: Real-Time Patient Scheduling & Queue Management System — Case Study | Tech Agenz",
+                "description":  "A real-time appointment booking and queue management system built with React, Node.js, and WhatsApp Cloud API for Dr. Iqbal Ahmad Kharal\u0027s specialist clinic, achieving a 42% decrease in waiting room congestion, zero double-booking incidents, and saving 25+ hours of front-desk scheduling work per week."
+            },
+    "coverImageAlt":  "Dr. Iqbal Ahmad Kharal Booking System"
+}

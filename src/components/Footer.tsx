@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin, Github } from "lucide-react";
 import logo from "@/assets/logo.webp?no-inline";
+import { siteConfig } from "@/content";
 
 function Footer() {
   return (
@@ -25,7 +26,7 @@ function Footer() {
           </div>
           <div className="mt-6 flex gap-3">
             <a
-              href="https://www.linkedin.com/in/haider5617/"
+              href={siteConfig.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
@@ -34,7 +35,7 @@ function Footer() {
               <Linkedin className="h-4 w-4 text-muted-foreground transition-colors hover:text-brand" />
             </a>
             <a
-              href="https://github.com/AliHaider3435"
+              href={siteConfig.social.github}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
@@ -137,14 +138,6 @@ function Footer() {
                 Terms of Service
               </Link>
             </li>
-            <li className="pt-2 border-t border-border/30">
-              <Link
-                to="/login"
-                className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium flex items-center gap-1.5"
-              >
-                <span>🔐 Team Portal Login</span>
-              </Link>
-            </li>
           </ul>
         </div>
       </div>
@@ -159,17 +152,13 @@ function Footer() {
           <Link to="/terms" className="hover:text-brand transition-colors">
             Terms of Service
           </Link>{" "}
-          •{" "}
-          <Link to="/login" className="text-cyan-400 hover:underline">
-            Team Portal
-          </Link>
         </div>
         <div className="flex gap-6">
-          <a href="mailto:info@techagenz.com" className="hover:text-brand">
-            info@techagenz.com
+          <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-brand">
+            {siteConfig.contact.email}
           </a>
-          <a href="tel:+923394555004" className="hover:text-brand">
-            +92 339 4555004
+          <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-brand">
+            {siteConfig.contact.displayPhone}
           </a>
         </div>
       </div>
