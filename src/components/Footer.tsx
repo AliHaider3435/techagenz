@@ -24,6 +24,16 @@ function Footer() {
           <div className="mt-3 text-xs text-brand font-medium">
             Based in Pakistan • Serving Clients Globally
           </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-border/50 bg-white p-2">
+              <img src="/pseb-mark.svg" alt="PSEB — Pakistan Software Export Board" className="h-9 w-auto" />
+              <span className="text-[10px] font-medium text-slate-700">PSEB Registered</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-border/50 bg-white p-2">
+              <img src="/aws-mark.svg" alt="AWS Cloud Services" className="h-9 w-auto" />
+              <span className="text-[10px] font-medium text-slate-700">AWS Cloud</span>
+            </div>
+          </div>
           <div className="mt-6 flex gap-3">
             <a
               href={siteConfig.social.linkedin}
