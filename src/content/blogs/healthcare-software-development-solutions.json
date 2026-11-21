@@ -6,7 +6,7 @@
     "date":  "October 3, 2026",
     "publishDateIso":  "2026-10-03",
     "author":  "Tech Agenz Team",
-    "image":  "/blog-images/healthcare-software-development-solutions.webp",
+    "image":  "/blog-images/software-house-illustrations.svg#healthcare-platform",
     "excerpt":  "How to build healthcare platforms that satisfy HIPAA, HL7 FHIR interoperability standards, and patient experience expectations — without compromising development velocity.",
     "featured":  false,
     "keywords":  [

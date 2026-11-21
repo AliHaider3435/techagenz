@@ -6,7 +6,7 @@
     "date":  "Aug 26, 2026",
     "publishDateIso":  "2026-08-26T16:00:00+05:00",
     "author":  "Tech Agenz Security Team",
-    "image":  "/blog-images/software-house-cybersecurity-best-practices.webp",
+    "image":  "/blog-images/software-house-illustrations.svg#security-shield",
     "excerpt":  "Defense-in-depth principles for custom applications: role-based access control (RBAC), end-to-end payload encryption, JWT rotation, and audit logs to prevent data breaches.",
     "featured":  false,
     "keywords":  [

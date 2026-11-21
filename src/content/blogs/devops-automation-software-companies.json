@@ -6,7 +6,7 @@
     "date":  "October 9, 2026",
     "publishDateIso":  "2026-10-09",
     "author":  "Tech Agenz Team",
-    "image":  "/blog-images/devops-automation-software-companies.webp",
+    "image":  "/blog-images/software-house-illustrations.svg#devops-delivery",
     "excerpt":  "How modern software houses architect CI/CD pipelines with GitHub Actions, Terraform, and containerized deployments to achieve multiple production releases per day.",
     "featured":  false,
     "keywords":  [
