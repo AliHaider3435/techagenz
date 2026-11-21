@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="72" viewBox="0 0 240 72" role="img" aria-labelledby="title desc">
-  <title id="title">PSEB</title>
-  <desc id="desc">Pakistan Software Export Board</desc>
-  <rect x="1" y="1" width="238" height="70" rx="12" fill="#fff"/>
-  <path d="M18 18h36v36H18z" fill="#0b6b4c"/>
-  <path d="M24 25h23M24 33h18M24 41h21M24 49h13" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-  <text x="64" y="37" fill="#123b5d" font-family="Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="1">PSEB</text>
-  <text x="64" y="53" fill="#526b7a" font-family="Arial,sans-serif" font-size="8.5" font-weight="600">PAKISTAN SOFTWARE EXPORT BOARD</text>
-</svg>

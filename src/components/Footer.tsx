@@ -26,11 +26,15 @@ function Footer() {
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <div className="flex flex-col items-center gap-1 rounded-lg border border-border/50 bg-white p-2">
-              <img src="/pseb-mark.svg" alt="PSEB — Pakistan Software Export Board" className="h-9 w-auto" />
+              <img
+                src="/PSEB.png"
+                alt="PSEB — Pakistan Software Export Board"
+                className="h-14 w-28 object-contain"
+              />
               <span className="text-[10px] font-medium text-slate-700">PSEB Registered</span>
             </div>
             <div className="flex flex-col items-center gap-1 rounded-lg border border-border/50 bg-white p-2">
-              <img src="/aws-mark.svg" alt="AWS Cloud Services" className="h-9 w-auto" />
+              <img src="/aws-logo.png" alt="AWS Cloud Services" className="h-14 w-28 object-contain" />
               <span className="text-[10px] font-medium text-slate-700">AWS Cloud</span>
             </div>
           </div>
