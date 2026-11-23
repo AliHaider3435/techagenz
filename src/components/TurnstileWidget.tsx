@@ -64,17 +64,37 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
   const containerRef = useRef<HTMLDivElement>(null);
   const onTokenRef = useRef(onToken);
   const onErrorRef = useRef(onError);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNearViewport, setIsNearViewport] = useState(false);
   const siteKey = import.meta.env.VITE_CF_TURNSTILE_SITE_KEY?.trim() ?? "";
 
   onTokenRef.current = onToken;
   onErrorRef.current = onError;
 
   useEffect(() => {
-    if (!siteKey || !containerRef.current) {
-      setIsLoading(false);
+    if (!siteKey || !containerRef.current || isNearViewport) return;
+
+    const container = containerRef.current;
+    if (!("IntersectionObserver" in window)) {
+      setIsNearViewport(true);
       return;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [siteKey, isNearViewport]);
+
+  useEffect(() => {
+    if (!siteKey || !isNearViewport || !containerRef.current) return;
 
     let disposed = false;
     let widgetId: string | undefined;
@@ -106,7 +126,7 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
       onTokenRef.current("");
     };
-  }, [siteKey, resetSignal]);
+  }, [siteKey, isNearViewport, resetSignal]);
 
   if (!siteKey) {
     return (
@@ -123,7 +143,7 @@ export function TurnstileWidget({ onToken, onError, resetSignal }: TurnstileWidg
           Loading secure verification...
         </p>
       )}
-      <div ref={containerRef} aria-label="Cloudflare Turnstile verification" />
+      <div ref={containerRef} role="group" aria-label="Cloudflare Turnstile verification" />
     </div>
   );
 }

@@ -10,8 +10,6 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
-import "@fontsource-variable/inter";
-import "@fontsource-variable/space-grotesk";
 import bodyFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import heroFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import logo from "@/assets/logo.webp?no-inline";

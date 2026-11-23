@@ -1,4 +1,10 @@
-export { blogCategories, blogPosts, filterBlogPosts, getBlogBySlug, getRelatedBlogPosts } from "./blogs";
+export {
+  blogCategories,
+  filterBlogPosts,
+  getBlogBySlug,
+  getRelatedBlogPosts,
+  loadBlogPosts,
+} from "./blogs";
 export type { BlogPost } from "./blogs/types";
 export {
   filterProjectsByCategory,

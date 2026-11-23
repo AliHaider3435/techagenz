@@ -1,7 +1,6 @@
 import type { BlogPost } from "./types";
 
 const blogModules = import.meta.glob<BlogPost>("./*.json", {
-  eager: true,
   import: "default",
 });
 
@@ -16,13 +15,17 @@ export const blogCategories = [
   "Industry Solutions",
 ] as const;
 
-export const blogPosts = Object.values(blogModules).sort((a, b) => {
-  const dateDifference = Date.parse(b.publishDateIso) - Date.parse(a.publishDateIso);
-  return dateDifference || a.id.localeCompare(b.id);
-});
+export async function loadBlogPosts(): Promise<BlogPost[]> {
+  const posts = await Promise.all(Object.values(blogModules).map((loadPost) => loadPost()));
+  return posts.sort((a, b) => {
+    const dateDifference = Date.parse(b.publishDateIso) - Date.parse(a.publishDateIso);
+    return dateDifference || a.id.localeCompare(b.id);
+  });
+}
 
-export function getBlogBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((post) => post.id === slug);
+export async function getBlogBySlug(slug: string): Promise<BlogPost | undefined> {
+  const loadPost = blogModules[`./${slug}.json`];
+  return loadPost ? loadPost() : undefined;
 }
 
 export function filterBlogPosts(
@@ -44,7 +47,8 @@ export function filterBlogPosts(
   });
 }
 
-export function getRelatedBlogPosts(post: BlogPost, limit = 3): BlogPost[] {
+export async function getRelatedBlogPosts(post: BlogPost, limit = 3): Promise<BlogPost[]> {
+  const blogPosts = await loadBlogPosts();
   return blogPosts
     .filter(
       (candidate) =>

@@ -1,10 +1,13 @@
 import { Brain, Code2, Cpu, Database, MessageSquare, Rocket } from "lucide-react";
 import workData from "@/assets/work-data.webp";
 import workDataCard from "@/assets/work-data-card.webp";
+import workDataMedium from "@/assets/work-data-720.webp";
 import workDev from "@/assets/work-dev.webp";
 import workDevCard from "@/assets/work-dev-card.webp";
+import workDevMedium from "@/assets/work-dev-720.webp";
 import workSaas from "@/assets/work-saas.webp";
 import workSaasCard from "@/assets/work-saas-card.webp";
+import workSaasMedium from "@/assets/work-saas-720.webp";
 
 export const homeServices = [
   {
@@ -13,6 +16,7 @@ export const homeServices = [
     title: "Smart Business Automation & AI Solutions",
     desc: "Streamline everyday operations through business process automation, intelligent workflows, and AI-powered applications reducing manual workloads.",
     img: workSaas,
+    imgMedium: workSaasMedium,
     imgWidth: 900,
     cardImg: workSaasCard,
   },
@@ -22,7 +26,8 @@ export const homeServices = [
     title: "WhatsApp Automation for Business",
     desc: "Automated messaging workflows for appointment reminders, customer inquiries, lead follow-ups, order updates, and FAQs with consistent service.",
     img: workDev,
-    imgWidth: 600,
+    imgMedium: workDevMedium,
+    imgWidth: 900,
     cardImg: workDevCard,
   },
   {
@@ -31,6 +36,7 @@ export const homeServices = [
     title: "AI Chatbot Development",
     desc: "Chatbots connected with business knowledge bases, customer support workflows, and applications to guide visitors and provide round-the-clock answers.",
     img: workDev,
+    imgMedium: workDevMedium,
     imgWidth: 900,
     cardImg: workDevCard,
   },
@@ -40,6 +46,7 @@ export const homeServices = [
     title: "Custom Software Development in Pakistan",
     desc: "Applications tailored to your workflows, users, and scaling targets — from internal management portals to complete enterprise business platforms.",
     img: workData,
+    imgMedium: workDataMedium,
     imgWidth: 900,
     cardImg: workDataCard,
   },
@@ -49,6 +56,7 @@ export const homeServices = [
     title: "Web Development Company in Pakistan",
     desc: "Modern, responsive, and functional web applications prioritizing usability, performance, security, and scalability for high conversion.",
     img: workDev,
+    imgMedium: workDevMedium,
     imgWidth: 900,
     cardImg: workDevCard,
   },
@@ -58,6 +66,7 @@ export const homeServices = [
     title: "ERPNext Implementation",
     desc: "Bring accounting, inventory, sales, purchasing, and operations into an integrated platform with complete visibility and consistent workflows.",
     img: workSaas,
+    imgMedium: workSaasMedium,
     imgWidth: 900,
     cardImg: workSaasCard,
   },

@@ -22,12 +22,12 @@ import { TechCursor } from "@/components/TechCursor";
 import { getBlogBySlug, getRelatedBlogPosts, siteConfig } from "@/content";
 
 export const Route = createFileRoute("/blogs/$slug")({
-  loader: ({ params }) => {
-    const post = getBlogBySlug(params.slug);
+  loader: async ({ params }) => {
+    const post = await getBlogBySlug(params.slug);
     if (!post) {
       throw notFound();
     }
-    return { post, relatedPosts: getRelatedBlogPosts(post, 3) };
+    return { post, relatedPosts: await getRelatedBlogPosts(post, 3) };
   },
   head: ({ loaderData }) => {
     const post = loaderData?.post;

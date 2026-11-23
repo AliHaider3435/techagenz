@@ -44,14 +44,17 @@ import { SplineScene } from "@/components/ui/spline-scene";
 import WorkSocialProof from "@/components/WorkSocialProof";
 import robotHero from "@/assets/robot-hero.webp";
 import workDev from "@/assets/work-dev.webp";
-import { blogPosts, getFeaturedHomepageProjects, homeServices, projects, teamMembers } from "@/content";
-import type { BlogPost, CaseStudy } from "@/content";
+import workDevMedium from "@/assets/work-dev-720.webp";
+import { homepageBlogPosts } from "@/content/blogs/homepage";
+import { getFeaturedHomepageProjects, homeServices, projects, teamMembers } from "@/content";
+import type { CaseStudy } from "@/content";
+import type { HomepageBlogCard } from "@/content/blogs/homepage";
 
 export const Route = createFileRoute("/")({
   loader: () => ({
     team: teamMembers,
     projects: getFeaturedHomepageProjects(projects),
-    blogs: blogPosts.slice(0, 3),
+    blogs: homepageBlogPosts,
   }),
   head: () => ({
     meta: [
@@ -526,7 +529,7 @@ function Services() {
         </div>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map(({ icon: Icon, tag, title, desc, img, imgWidth, cardImg }) => (
+          {services.map(({ icon: Icon, tag, title, desc, img, imgMedium, imgWidth, cardImg }) => (
             <div
               key={title}
               className="group relative overflow-hidden rounded-2xl"
@@ -558,7 +561,7 @@ function Services() {
                   <div className="relative h-36 overflow-hidden">
                     <img
                       src={img}
-                      srcSet={`${cardImg} 480w, ${img} ${imgWidth}w`}
+                      srcSet={`${cardImg} 480w, ${imgMedium} 720w, ${img} ${imgWidth}w`}
                       sizes="(max-width: 640px) 80vw, (max-width: 1024px) 40vw, 28vw"
                       alt={title}
                       className="h-full w-full object-cover opacity-70 transition-transform duration-700 group-hover:scale-110"
@@ -686,6 +689,8 @@ function About() {
           <div className="glass-card overflow-hidden rounded-3xl p-2">
             <img
               src={workDev}
+              srcSet={`${workDevMedium} 720w, ${workDev} 900w`}
+              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 45vw"
               alt="Tech Agenz engineering team at work"
               width={900}
               height={700}
@@ -1001,7 +1006,7 @@ function Testimonials() {
   );
 }
 
-function BlogsTeaser({ posts }: { posts: BlogPost[] }) {
+function BlogsTeaser({ posts }: { posts: HomepageBlogCard[] }) {
   return (
     <section id="blogs" className="relative py-20">
       <div className="mx-auto max-w-7xl px-6">

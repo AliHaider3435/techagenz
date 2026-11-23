@@ -6,10 +6,10 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import { blogCategories, blogPosts, filterBlogPosts } from "@/content";
+import { blogCategories, filterBlogPosts, loadBlogPosts } from "@/content";
 
 export const Route = createFileRoute("/blogs/")({
-  loader: () => ({ posts: blogPosts }),
+  loader: async () => ({ posts: await loadBlogPosts() }),
   head: () => ({
     meta: [
       {

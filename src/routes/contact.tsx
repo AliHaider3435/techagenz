@@ -147,6 +147,7 @@ function ContactPage() {
       <WhatsAppButton />
       <Nav />
 
+      <main>
       {/* Hero Header */}
       <section className="relative pt-36 pb-14">
         <div
@@ -590,6 +591,7 @@ function ContactPage() {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>
