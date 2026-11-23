@@ -1,7 +1,8 @@
+# Public pages are available to search engines and AI search crawlers.
 User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /login
+Disallow: /api/admin/
 
-# Sitemap
 Sitemap: https://techagenz.com/sitemap.xml

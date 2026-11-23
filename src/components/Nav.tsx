@@ -50,9 +50,12 @@ function Nav() {
           </BouncyButton>
 
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border/80 bg-background/80 text-foreground transition-colors hover:bg-card lg:hidden"
-            aria-label="Toggle navigation menu"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border/80 bg-background/80 text-foreground transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand lg:hidden"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -60,7 +63,10 @@ function Nav() {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="glass-card absolute left-0 right-0 top-full mt-3 flex flex-col gap-2 rounded-3xl border border-brand/30 bg-background/95 p-6 shadow-2xl backdrop-blur-2xl lg:hidden">
+          <div
+            id="mobile-navigation"
+            className="absolute left-0 right-0 top-full mt-3 flex flex-col gap-2 rounded-3xl border border-brand/50 bg-[#071426] p-6 text-slate-100 shadow-2xl shadow-black/60 ring-1 ring-white/10 lg:hidden"
+          >
             {navItems.map((item) => (
               <Link
                 key={item.label}

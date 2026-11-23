@@ -61,6 +61,11 @@ export const Route = createFileRoute("/")({
         content:
           "Tech Agenz is an AI-powered software house helping businesses simplify complex operations, automate repetitive tasks, and build smarter digital experiences. Smart business automation, custom software, ERPNext, WhatsApp & AI chatbot development.",
       },
+      {
+        name: "keywords",
+        content:
+          "AI automation services Pakistan, AI agents and workflow automation, generative AI integration, software house in Pakistan, custom software development Pakistan, ERPNext implementation, WhatsApp automation",
+      },
       { property: "og:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
         property: "og:description",
