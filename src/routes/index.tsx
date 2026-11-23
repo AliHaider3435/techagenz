@@ -42,7 +42,7 @@ import TeamSection from "@/components/TeamSection";
 import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
 import { SplineScene } from "@/components/ui/spline-scene";
 import WorkSocialProof from "@/components/WorkSocialProof";
-import robotHero from "@/assets/robot-hero.png";
+import robotHero from "@/assets/robot-hero.webp";
 import workDev from "@/assets/work-dev.webp";
 import { blogPosts, getFeaturedHomepageProjects, homeServices, projects, teamMembers } from "@/content";
 import type { BlogPost, CaseStudy } from "@/content";
@@ -300,6 +300,8 @@ function Hero() {
                     alt="Tech Agenz AI Robot"
                     width={351}
                     height={327}
+                    fetchPriority="high"
+                    decoding="async"
                     className="relative z-10 max-h-[82%] max-w-[88%] object-contain drop-shadow-[0_8px_24px_rgba(34,211,238,0.22)] animate-float-slow pointer-events-none"
                   />
                 </div>
@@ -929,6 +931,8 @@ function Portfolio({ projects }: { projects: CaseStudy[] }) {
                 <img
                   src="/project-images/team6.jpg"
                   alt="Client Testimonial"
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const t = e.currentTarget;
                     if (!t.src.endsWith("/team6.jpg")) {

@@ -12,6 +12,10 @@ function Footer() {
             <img
               src={logo}
               alt="Tech Agenz — AI Automation & Software House in Pakistan"
+              width={48}
+              height={48}
+              loading="lazy"
+              decoding="async"
               className="h-12 w-12 object-contain"
             />
             <span className="font-display text-lg font-semibold">Tech Agenz</span>
@@ -29,12 +33,24 @@ function Footer() {
               <img
                 src="/PSEB.png"
                 alt="PSEB — Pakistan Software Export Board"
+                width={112}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="h-14 w-28 object-contain"
               />
               <span className="text-[10px] font-medium text-slate-700">PSEB Registered</span>
             </div>
             <div className="flex flex-col items-center gap-1 rounded-lg border border-border/50 bg-white p-2">
-              <img src="/aws-logo.png" alt="AWS Cloud Services" className="h-14 w-28 object-contain" />
+              <img
+                src="/aws-logo.png"
+                alt="AWS Cloud Services"
+                width={112}
+                height={56}
+                loading="lazy"
+                decoding="async"
+                className="h-14 w-28 object-contain"
+              />
               <span className="text-[10px] font-medium text-slate-700">AWS Cloud</span>
             </div>
           </div>

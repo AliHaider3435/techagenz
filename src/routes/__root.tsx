@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/space-grotesk";
+import bodyFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import heroFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import logo from "@/assets/logo.webp?no-inline";
 
@@ -172,6 +173,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "font/woff2",
         crossOrigin: "anonymous",
       },
+      {
+        rel: "preload",
+        href: bodyFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       { rel: "icon", href: logo, type: "image/webp" },
       // DNS-prefetch for AdSense
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
@@ -194,11 +202,11 @@ function RootShell({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: localBusinessSchema }}
         />
-        {/* Official Google AdSense script tag for automated site review & ad serving */}
+        {/* Load AdSense after the page load so ad scripts do not compete with initial rendering. */}
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466"
-          crossOrigin="anonymous"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){function loadAds(){if(document.querySelector('script[data-adsense-client]'))return;var script=document.createElement('script');script.async=true;script.crossOrigin='anonymous';script.dataset.adsenseClient='true';script.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2324408013770466';document.head.appendChild(script)}window.addEventListener('load',function(){window.setTimeout(function(){if('requestIdleCallback'in window){window.requestIdleCallback(loadAds,{timeout:3000})}else{loadAds()}},4000)},{once:true})})();`,
+          }}
         />
       </head>
       <body>

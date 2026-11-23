@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   Calendar,
   Clock,
@@ -150,7 +149,8 @@ function BlogPostDetail() {
       <WhatsAppButton />
       <Nav />
 
-      {/* Hero Header & Breadcrumbs */}
+      <main>
+        {/* Hero Header & Breadcrumbs */}
       <section className="relative pt-36 pb-12">
         <div
           aria-hidden
@@ -202,14 +202,9 @@ function BlogPostDetail() {
           </div>
 
           {/* Main H1 Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-hero mt-6 text-3xl font-bold uppercase leading-tight sm:text-4xl lg:text-5xl"
-          >
+          <h1 className="font-hero mt-6 text-3xl font-bold uppercase leading-tight sm:text-4xl lg:text-5xl">
             {post.title}
-          </motion.h1>
+          </h1>
 
           <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed font-display">
             By <strong className="text-foreground font-semibold">{post.author}</strong> —
@@ -347,9 +342,9 @@ function BlogPostDetail() {
                 <span className="text-xs font-semibold uppercase tracking-widest text-brand">
                   Recommended Engineering Solution
                 </span>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground mt-1">
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mt-1">
                   Ready to deploy this architecture in your company?
-                </h3>
+                </h2>
                 <p className="mt-2 text-sm text-muted-foreground max-w-xl">
                   Tech Agenz specializes in custom software development in Pakistan, WhatsApp
                   automation, and ERPNext integrations for growing enterprises.
@@ -493,6 +488,7 @@ function BlogPostDetail() {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>
