@@ -84,7 +84,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 const localBusinessSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": ["ProfessionalService", "SoftwareApplication"],
+  "@type": "ProfessionalService",
   name: "Tech Agenz",
   alternateName: "TechAgenz",
   url: "https://techagenz.com",
@@ -96,15 +96,10 @@ const localBusinessSchema = JSON.stringify({
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Lahore",
+    streetAddress: "Canal Road, Near Pull Sheikh Jallu",
+    addressLocality: "Layyah",
     addressRegion: "Punjab",
-    postalCode: "54000",
     addressCountry: "PK",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: "31.5204",
-    longitude: "74.3587",
   },
   areaServed: [
     { "@type": "Country", name: "Pakistan" },
@@ -142,7 +137,7 @@ const localBusinessSchema = JSON.stringify({
     jobTitle: "Managing Director",
     url: "https://www.linkedin.com/in/haider5617/",
   },
-  foundingDate: "2023",
+  foundingDate: "2026",
   knowsAbout: [
     "Artificial Intelligence",
     "Machine Learning",
