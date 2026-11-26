@@ -6,7 +6,7 @@ import type { EnquiryEmailNotificationStatus } from "@/api/send-enquiry";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import {
   useTransform,
@@ -38,9 +38,15 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { TechCursor } from "@/components/TechCursor";
-import TeamSection from "@/components/TeamSection";
-import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
-import { SplineScene } from "@/components/ui/spline-scene";
+const TeamSection = lazy(() => import("@/components/TeamSection"));
+const AnimatedTestimonialsDemo = lazy(() =>
+  import("@/components/ui/animated-testimonials").then((m) => ({
+    default: m.AnimatedTestimonialsDemo,
+  })),
+);
+const SplineScene = lazy(() =>
+  import("@/components/ui/spline-scene").then((m) => ({ default: m.SplineScene })),
+);
 import WorkSocialProof from "@/components/WorkSocialProof";
 import robotHero from "@/assets/robot-hero.webp";
 import workDev from "@/assets/work-dev.webp";
@@ -128,7 +134,15 @@ function Index() {
         </RevealSection>
         <RevealSection>
           <div id="team"></div>
-          <TeamSection members={team} />
+          <Suspense
+            fallback={
+              <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                Loading team...
+              </div>
+            }
+          >
+            <TeamSection members={team} />
+          </Suspense>
         </RevealSection>
         <RevealSection>
           <Portfolio projects={projects} />
@@ -294,12 +308,20 @@ function Hero() {
           <div className="relative z-10 aspect-square w-full rounded-full border border-cyan-400/40 bg-gradient-to-b from-cyan-950/20 via-background/40 to-slate-950/70 p-4 shadow-[0_0_40px_-10px_rgba(34,211,238,0.25)] backdrop-blur-[2px] overflow-hidden flex items-center justify-center">
             {isRobotActive ? (
               /* Only mount Spline AFTER user click — defers the ~2MB bundle from initial load */
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="h-full w-full"
-                style={{ background: "transparent" }}
-                onLoad={handleSplineLoad}
-              />
+              <Suspense
+                fallback={
+                  <div className="h-full w-full flex items-center justify-center text-xs text-cyan-400 animate-pulse">
+                    Loading 3D Engine...
+                  </div>
+                }
+              >
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="h-full w-full"
+                  style={{ background: "transparent" }}
+                  onLoad={handleSplineLoad}
+                />
+              </Suspense>
             ) : (
               /* Original 3D Robot preview — kept strictly inside the circle */
               <div
@@ -1014,7 +1036,15 @@ function Testimonials() {
           </h2>
         </div>
         <div className="mt-14">
-          <AnimatedTestimonialsDemo />
+          <Suspense
+            fallback={
+              <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                Loading testimonials...
+              </div>
+            }
+          >
+            <AnimatedTestimonialsDemo />
+          </Suspense>
         </div>
       </div>
     </section>

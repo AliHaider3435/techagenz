@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import {
   Rocket,
@@ -20,8 +21,12 @@ import BouncyButton from "@/components/BouncyButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
-import TeamSection from "@/components/TeamSection";
-import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
+const TeamSection = lazy(() => import("@/components/TeamSection"));
+const AnimatedTestimonialsDemo = lazy(() =>
+  import("@/components/ui/animated-testimonials").then((m) => ({
+    default: m.AnimatedTestimonialsDemo,
+  })),
+);
 import workDev from "@/assets/work-dev.webp";
 import { teamMembers } from "@/content";
 
@@ -405,7 +410,15 @@ function AboutPage() {
         {/* Leadership & Engineering Team */}
         <section className="relative py-20">
           <div className="mx-auto max-w-7xl px-6">
-            <TeamSection members={team} />
+            <Suspense
+              fallback={
+                <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                  Loading team...
+                </div>
+              }
+            >
+              <TeamSection members={team} />
+            </Suspense>
           </div>
         </section>
 
@@ -421,7 +434,15 @@ function AboutPage() {
               </h2>
             </div>
             <div className="mt-12">
-              <AnimatedTestimonialsDemo />
+              <Suspense
+                fallback={
+                  <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                    Loading testimonials...
+                  </div>
+                }
+              >
+                <AnimatedTestimonialsDemo />
+              </Suspense>
             </div>
           </div>
         </section>
