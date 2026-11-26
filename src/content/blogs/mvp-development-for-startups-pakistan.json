@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#startup-mvp",
   "imageAlt": "Illustration of an early-stage software product prototype",
   "excerpt": "Keep startup MVP development focused: identify the riskiest product assumption, build a small testable release and use evidence to choose what comes next.",
-  "keywords": ["MVP development for startups Pakistan", "startup software development Pakistan", "minimum viable product development", "MVP development company", "product validation"],
-  "keyTakeaways": ["Define a specific customer problem and a testable product hypothesis.", "Build only the functionality needed to learn from real use.", "Plan feedback, measurement and iteration before the MVP goes live."],
+  "keywords": [
+    "MVP development for startups Pakistan",
+    "startup software development Pakistan",
+    "minimum viable product development",
+    "MVP development company",
+    "product validation"
+  ],
+  "keyTakeaways": [
+    "Define a specific customer problem and a testable product hypothesis.",
+    "Build only the functionality needed to learn from real use.",
+    "Plan feedback, measurement and iteration before the MVP goes live."
+  ],
   "content": [
     "An MVP is a focused way to test whether a product solves a meaningful customer problem. It is not simply a low-quality version of a full product: it should be reliable enough for the experiment and small enough to change as the team learns.",
     "Write down the riskiest assumption, such as whether a user will adopt a new workflow or pay for a particular outcome. Choose a small group of target users and define what evidence would support changing or continuing the idea.",
     "Work with an MVP development company to agree on the minimum journey, delivery timeline, success measures and technical boundaries. Avoid premature complexity, but make sensible decisions about security, data ownership and the parts that would be expensive to replace.",
     "After launch, review user behavior and direct feedback against the original hypothesis. Keep, revise or retire features based on what you learn, and maintain a roadmap that responds to evidence instead of adding every requested feature."
   ],
-  "seo": {"title": "MVP Development for Startups in Pakistan | Tech Agenz", "description": "A practical startup MVP guide: validate a product assumption, scope the first release and use customer feedback to plan the next iteration.", "keywords": "MVP development for startups Pakistan, startup software development Pakistan, minimum viable product development"}
+  "seo": {
+    "title": "MVP Development for Startups in Pakistan | Tech Agenz",
+    "description": "A practical startup MVP guide: validate a product assumption, scope the first release and use customer feedback to plan the next iteration.",
+    "keywords": "MVP development for startups Pakistan, startup software development Pakistan, minimum viable product development"
+  }
 }

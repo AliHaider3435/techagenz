@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#crm-workflows",
   "imageAlt": "Illustration of a custom CRM pipeline connecting customer and sales records",
   "excerpt": "See when custom CRM development makes sense, which workflows to map first and how to integrate customer data without creating another silo.",
-  "keywords": ["custom CRM software development", "CRM development company", "CRM software Pakistan", "sales workflow automation", "CRM integration services"],
-  "keyTakeaways": ["Map the current lead-to-customer workflow before choosing features.", "Plan permissions, data migration and integrations alongside the interface.", "Pilot the CRM with real users and measure adoption and data quality."],
+  "keywords": [
+    "custom CRM software development",
+    "CRM development company",
+    "CRM software Pakistan",
+    "sales workflow automation",
+    "CRM integration services"
+  ],
+  "keyTakeaways": [
+    "Map the current lead-to-customer workflow before choosing features.",
+    "Plan permissions, data migration and integrations alongside the interface.",
+    "Pilot the CRM with real users and measure adoption and data quality."
+  ],
   "content": [
     "A CRM should help teams keep customer context, follow up on time and see what is happening in the sales pipeline. When a standard CRM cannot fit an important workflow, custom CRM software development can provide a closer match—but customization should solve a clear operational problem.",
     "Document how leads arrive, who qualifies them, what information each stage needs and how teams hand work to one another. Identify which reports guide decisions and which existing tools must exchange data. This process map helps a CRM development company distinguish essential capabilities from nice-to-have features.",
     "Design data ownership, role-based access and migration rules before importing customer records. Integrations with email, websites, accounting or support tools should have explicit error handling and a plan for duplicate or outdated information.",
     "Launch with a small group, collect feedback and monitor practical indicators such as follow-up completion and record accuracy. Good CRM software supports the way people work, while clear training and ongoing iteration help the system earn regular use."
   ],
-  "seo": {"title": "Custom CRM Software Development Services | Tech Agenz", "description": "Plan custom CRM software around your sales workflows with practical guidance on requirements, integrations, data migration and adoption.", "keywords": "custom CRM software development, CRM development company, CRM integration services"}
+  "seo": {
+    "title": "Custom CRM Software Development Services | Tech Agenz",
+    "description": "Plan custom CRM software around your sales workflows with practical guidance on requirements, integrations, data migration and adoption.",
+    "keywords": "custom CRM software development, CRM development company, CRM integration services"
+  }
 }

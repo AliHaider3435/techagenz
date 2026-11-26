@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#software-maintenance",
   "imageAlt": "Illustration of ongoing software monitoring and maintenance",
   "excerpt": "Plan software maintenance around monitoring, backups, dependency updates, support ownership and a clear path for controlled improvements.",
-  "keywords": ["software maintenance and support services", "software support company Pakistan", "application maintenance services", "managed software support", "software maintenance plan"],
-  "keyTakeaways": ["Set clear support hours, response targets and escalation ownership.", "Schedule dependency, security, backup and recovery maintenance.", "Separate incidents, routine maintenance and new feature requests."],
+  "keywords": [
+    "software maintenance and support services",
+    "software support company Pakistan",
+    "application maintenance services",
+    "managed software support",
+    "software maintenance plan"
+  ],
+  "keyTakeaways": [
+    "Set clear support hours, response targets and escalation ownership.",
+    "Schedule dependency, security, backup and recovery maintenance.",
+    "Separate incidents, routine maintenance and new feature requests."
+  ],
   "content": [
     "Software maintenance keeps an application dependable as its users, dependencies and operating environment change. A product can continue to serve its purpose only when someone is responsible for monitoring, updates, incidents and planned improvements.",
     "A practical support agreement defines covered systems, support hours, contact channels, severity levels and escalation paths. It should distinguish an outage or defect from a request for new functionality so that each kind of work can be prioritized and estimated correctly.",
     "Routine maintenance includes reviewing dependencies, applying security updates, checking error signals, testing backups and confirming that recovery steps still work. Keep access limited, document production changes and ensure support staff can reach the right technical context without sharing credentials insecurely.",
     "When comparing software maintenance and support services, ask how work is logged, reported and handed over. A predictable review cadence helps owners spot recurring issues and decide which technical improvements will reduce future operating effort."
   ],
-  "seo": {"title": "Software Maintenance and Support Services | Tech Agenz", "description": "Build a dependable software maintenance plan covering support ownership, monitoring, updates, backups and controlled product improvements.", "keywords": "software maintenance and support services, software support company Pakistan, application maintenance services"}
+  "seo": {
+    "title": "Software Maintenance and Support Services | Tech Agenz",
+    "description": "Build a dependable software maintenance plan covering support ownership, monitoring, updates, backups and controlled product improvements.",
+    "keywords": "software maintenance and support services, software support company Pakistan, application maintenance services"
+  }
 }

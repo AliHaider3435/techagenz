@@ -1,6 +1,11 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { IncomingMessage, ServerResponse } from "node:http";
 
-export default function handler(_req: VercelRequest, res: VercelResponse) {
+interface VercelResponseLike extends ServerResponse {
+  status(code: number): this;
+  json(body: unknown): this;
+}
+
+export default function handler(_req: IncomingMessage, res: VercelResponseLike) {
   return res.status(410).json({
     success: false,
     error:

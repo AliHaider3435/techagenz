@@ -1,36 +1,36 @@
 {
-    "id":  "whatsapp-automation-for-business",
-    "title":  "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries",
-    "category":  "Automation",
-    "readTime":  "5 min read",
-    "date":  "Oct 15, 2026",
-    "publishDateIso":  "2026-10-15T11:00:00+05:00",
-    "author":  "Muhammad Faizan, Automation Engineer",
-    "image":  "/blog-images/whatsapp-automation-for-business.webp",
-    "excerpt":  "A complete guide to automated appointment booking, payment receipts, instant lead capture, and CRM syncing via the official Meta WhatsApp Cloud API.",
-    "featured":  false,
-    "keywords":  [
-                     "WhatsApp Automation for Business",
-                     "WhatsApp Cloud API",
-                     "Customer Support AI",
-                     "Automated Appointment Booking",
-                     "Lead Generation WhatsApp"
-                 ],
-    "keyTakeaways":  [
-                         "WhatsApp boasts an open rate of 98% compared to traditional email\u0027s 20%, resulting in instant customer engagement.",
-                         "Official Meta WhatsApp Cloud API webhooks enable instant, 24/7 automated qualification and appointment booking.",
-                         "Automated WhatsApp reminders reduce customer no-shows and missed appointments by upwards of 45%."
-                     ],
-    "content":  [
-                    "Customer attention has permanently shifted from crowded email inboxes to instant messaging. In emerging and international markets alike, WhatsApp is the dominant communication channel for customer discovery, transactions, and support.",
-                    "By integrating the official Meta WhatsApp Cloud API with intelligent backend webhooks, Tech Agenz empowers businesses to answer customer queries, schedule doctor visits, send delivery updates, and collect lead information automatically within seconds.",
-                    "The result is happier customers, 24/7 responsiveness without hiring night-shift support agents, and instant CRM synchronization.",
-                    "For clinics like Rahmania Medical Center and law firms managing incoming consultations, automated messaging ensures immediate responsiveness and zero dropped leads."
-                ],
-    "seo":  {
-                "title":  "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries — Tech Agenz",
-                "description":  "A complete guide to automated appointment booking, payment receipts, instant lead capture, and CRM syncing via the official Meta WhatsApp Cloud API.",
-                "keywords":  "WhatsApp Automation for Business, WhatsApp Cloud API, Customer Support AI, Automated Appointment Booking, Lead Generation WhatsApp"
-            },
-    "imageAlt":  "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries"
+  "id": "whatsapp-automation-for-business",
+  "title": "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries",
+  "category": "Automation",
+  "readTime": "5 min read",
+  "date": "Oct 15, 2026",
+  "publishDateIso": "2026-10-15T11:00:00+05:00",
+  "author": "Muhammad Faizan, Automation Engineer",
+  "image": "/blog-images/whatsapp-automation-for-business.webp",
+  "excerpt": "A complete guide to automated appointment booking, payment receipts, instant lead capture, and CRM syncing via the official Meta WhatsApp Cloud API.",
+  "featured": false,
+  "keywords": [
+    "WhatsApp Automation for Business",
+    "WhatsApp Cloud API",
+    "Customer Support AI",
+    "Automated Appointment Booking",
+    "Lead Generation WhatsApp"
+  ],
+  "keyTakeaways": [
+    "WhatsApp boasts an open rate of 98% compared to traditional email\u0027s 20%, resulting in instant customer engagement.",
+    "Official Meta WhatsApp Cloud API webhooks enable instant, 24/7 automated qualification and appointment booking.",
+    "Automated WhatsApp reminders reduce customer no-shows and missed appointments by upwards of 45%."
+  ],
+  "content": [
+    "Customer attention has permanently shifted from crowded email inboxes to instant messaging. In emerging and international markets alike, WhatsApp is the dominant communication channel for customer discovery, transactions, and support.",
+    "By integrating the official Meta WhatsApp Cloud API with intelligent backend webhooks, Tech Agenz empowers businesses to answer customer queries, schedule doctor visits, send delivery updates, and collect lead information automatically within seconds.",
+    "The result is happier customers, 24/7 responsiveness without hiring night-shift support agents, and instant CRM synchronization.",
+    "For clinics like Rahmania Medical Center and law firms managing incoming consultations, automated messaging ensures immediate responsiveness and zero dropped leads."
+  ],
+  "seo": {
+    "title": "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries — Tech Agenz",
+    "description": "A complete guide to automated appointment booking, payment receipts, instant lead capture, and CRM syncing via the official Meta WhatsApp Cloud API.",
+    "keywords": "WhatsApp Automation for Business, WhatsApp Cloud API, Customer Support AI, Automated Appointment Booking, Lead Generation WhatsApp"
+  },
+  "imageAlt": "WhatsApp Business Automation: How Clinics, Law Firms, and Retailers Automate 80% of Inquiries"
 }

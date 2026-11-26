@@ -1,36 +1,36 @@
 {
-    "id":  "ai-chatbot-development-rag",
-    "title":  "Enterprise AI Chatbot Development: Building RAG Pipelines That Don\u0027t Hallucinate",
-    "category":  "AI \u0026 ML",
-    "readTime":  "6 min read",
-    "date":  "Oct 09, 2026",
-    "publishDateIso":  "2026-10-09T14:00:00+05:00",
-    "author":  "Muhammad Rizwan, Data Scientist",
-    "image":  "/blog-images/ai-chatbot-development-rag.webp",
-    "excerpt":  "Eliminating vector collision and inaccurate generative responses using hybrid BM25 + dense vector search, cross-encoder re-ranking, and strict business guardrails.",
-    "featured":  false,
-    "keywords":  [
-                     "AI Chatbot Development",
-                     "RAG Architecture",
-                     "Enterprise AI",
-                     "Vector Database",
-                     "Context-Aware Chatbots"
-                 ],
-    "keyTakeaways":  [
-                         "Naive vector search RAG setups frequently fail when enterprise knowledge bases exceed thousands of documents.",
-                         "Hybrid search (BM25 sparse keywords + dense embeddings) captures both exact technical terminology and semantic intent.",
-                         "Cross-encoder re-ranking and prompt guardrails deliver 99%+ factual accuracy with deterministic business logic."
-                     ],
-    "content":  [
-                    "Deploying a chatbot powered by standard large language models is simple, but ensuring it never provides incorrect product details, hallucinated pricing, or sensitive internal data is a serious engineering challenge.",
-                    "At Tech Agenz, we architect production-grade Retrieval-Augmented Generation (RAG) pipelines. By chunking internal PDFs, manuals, and customer FAQs into vector databases (like Qdrant or pgvector) and applying reciprocal rank fusion, we ensure the language model only responds based on your verified knowledge base.",
-                    "Furthermore, our chatbots include seamless fallback escalation to human operators whenever a query requires nuanced personal assistance.",
-                    "This architecture guarantees enterprise compliance while saving support personnel dozens of hours every week."
-                ],
-    "seo":  {
-                "title":  "Enterprise AI Chatbot Development: Building RAG Pipelines That Don't Hallucinate — Tech Agenz",
-                "description":  "Eliminating vector collision and inaccurate generative responses using hybrid BM25 + dense vector search, cross-encoder re-ranking, and strict business guardrails.",
-                "keywords":  "AI Chatbot Development, RAG Architecture, Enterprise AI, Vector Database, Context-Aware Chatbots"
-            },
-    "imageAlt":  "Enterprise AI Chatbot Development: Building RAG Pipelines That Don\u0027t Hallucinate"
+  "id": "ai-chatbot-development-rag",
+  "title": "Enterprise AI Chatbot Development: Building RAG Pipelines That Don\u0027t Hallucinate",
+  "category": "AI \u0026 ML",
+  "readTime": "6 min read",
+  "date": "Oct 09, 2026",
+  "publishDateIso": "2026-10-09T14:00:00+05:00",
+  "author": "Muhammad Rizwan, Data Scientist",
+  "image": "/blog-images/ai-chatbot-development-rag.webp",
+  "excerpt": "Eliminating vector collision and inaccurate generative responses using hybrid BM25 + dense vector search, cross-encoder re-ranking, and strict business guardrails.",
+  "featured": false,
+  "keywords": [
+    "AI Chatbot Development",
+    "RAG Architecture",
+    "Enterprise AI",
+    "Vector Database",
+    "Context-Aware Chatbots"
+  ],
+  "keyTakeaways": [
+    "Naive vector search RAG setups frequently fail when enterprise knowledge bases exceed thousands of documents.",
+    "Hybrid search (BM25 sparse keywords + dense embeddings) captures both exact technical terminology and semantic intent.",
+    "Cross-encoder re-ranking and prompt guardrails deliver 99%+ factual accuracy with deterministic business logic."
+  ],
+  "content": [
+    "Deploying a chatbot powered by standard large language models is simple, but ensuring it never provides incorrect product details, hallucinated pricing, or sensitive internal data is a serious engineering challenge.",
+    "At Tech Agenz, we architect production-grade Retrieval-Augmented Generation (RAG) pipelines. By chunking internal PDFs, manuals, and customer FAQs into vector databases (like Qdrant or pgvector) and applying reciprocal rank fusion, we ensure the language model only responds based on your verified knowledge base.",
+    "Furthermore, our chatbots include seamless fallback escalation to human operators whenever a query requires nuanced personal assistance.",
+    "This architecture guarantees enterprise compliance while saving support personnel dozens of hours every week."
+  ],
+  "seo": {
+    "title": "Enterprise AI Chatbot Development: Building RAG Pipelines That Don't Hallucinate — Tech Agenz",
+    "description": "Eliminating vector collision and inaccurate generative responses using hybrid BM25 + dense vector search, cross-encoder re-ranking, and strict business guardrails.",
+    "keywords": "AI Chatbot Development, RAG Architecture, Enterprise AI, Vector Database, Context-Aware Chatbots"
+  },
+  "imageAlt": "Enterprise AI Chatbot Development: Building RAG Pipelines That Don\u0027t Hallucinate"
 }

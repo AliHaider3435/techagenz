@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#software-testing",
   "imageAlt": "Illustration of software quality checks and a verified release",
   "excerpt": "Create a practical quality strategy with risk-based testing, repeatable automation, exploratory checks and a clear production release process.",
-  "keywords": ["software testing and QA services", "software testing company Pakistan", "quality assurance software", "automated software testing", "web application testing"],
-  "keyTakeaways": ["Prioritize tests according to user impact and technical risk.", "Use automation for repeatable checks while retaining exploratory testing.", "Define release criteria and test the rollback or recovery path."],
+  "keywords": [
+    "software testing and QA services",
+    "software testing company Pakistan",
+    "quality assurance software",
+    "automated software testing",
+    "web application testing"
+  ],
+  "keyTakeaways": [
+    "Prioritize tests according to user impact and technical risk.",
+    "Use automation for repeatable checks while retaining exploratory testing.",
+    "Define release criteria and test the rollback or recovery path."
+  ],
   "content": [
     "Software quality assurance is most effective when it is part of normal development rather than a final inspection. Teams can catch issues earlier by reviewing requirements, testing important workflows and checking changes as they are made.",
     "A balanced plan includes unit and integration checks, end-to-end coverage for critical journeys, accessibility review and exploratory testing. Automation helps repeat predictable scenarios, but it does not replace judgment about confusing interfaces or unusual user behavior.",
     "Prioritize cases by impact: authentication, payments, permissions and data changes often deserve more attention than low-risk presentation details. Test with representative devices and data, protect personal information in test environments and document known limitations.",
     "Before deployment, agree on acceptance criteria, monitoring signals and a rollback plan. A software testing company should be able to explain how its checks reduce risk and how defects are reported, fixed and verified—not promise that software will never fail."
   ],
-  "seo": {"title": "Software Testing and QA Services | Tech Agenz", "description": "Improve software quality with practical QA planning, risk-based testing, useful automation and safer release processes.", "keywords": "software testing and QA services, software testing company Pakistan, quality assurance software"}
+  "seo": {
+    "title": "Software Testing and QA Services | Tech Agenz",
+    "description": "Improve software quality with practical QA planning, risk-based testing, useful automation and safer release processes.",
+    "keywords": "software testing and QA services, software testing company Pakistan, quality assurance software"
+  }
 }

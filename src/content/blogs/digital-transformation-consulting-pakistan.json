@@ -1,37 +1,37 @@
 {
-    "id":  "digital-transformation-consulting-pakistan",
-    "title":  "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises",
-    "category":  "Enterprise ERP",
-    "readTime":  "10 min read",
-    "date":  "September 21, 2026",
-    "publishDateIso":  "2026-09-21",
-    "author":  "Tech Agenz Team",
-    "image":  "/blog-images/digital-transformation-consulting-pakistan.webp",
-    "excerpt":  "A comprehensive guide to digital transformation engagements — from process discovery and technology selection to change management and measurable business outcomes.",
-    "featured":  false,
-    "keywords":  [
-                     "digital transformation consulting",
-                     "enterprise modernization",
-                     "business process automation",
-                     "legacy modernization Pakistan",
-                     "IT consulting Pakistan",
-                     "digital strategy"
-                 ],
-    "keyTakeaways":  [
-                         "70% of digital transformation initiatives fail due to organizational resistance, not technology — change management is the single biggest success factor.",
-                         "Process mining tools like Celonis or UiPath Process Mining reveal hidden inefficiencies that manual audits miss, reducing operational costs by 20-35%.",
-                         "A phased transformation roadmap with 90-day value milestones maintains executive buy-in and demonstrates ROI before the full rollout completes."
-                     ],
-    "content":  [
-                    "Digital transformation is not about replacing spreadsheets with software. It is a fundamental rethinking of how an organization creates value, engages customers, and empowers employees through technology. Done right, it transforms cost centers into competitive advantages.",
-                    "Tech Agenz\u0027s consulting practice begins with a process discovery phase where we shadow operational teams, map existing workflows, and quantify inefficiencies. We use process mining tools to analyze event logs from existing systems, revealing bottlenecks and redundancies that stakeholders often cannot see from within.",
-                    "Technology selection follows strategy, never the reverse. Based on the discovered pain points, we recommend a tailored stack: ERP modernization for supply chain inefficiencies, CRM implementation for customer experience gaps, RPA for repetitive manual tasks, or custom application development for unique competitive workflows.",
-                    "The most critical element of our engagements is change management. We embed training programs, create internal champion networks, and establish feedback loops that ensure adoption rates exceed 85% within the first six months of deployment. Technology without adoption is just expensive shelfware."
-                ],
-    "seo":  {
-                "title":  "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises — Tech Agenz",
-                "description":  "A comprehensive guide to digital transformation engagements — from process discovery and technology selection to change management and measurable business outcomes.",
-                "keywords":  "digital transformation consulting, enterprise modernization, business process automation, legacy modernization Pakistan, IT consulting Pakistan, digital strategy"
-            },
-    "imageAlt":  "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises"
+  "id": "digital-transformation-consulting-pakistan",
+  "title": "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises",
+  "category": "Enterprise ERP",
+  "readTime": "10 min read",
+  "date": "September 21, 2026",
+  "publishDateIso": "2026-09-21",
+  "author": "Tech Agenz Team",
+  "image": "/blog-images/digital-transformation-consulting-pakistan.webp",
+  "excerpt": "A comprehensive guide to digital transformation engagements — from process discovery and technology selection to change management and measurable business outcomes.",
+  "featured": false,
+  "keywords": [
+    "digital transformation consulting",
+    "enterprise modernization",
+    "business process automation",
+    "legacy modernization Pakistan",
+    "IT consulting Pakistan",
+    "digital strategy"
+  ],
+  "keyTakeaways": [
+    "70% of digital transformation initiatives fail due to organizational resistance, not technology — change management is the single biggest success factor.",
+    "Process mining tools like Celonis or UiPath Process Mining reveal hidden inefficiencies that manual audits miss, reducing operational costs by 20-35%.",
+    "A phased transformation roadmap with 90-day value milestones maintains executive buy-in and demonstrates ROI before the full rollout completes."
+  ],
+  "content": [
+    "Digital transformation is not about replacing spreadsheets with software. It is a fundamental rethinking of how an organization creates value, engages customers, and empowers employees through technology. Done right, it transforms cost centers into competitive advantages.",
+    "Tech Agenz\u0027s consulting practice begins with a process discovery phase where we shadow operational teams, map existing workflows, and quantify inefficiencies. We use process mining tools to analyze event logs from existing systems, revealing bottlenecks and redundancies that stakeholders often cannot see from within.",
+    "Technology selection follows strategy, never the reverse. Based on the discovered pain points, we recommend a tailored stack: ERP modernization for supply chain inefficiencies, CRM implementation for customer experience gaps, RPA for repetitive manual tasks, or custom application development for unique competitive workflows.",
+    "The most critical element of our engagements is change management. We embed training programs, create internal champion networks, and establish feedback loops that ensure adoption rates exceed 85% within the first six months of deployment. Technology without adoption is just expensive shelfware."
+  ],
+  "seo": {
+    "title": "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises — Tech Agenz",
+    "description": "A comprehensive guide to digital transformation engagements — from process discovery and technology selection to change management and measurable business outcomes.",
+    "keywords": "digital transformation consulting, enterprise modernization, business process automation, legacy modernization Pakistan, IT consulting Pakistan, digital strategy"
+  },
+  "imageAlt": "Digital Transformation Consulting: How Pakistani Software Houses Modernize Enterprises"
 }

@@ -1,37 +1,37 @@
 {
-    "id":  "fintech-software-development-pakistan",
-    "title":  "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms",
-    "category":  "Industry Solutions",
-    "readTime":  "9 min read",
-    "date":  "October 6, 2026",
-    "publishDateIso":  "2026-10-06",
-    "author":  "Tech Agenz Team",
-    "image":  "/blog-images/fintech-software-development-pakistan.webp",
-    "excerpt":  "Inside the engineering practices that make fintech applications secure, compliant, and scalable — from PCI DSS architecture to real-time fraud detection pipelines.",
-    "featured":  false,
-    "keywords":  [
-                     "fintech software development",
-                     "payment gateway integration",
-                     "banking software Pakistan",
-                     "PCI DSS compliance",
-                     "digital wallet development",
-                     "financial technology solutions"
-                 ],
-    "keyTakeaways":  [
-                         "PCI DSS Level 1 compliance requires network segmentation, tokenized card storage, and quarterly vulnerability scans — all achievable with cloud-native tooling.",
-                         "Real-time fraud detection engines using streaming ML models can flag suspicious transactions in under 200ms without adding user friction.",
-                         "Pakistan\u0027s SBP regulatory sandbox allows fintech startups to test new financial products under controlled conditions before full market launch."
-                     ],
-    "content":  [
-                    "Pakistan\u0027s digital payments volume grew by over 35% year-on-year in 2025, driven by mobile wallets, QR payments, and embedded finance integrations. This explosive growth has created enormous demand for specialized fintech engineering teams.",
-                    "Tech Agenz has delivered payment platforms processing millions of transactions monthly. Our architecture isolates the cardholder data environment (CDE) in a dedicated VPC with hardware security module (HSM) integration for encryption key management, meeting PCI DSS Level 1 requirements.",
-                    "For fraud prevention, we deploy streaming ML pipelines on Apache Kafka that analyze transaction velocity, geolocation anomalies, device fingerprints, and behavioral biometrics in real time. Suspicious transactions are routed to a human review queue while legitimate ones clear in milliseconds.",
-                    "Whether you are building a neobank, a B2B lending platform, or an embedded payment widget, our fintech engineering team understands the regulatory landscape, security requirements, and user experience expectations that determine market success."
-                ],
-    "seo":  {
-                "title":  "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms — Tech Agenz",
-                "description":  "Inside the engineering practices that make fintech applications secure, compliant, and scalable — from PCI DSS architecture to real-time fraud detection pipelines.",
-                "keywords":  "fintech software development, payment gateway integration, banking software Pakistan, PCI DSS compliance, digital wallet development, financial technology solutions"
-            },
-    "imageAlt":  "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms"
+  "id": "fintech-software-development-pakistan",
+  "title": "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms",
+  "category": "Industry Solutions",
+  "readTime": "9 min read",
+  "date": "October 6, 2026",
+  "publishDateIso": "2026-10-06",
+  "author": "Tech Agenz Team",
+  "image": "/blog-images/fintech-software-development-pakistan.webp",
+  "excerpt": "Inside the engineering practices that make fintech applications secure, compliant, and scalable — from PCI DSS architecture to real-time fraud detection pipelines.",
+  "featured": false,
+  "keywords": [
+    "fintech software development",
+    "payment gateway integration",
+    "banking software Pakistan",
+    "PCI DSS compliance",
+    "digital wallet development",
+    "financial technology solutions"
+  ],
+  "keyTakeaways": [
+    "PCI DSS Level 1 compliance requires network segmentation, tokenized card storage, and quarterly vulnerability scans — all achievable with cloud-native tooling.",
+    "Real-time fraud detection engines using streaming ML models can flag suspicious transactions in under 200ms without adding user friction.",
+    "Pakistan\u0027s SBP regulatory sandbox allows fintech startups to test new financial products under controlled conditions before full market launch."
+  ],
+  "content": [
+    "Pakistan\u0027s digital payments volume grew by over 35% year-on-year in 2025, driven by mobile wallets, QR payments, and embedded finance integrations. This explosive growth has created enormous demand for specialized fintech engineering teams.",
+    "Tech Agenz has delivered payment platforms processing millions of transactions monthly. Our architecture isolates the cardholder data environment (CDE) in a dedicated VPC with hardware security module (HSM) integration for encryption key management, meeting PCI DSS Level 1 requirements.",
+    "For fraud prevention, we deploy streaming ML pipelines on Apache Kafka that analyze transaction velocity, geolocation anomalies, device fingerprints, and behavioral biometrics in real time. Suspicious transactions are routed to a human review queue while legitimate ones clear in milliseconds.",
+    "Whether you are building a neobank, a B2B lending platform, or an embedded payment widget, our fintech engineering team understands the regulatory landscape, security requirements, and user experience expectations that determine market success."
+  ],
+  "seo": {
+    "title": "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms — Tech Agenz",
+    "description": "Inside the engineering practices that make fintech applications secure, compliant, and scalable — from PCI DSS architecture to real-time fraud detection pipelines.",
+    "keywords": "fintech software development, payment gateway integration, banking software Pakistan, PCI DSS compliance, digital wallet development, financial technology solutions"
+  },
+  "imageAlt": "Fintech Software Development in Pakistan: Building Secure Payment and Banking Platforms"
 }
