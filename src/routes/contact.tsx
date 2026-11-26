@@ -34,7 +34,9 @@ const contactPageSchema = {
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Pakistan",
+    streetAddress: "Canal Road, Near Pull Sheikh Jallu",
+    addressLocality: "Layyah",
+    addressRegion: "Punjab",
     addressCountry: "PK",
   },
   areaServed: [
