@@ -80,6 +80,10 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
@@ -88,6 +92,10 @@ export const Route = createFileRoute("/")({
           "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz. AI Automation, WhatsApp Automation, ERPNext & Custom Software.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
+      {
+        name: "twitter:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
     ],
     links: [{ rel: "canonical", href: "https://techagenz.com/" }],
   }),
@@ -102,7 +110,7 @@ function Index() {
       <TechCursor />
       <WhatsAppButton />
       <Nav />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <Hero />
         <Marquee />
         <AIVision />
@@ -249,21 +257,26 @@ function Hero() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               to="/contact"
-              className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
+              className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.03]"
+              aria-label="Book a discovery call with Tech Agenz to discuss your project"
             >
-              Start a project <ArrowUpRight className="h-4 w-4" />
+              Book a Discovery Call <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="https://wa.me/923394555004"
+              href="https://wa.me/923394555004?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20project%20with%20Tech%20Agenz."
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Chat with Tech Agenz on WhatsApp (opens in new tab)"
               className="font-display inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-3 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
             >
               WhatsApp Us
             </a>
-            <div className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-              Clinics &bull; Law Firms &bull; Growing Businesses
+            <div
+              className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground"
+              aria-label="Industries we serve"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
+              Startups &bull; SMEs &bull; Healthcare &bull; Legal
             </div>
           </div>
         </div>
@@ -363,11 +376,13 @@ function Marquee() {
     "Smart Business Automation",
     "AI Automation Services",
     "WhatsApp Automation for Business",
+    "AI Agent Development",
+    "n8n Workflow Automation",
     "AI Chatbot Development",
-    "Custom Software Development in Pakistan",
-    "Web Development Company in Pakistan",
+    "Custom Software Development",
+    "Web Application Development",
     "ERPNext Implementation",
-    "Clinic & Law Firm Systems",
+    "Industry Solutions",
   ];
   return (
     <div className="relative overflow-hidden border-y border-border/70 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 py-10 shadow-[0_0_60px_rgba(59,130,246,0.12)]">
@@ -482,7 +497,7 @@ function AIVision() {
               to="/contact"
               className="font-display inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
             >
-              Get In Touch
+              Book a Discovery Call
             </Link>
           </div>
         </div>

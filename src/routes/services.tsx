@@ -16,6 +16,7 @@ import {
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { TechCursor } from "@/components/TechCursor";
 import { serviceDetails as serviceList } from "@/content";
@@ -170,6 +171,10 @@ export const Route = createFileRoute("/services")({
       { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -181,6 +186,10 @@ export const Route = createFileRoute("/services")({
           "WhatsApp Automation, ERPNext Implementation, Custom Software Development & AI Chatbots engineered for businesses worldwide.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
+      {
+        name: "twitter:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
     ],
     links: [{ rel: "canonical", href: "https://techagenz.com/services" }],
     scripts: [
@@ -248,262 +257,269 @@ function ServicesPage() {
       <WhatsAppButton />
       <Nav />
 
-      {/* Hero Header */}
-      <section className="relative pt-36 pb-16">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.12]"
-          style={{
-            backgroundImage:
-              "linear-gradient(oklch(0.7 0.19 240 / 0.5) 1px, transparent 1px), linear-gradient(90deg, oklch(0.7 0.19 240 / 0.5) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-            maskImage: "radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-5xl px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand"
-          >
-            <Sparkles className="h-3.5 w-3.5" /> Capabilities & Solutions
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-hero mt-5 text-4xl font-bold uppercase sm:text-6xl"
-          >
-            Simplify Operations. Automate Tasks. <br />
-            <span className="text-gradient-brand">Build Smarter Experiences.</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
-          >
-            Tech Agenz helps businesses streamline everyday operations through business process
-            automation, intelligent workflows, and AI-powered applications that connect people,
-            processes, and systems to support long-term growth.
-          </motion.p>
-        </div>
-      </section>
+      <main id="main-content" tabIndex={-1}>
+        {/* Hero Header */}
+        <section className="relative pt-36 pb-16">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.12]"
+            style={{
+              backgroundImage:
+                "linear-gradient(oklch(0.7 0.19 240 / 0.5) 1px, transparent 1px), linear-gradient(90deg, oklch(0.7 0.19 240 / 0.5) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+              maskImage: "radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 80%)",
+            }}
+          />
+          <div className="relative mx-auto max-w-5xl px-6 text-center">
+            <Breadcrumbs
+              items={[{ label: "Services", to: "/services" }]}
+              className="mb-6 justify-center"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Capabilities & Solutions
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="font-hero mt-5 text-4xl font-bold uppercase sm:text-6xl"
+            >
+              Simplify Operations. Automate Tasks. <br />
+              <span className="text-gradient-brand">Build Smarter Experiences.</span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="font-display mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg"
+            >
+              Tech Agenz helps businesses streamline everyday operations through business process
+              automation, intelligent workflows, and AI-powered applications that connect people,
+              processes, and systems to support long-term growth.
+            </motion.p>
+          </div>
+        </section>
 
-      {/* Services Breakdown */}
-      <section className="relative py-12">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="space-y-16">
-            {serviceList.map((service, index) => {
-              const Icon = service.icon;
-              const isEven = index % 2 === 0;
+        {/* Services Breakdown */}
+        <section className="relative py-12">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="space-y-16">
+              {serviceList.map((service, index) => {
+                const Icon = service.icon;
+                const isEven = index % 2 === 0;
 
-              return (
-                <motion.div
-                  key={service.id}
-                  id={service.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.6 }}
-                  className={`scroll-mt-28 grid items-center gap-10 rounded-3xl border border-border/60 bg-card/40 p-8 backdrop-blur-xl lg:grid-cols-2 lg:p-12 ${
-                    isEven ? "" : "lg:grid-flow-dense"
-                  }`}
-                >
-                  {/* Text Details */}
-                  <div className={isEven ? "" : "lg:col-start-2"}>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-brand ring-1 ring-brand/30">
-                      <Icon className="h-3.5 w-3.5" />
-                      {service.tag}
-                    </div>
-                    <h2 className="mt-4 font-display text-2xl font-bold sm:text-3xl lg:text-4xl">
-                      {service.title}
-                    </h2>
-                    <p className="mt-3 text-muted-foreground">{service.lead}</p>
+                return (
+                  <motion.div
+                    key={service.id}
+                    id={service.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6 }}
+                    className={`scroll-mt-28 grid items-center gap-10 rounded-3xl border border-border/60 bg-card/40 p-8 backdrop-blur-xl lg:grid-cols-2 lg:p-12 ${
+                      isEven ? "" : "lg:grid-flow-dense"
+                    }`}
+                  >
+                    {/* Text Details */}
+                    <div className={isEven ? "" : "lg:col-start-2"}>
+                      <div className="inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-brand ring-1 ring-brand/30">
+                        <Icon className="h-3.5 w-3.5" />
+                        {service.tag}
+                      </div>
+                      <h2 className="mt-4 font-display text-2xl font-bold sm:text-3xl lg:text-4xl">
+                        {service.title}
+                      </h2>
+                      <p className="mt-3 text-muted-foreground">{service.lead}</p>
 
-                    <div className="mt-6 space-y-2.5">
-                      {service.capabilities.map((cap, i) => (
-                        <div key={i} className="flex items-start gap-2.5 text-sm">
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                          <span className="text-foreground/90">{cap}</span>
-                        </div>
-                      ))}
-                    </div>
+                      <div className="mt-6 space-y-2.5">
+                        {service.capabilities.map((cap, i) => (
+                          <div key={i} className="flex items-start gap-2.5 text-sm">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                            <span className="text-foreground/90">{cap}</span>
+                          </div>
+                        ))}
+                      </div>
 
-                    <div className="mt-6 flex flex-wrap gap-2 pt-2">
-                      {service.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="rounded-full border border-border/80 bg-background/80 px-3 py-1 text-xs text-muted-foreground"
+                      <div className="mt-6 flex flex-wrap gap-2 pt-2">
+                        {service.techStack.map((tech) => (
+                          <span
+                            key={tech}
+                            className="rounded-full border border-border/80 bg-background/80 px-3 py-1 text-xs text-muted-foreground"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-8">
+                        <Link
+                          to="/contact"
+                          className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
                         >
-                          {tech}
-                        </span>
-                      ))}
+                          Consult on {service.tag} <ArrowUpRight className="h-4 w-4" />
+                        </Link>
+                      </div>
                     </div>
 
-                    <div className="mt-8">
-                      <Link
-                        to="/contact"
-                        className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
-                      >
-                        Consult on {service.tag} <ArrowUpRight className="h-4 w-4" />
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Visual Image */}
-                  <div className={isEven ? "" : "lg:col-start-1"}>
-                    <div className="group relative overflow-hidden rounded-2xl border border-border/60">
-                      <img
-                        src={service.img}
-                        srcSet={`${service.cardImg} 480w, ${service.img} ${service.imgWidth}w`}
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        alt={service.title}
-                        loading="lazy"
-                        className="h-80 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-96"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-                      <div className="absolute bottom-6 left-6 right-6">
-                        <div className="glass-card inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-medium text-brand backdrop-blur-md">
-                          <Zap className="h-3.5 w-3.5" /> Production-Ready Architecture
+                    {/* Visual Image */}
+                    <div className={isEven ? "" : "lg:col-start-1"}>
+                      <div className="group relative overflow-hidden rounded-2xl border border-border/60">
+                        <img
+                          src={service.img}
+                          srcSet={`${service.cardImg} 480w, ${service.img} ${service.imgWidth}w`}
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          alt={service.title}
+                          loading="lazy"
+                          className="h-80 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-96"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <div className="glass-card inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-medium text-brand backdrop-blur-md">
+                            <Zap className="h-3.5 w-3.5" /> Production-Ready Architecture
+                          </div>
                         </div>
                       </div>
                     </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Engineering Process */}
+        <section className="relative py-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs uppercase tracking-widest text-brand">
+                <Layers className="h-3 w-3" /> How We Build
+              </div>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">
+                From Concept to <span className="text-gradient-brand">Production</span>
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                A disciplined, transparent engineering methodology designed for high-velocity
+                execution and zero regressions.
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {processSteps.map((step, idx) => (
+                <motion.div
+                  key={step.step}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  className="glass-card relative flex flex-col justify-between rounded-2xl p-6"
+                >
+                  <div>
+                    <span className="font-display text-3xl font-extrabold text-brand/80">
+                      {step.step}
+                    </span>
+                    <h3 className="mt-3 font-display text-lg font-semibold">{step.title}</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                      {step.desc}
+                    </p>
                   </div>
                 </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Engineering Process */}
-      <section className="relative py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs uppercase tracking-widest text-brand">
-              <Layers className="h-3 w-3" /> How We Build
+              ))}
             </div>
-            <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">
-              From Concept to <span className="text-gradient-brand">Production</span>
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              A disciplined, transparent engineering methodology designed for high-velocity
-              execution and zero regressions.
-            </p>
           </div>
+        </section>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {processSteps.map((step, idx) => (
-              <motion.div
-                key={step.step}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="glass-card relative flex flex-col justify-between rounded-2xl p-6"
-              >
-                <div>
-                  <span className="font-display text-3xl font-extrabold text-brand/80">
-                    {step.step}
-                  </span>
-                  <h3 className="mt-3 font-display text-lg font-semibold">{step.title}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Frequently Asked Questions (FAQ) */}
-      <section className="relative py-20 border-t border-border/60">
-        <div className="mx-auto max-w-4xl px-6">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand">
-              <HelpCircle className="h-3.5 w-3.5" /> Common Questions
+        {/* Frequently Asked Questions (FAQ) */}
+        <section className="relative py-20 border-t border-border/60">
+          <div className="mx-auto max-w-4xl px-6">
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs uppercase tracking-widest text-brand">
+                <HelpCircle className="h-3.5 w-3.5" /> Common Questions
+              </div>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">
+                Frequently Asked Questions
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground sm:text-base">
+                Clear answers on WhatsApp automation, ERPNext pricing and implementation, custom
+                software delivery, and enterprise AI engineering.
+              </p>
             </div>
-            <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">
-              Frequently Asked Questions
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Clear answers on WhatsApp automation, ERPNext pricing and implementation, custom
-              software delivery, and enterprise AI engineering.
-            </p>
-          </div>
 
-          <div className="mt-12 space-y-4">
-            {faqs.map((faq, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div
-                  key={index}
-                  className="glass-card overflow-hidden rounded-2xl border border-border/70 transition-colors hover:border-brand/40"
-                >
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="flex w-full items-center justify-between p-6 text-left"
-                    aria-expanded={isOpen}
+            <div className="mt-12 space-y-4">
+              {faqs.map((faq, index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div
+                    key={index}
+                    className="glass-card overflow-hidden rounded-2xl border border-border/70 transition-colors hover:border-brand/40"
                   >
-                    <span className="font-display text-base sm:text-lg font-semibold text-foreground pr-4">
-                      {faq.q}
-                    </span>
-                    <ChevronDown
-                      className={`h-5 w-5 shrink-0 text-brand transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="px-6 pb-6 text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-4"
-                      >
-                        {faq.a}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="relative py-20">
-        <div className="mx-auto max-w-5xl px-6 text-center">
-          <div className="glass-card relative overflow-hidden rounded-3xl p-10 sm:p-16">
-            <h2 className="font-display text-3xl font-bold sm:text-5xl">
-              Have a technical challenge in mind?
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              Schedule a technical discovery session with our lead engineers to assess feasibility,
-              architecture, and timeline.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <BouncyButton
-                href="/contact"
-                className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground"
-              >
-                Start a project <ArrowUpRight className="h-4 w-4" />
-              </BouncyButton>
-              <Link
-                to="/work"
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card"
-              >
-                View our work
-              </Link>
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                      className="flex w-full items-center justify-between p-6 text-left"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="font-display text-base sm:text-lg font-semibold text-foreground pr-4">
+                        {faq.q}
+                      </span>
+                      <ChevronDown
+                        className={`h-5 w-5 shrink-0 text-brand transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    <AnimatePresence>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="px-6 pb-6 text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-4"
+                        >
+                          {faq.a}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* Bottom CTA */}
+        <section className="relative py-20">
+          <div className="mx-auto max-w-5xl px-6 text-center">
+            <div className="glass-card relative overflow-hidden rounded-3xl p-10 sm:p-16">
+              <h2 className="font-display text-3xl font-bold sm:text-5xl">
+                Have a technical challenge in mind?
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+                Schedule a technical discovery session with our lead engineers to assess
+                feasibility, architecture, and timeline.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <BouncyButton
+                  href="/contact"
+                  className="glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground"
+                >
+                  Start a project <ArrowUpRight className="h-4 w-4" />
+                </BouncyButton>
+                <Link
+                  to="/work"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-6 py-3 text-sm hover:bg-card"
+                >
+                  View our work
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
       <Footer />
     </div>
   );

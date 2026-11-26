@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -40,6 +41,11 @@ const BlogsRoute = BlogsRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndustriesRoute = IndustriesRouteImport.update({
+  id: '/industries',
+  path: '/industries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/blogs': typeof BlogsRouteWithChildren
   '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/blogs': typeof BlogsRouteWithChildren
   '/contact': typeof ContactRoute
+  '/industries': typeof IndustriesRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/blogs'
     | '/contact'
+    | '/industries'
     | '/privacy'
     | '/services'
     | '/terms'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/industries'
     | '/privacy'
     | '/services'
     | '/terms'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/blogs'
     | '/contact'
+    | '/industries'
     | '/privacy'
     | '/services'
     | '/terms'
@@ -172,6 +184,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BlogsRoute: typeof BlogsRouteWithChildren
   ContactRoute: typeof ContactRoute
+  IndustriesRoute: typeof IndustriesRoute
   PrivacyRoute: typeof PrivacyRoute
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/industries': {
+      id: '/industries'
+      path: '/industries'
+      fullPath: '/industries'
+      preLoaderRoute: typeof IndustriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BlogsRoute: BlogsRouteWithChildren,
   ContactRoute: ContactRoute,
+  IndustriesRoute: IndustriesRoute,
   PrivacyRoute: PrivacyRoute,
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
