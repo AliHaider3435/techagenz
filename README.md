@@ -12,16 +12,20 @@ Official web platform for [Tech Agenz](https://www.techagenz.com) engineering in
 ## Getting Started
 
 ### 1. Prerequisites
+
 - Node.js 20+ (v24 recommended)
 - npm or pnpm
 
 ### 2. Environment Variables
+
 For local development, create a `.env` file with the enquiry API origin and
 public Turnstile site key:
+
 ```env
 VITE_API_BASE_URL=https://api-dev.techagenz.com
 VITE_CF_TURNSTILE_SITE_KEY=your_public_turnstile_site_key
 ```
+
 `VITE_API_BASE_URL` is used only to submit public enquiries to the Cloudflare
 Worker. Production uses `https://api.techagenz.com`. The Turnstile site key is
 public; never put secrets in Vite variables.
@@ -34,22 +38,26 @@ Worker-only secrets. For local Worker development, set
 a local frontend.
 
 ### 3. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 4. Development Server
+
 ```bash
 npm run dev
 ```
 
 ### 5. Build & Typecheck
+
 ```bash
 npx tsc --noEmit
 npm run build
 ```
 
 ## Managing Website Content
+
 Public content is version-controlled in `src/content/` and `public/`:
 
 - `src/content/team.ts` — team profiles and local portrait paths.
@@ -70,6 +78,7 @@ builds the checked-in content with the website. Do not put credentials or
 private enquiry data in content files.
 
 ## Project Structure
+
 - `src/routes/` — File-based public routes and SEO metadata.
 - `src/content/` — GitHub-managed team, blog, project, service, testimonial,
   and site configuration data.

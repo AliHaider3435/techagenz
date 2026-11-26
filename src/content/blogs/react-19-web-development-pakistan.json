@@ -1,36 +1,36 @@
 {
-    "id":  "react-19-web-development-pakistan",
-    "title":  "Building Sub-Second Web Applications: React 19, TanStack Start \u0026 Tailwind CSS",
-    "category":  "Custom Software",
-    "readTime":  "6 min read",
-    "date":  "Sep 22, 2026",
-    "publishDateIso":  "2026-09-22T08:45:00+05:00",
-    "author":  "Tech Agenz Engineering Team",
-    "image":  "/blog-images/react-19-web-development-pakistan.webp",
-    "excerpt":  "A masterclass in modern web engineering: sub-second initial paint, 0ms Total Blocking Time, and server-side rendering for flawless Core Web Vitals and top Google search rankings.",
-    "featured":  false,
-    "keywords":  [
-                     "Web Development Company in Pakistan",
-                     "React 19 Development",
-                     "TanStack Start SSR",
-                     "Core Web Vitals Optimization",
-                     "Frontend Architecture"
-                 ],
-    "keyTakeaways":  [
-                         "Google\u0027s search ranking algorithm prioritizes websites that achieve green Core Web Vitals scores (LCP, INP, CLS).",
-                         "Modern full-stack frameworks like TanStack Start combine server-rendered speed with client-side interactive smoothness.",
-                         "Converting legacy heavy assets to WebP and deferring non-critical 3D scripts delivers 95+ Lighthouse mobile ratings."
-                     ],
-    "content":  [
-                    "In modern web development, speed is not merely a technical vanity metric—it directly determines bounce rates, conversion percentages, and Google search ranking visibility. Studies show that a 1-second delay in page load time can reduce conversions by up to 20%.",
-                    "At Tech Agenz, we specialize in building fast, scalable web platforms using React 19, TanStack Start, and Tailwind CSS. By adopting server-side rendering (SSR), critical CSS inlining, and asset preloading, our platforms consistently score 95+ on Google Lighthouse audits.",
-                    "Whether developing high-volume commercial portals or internal enterprise dashboards, our web engineering guarantees instantaneous response times across all mobile and desktop devices.",
-                    "Clean semantic HTML, correct Open Graph metadata, and JSON-LD structured schema turn modern web apps into search engine powerhouses."
-                ],
-    "seo":  {
-                "title":  "Building Sub-Second Web Applications: React 19, TanStack Start & Tailwind CSS — Tech Agenz",
-                "description":  "A masterclass in modern web engineering: sub-second initial paint, 0ms Total Blocking Time, and server-side rendering for flawless Core Web Vitals and top Google search rankings.",
-                "keywords":  "Web Development Company in Pakistan, React 19 Development, TanStack Start SSR, Core Web Vitals Optimization, Frontend Architecture"
-            },
-    "imageAlt":  "Building Sub-Second Web Applications: React 19, TanStack Start \u0026 Tailwind CSS"
+  "id": "react-19-web-development-pakistan",
+  "title": "Building Sub-Second Web Applications: React 19, TanStack Start \u0026 Tailwind CSS",
+  "category": "Custom Software",
+  "readTime": "6 min read",
+  "date": "Sep 22, 2026",
+  "publishDateIso": "2026-09-22T08:45:00+05:00",
+  "author": "Tech Agenz Engineering Team",
+  "image": "/blog-images/react-19-web-development-pakistan.webp",
+  "excerpt": "A masterclass in modern web engineering: sub-second initial paint, 0ms Total Blocking Time, and server-side rendering for flawless Core Web Vitals and top Google search rankings.",
+  "featured": false,
+  "keywords": [
+    "Web Development Company in Pakistan",
+    "React 19 Development",
+    "TanStack Start SSR",
+    "Core Web Vitals Optimization",
+    "Frontend Architecture"
+  ],
+  "keyTakeaways": [
+    "Google\u0027s search ranking algorithm prioritizes websites that achieve green Core Web Vitals scores (LCP, INP, CLS).",
+    "Modern full-stack frameworks like TanStack Start combine server-rendered speed with client-side interactive smoothness.",
+    "Converting legacy heavy assets to WebP and deferring non-critical 3D scripts delivers 95+ Lighthouse mobile ratings."
+  ],
+  "content": [
+    "In modern web development, speed is not merely a technical vanity metric—it directly determines bounce rates, conversion percentages, and Google search ranking visibility. Studies show that a 1-second delay in page load time can reduce conversions by up to 20%.",
+    "At Tech Agenz, we specialize in building fast, scalable web platforms using React 19, TanStack Start, and Tailwind CSS. By adopting server-side rendering (SSR), critical CSS inlining, and asset preloading, our platforms consistently score 95+ on Google Lighthouse audits.",
+    "Whether developing high-volume commercial portals or internal enterprise dashboards, our web engineering guarantees instantaneous response times across all mobile and desktop devices.",
+    "Clean semantic HTML, correct Open Graph metadata, and JSON-LD structured schema turn modern web apps into search engine powerhouses."
+  ],
+  "seo": {
+    "title": "Building Sub-Second Web Applications: React 19, TanStack Start & Tailwind CSS — Tech Agenz",
+    "description": "A masterclass in modern web engineering: sub-second initial paint, 0ms Total Blocking Time, and server-side rendering for flawless Core Web Vitals and top Google search rankings.",
+    "keywords": "Web Development Company in Pakistan, React 19 Development, TanStack Start SSR, Core Web Vitals Optimization, Frontend Architecture"
+  },
+  "imageAlt": "Building Sub-Second Web Applications: React 19, TanStack Start \u0026 Tailwind CSS"
 }

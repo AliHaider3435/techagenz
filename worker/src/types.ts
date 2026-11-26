@@ -10,7 +10,7 @@ export interface Env {
   // ── Cloudflare R2 (object storage) ───────────────────────────────────────
   ASSETS: R2Bucket;
 
-  // ── Non-secret vars (set in wrangler.toml [env.dev.vars]) ────────────────
+  // ── Non-secret vars (set in wrangler.toml) ─────────────────────────────────
   ENVIRONMENT: string;
 
   // ── Cloudflare-native public endpoint rate limiting ─────────────────────
@@ -20,37 +20,8 @@ export interface Env {
   RESEND_API_KEY: string;
   CF_TURNSTILE_SECRET_KEY: string;
 
-  /** Cloudflare Access team domain, without a scheme or path. */
-  CF_ACCESS_TEAM_DOMAIN?: string;
-  /** Cloudflare Access application AUD tag. */
-  CF_ACCESS_AUD?: string;
-  /** Exact comma-separated administrator email allow-list; configure per environment. */
-  ADMIN_ALLOWED_EMAILS?: string;
-  /** Canonical API hostname; blocks Access assertion replay via workers.dev. */
-  CF_ACCESS_API_HOST?: string;
-  /** Set to "true" to enable live Admin CMS operations and R2 writes. */
-  ADMIN_CMS_ENABLED?: string;
-
-  // ── Production Shared Team Authentication (Secrets & Config) ─────────────
-  /** Shared team admin username (production only). */
-  ADMIN_SHARED_USERNAME?: string;
-  /** Shared team admin password hash (production only, PBKDF2 format). */
-  ADMIN_SHARED_PASSWORD_HASH?: string;
-  /** Session TTL in hours (default: "8"). */
-  ADMIN_SESSION_TTL_HOURS?: string;
-  /** Optional Cloudflare rate limiter binding for admin login attempts. */
-  ADMIN_LOGIN_RATE_LIMITER?: RateLimit;
   /** Expected Turnstile hostname for public enquiry requests outside production. */
   TURNSTILE_ENQUIRY_HOSTNAME?: string;
-}
-
-// ─── Unified Administrator Principal ──────────────────────────────────────────
-
-export interface AdminPrincipal {
-  authType: "cloudflare_access" | "session";
-  username?: string;
-  email?: string;
-  sessionId?: string;
 }
 
 // ─── Shared response shapes ───────────────────────────────────────────────────

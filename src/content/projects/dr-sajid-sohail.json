@@ -1,137 +1,124 @@
 {
-    "slug":  "dr-sajid-sohail",
-    "title":  "Dr. Sajid Sohail: High-Volume Clinic Operations \u0026 Patient Consultation Portal",
-    "shortTitle":  "Dr. Sajid Sohail Clinic Portal",
-    "formulaSummary":  "A responsive patient booking and clinical consultation workflow system built with React 19, TypeScript, and PostgreSQL for Dr. Sajid Sohail at Rahmania Medical Center, achieving a \u003c5% patient no-show rate, saving 4 minutes per consultation intake, and increasing monthly consultations by 35%.",
-    "clientType":  "Hospital \u0026 Medical Center Healthcare",
-    "clientName":  "Dr. Sajid Sohail (Rahmania Medical Center)",
-    "category":  "Healthcare",
-    "coverImage":  "/project-images/dr-sajid-sohail.webp",
-    "tags":  [
-                 "React 19",
-                 "TypeScript",
-                 "Node.js",
-                 "PostgreSQL",
-                 "Healthcare"
-             ],
-    "featuredOnHome":  true,
-    "order":  3,
-    "timeline":  "Live in Production",
-    "status":  "Live in Production",
-    "problem":  {
-                    "heading":  "Hospital Quota Coordination \u0026 Manual Intake Bottlenecks",
-                    "description":  "Operating within Rahmania Medical Center, Dr. Sajid Sohail required a specialized digital workflow that coordinated seamlessly between hospital reception, patient inquiries, and daily consultation quotas. Relying on paper charts and phone calls led to scheduling gaps, manual errors in patient record intake, and high no-show rates during bad weather or hospital emergencies.",
-                    "painPoints":  [
-                                       "Manual paper intake taking 4 to 5 minutes of doctor consultation time per patient",
-                                       "Scheduling gaps and no-show rates reaching 15% due to lack of automated reminders",
-                                       "Lack of coordination between central hospital reception desk and doctor examination room",
-                                       "Difficulty rapidly retrieving previous prescription and consultation history"
-                                   ]
-                },
-    "solution":  {
-                     "heading":  "Dynamic 15-Minute Slot Allocation \u0026 Pre-Consultation Questionnaires",
-                     "description":  "We built a tailored medical portal with 15-minute slot allocation, intelligent patient symptom intake questionnaires, and automated clinic confirmation notifications. The system features a doctor control panel to view expected patient volumes, mark completed consultations, and seamlessly reschedule appointments with one click. Hospital staff access a dedicated receptionist view to manage check-ins instantly.",
-                     "keyDeliverables":  [
-                                             "15-minute slot allocation algorithm tailored to daily hospital consultation quotas",
-                                             "Pre-filled digital symptom intake questionnaires submitted prior to patient arrival",
-                                             "Doctor control console with 1-click consultation completion and history lookup",
-                                             "Dedicated receptionist view for check-ins, queue management, and quota pacing"
-                                         ]
-                 },
-    "stack":  [
-                  "React 19",
-                  "TypeScript",
-                  "Tailwind CSS",
-                  "Node.js",
-                  "Express",
-                  "PostgreSQL"
-              ],
-    "architecture":  {
-                         "overview":  "Lightweight, sub-second web architecture connecting patient booking with the doctor\u0027s consultation desk and hospital reception. Intake data is cached and synchronized in real time.",
-                         "flowSteps":  [
-                                           {
-                                               "step":  "01",
-                                               "title":  "15-Minute Slot Booking",
-                                               "description":  "Patient reserves consultation slot according to daily session capacity."
-                                           },
-                                           {
-                                               "step":  "02",
-                                               "title":  "Digital Symptom Intake",
-                                               "description":  "Patient completes brief symptom questionnaire before consultation."
-                                           },
-                                           {
-                                               "step":  "03",
-                                               "title":  "Reception Check-In",
-                                               "description":  "Hospital receptionist marks patient arrival with one click."
-                                           },
-                                           {
-                                               "step":  "04",
-                                               "title":  "Doctor Consultation View",
-                                               "description":  "Doctor accesses pre-filled brief and records follow-up instructions."
-                                           }
-                                       ]
-                     },
-    "results":  {
-                    "stats":  [
-                                  {
-                                      "metric":  "\u003c5%",
-                                      "label":  "Patient No-Show Rate",
-                                      "context":  "Down from 15% via automated pre-visit reminders"
-                                  },
-                                  {
-                                      "metric":  "4 Mins",
-                                      "label":  "Saved Per Consultation",
-                                      "context":  "Pre-filled medical intake saves doctor time"
-                                  },
-                                  {
-                                      "metric":  "35%",
-                                      "label":  "Consultation Growth",
-                                      "context":  "Increase in verified monthly patient consultations"
-                                  },
-                                  {
-                                      "metric":  "\u003c1 sec",
-                                      "label":  "Record Retrieval",
-                                      "context":  "Instantaneous access to appointment history"
-                                  }
-                              ],
-                    "bullets":  [
-                                    "35% increase in verified monthly patient consultations through automated scheduling",
-                                    "No-show rate dropped to under 5% following automated pre-consultation reminders",
-                                    "Pre-filled medical intake questionnaires saving 4 minutes per doctor consultation",
-                                    "Integrated patient ledger and appointment history accessible in under 1 second"
-                                ]
-                },
-    "keyFeatures":  [
-                        {
-                            "title":  "15-Minute Slot Allocation",
-                            "description":  "Optimized consultation pacing preventing waiting room overcrowding.",
-                            "tag":  "Scheduling"
-                        },
-                        {
-                            "title":  "Symptom Intake Questionnaire",
-                            "description":  "Pre-fills essential patient history before the doctor consultation begins.",
-                            "tag":  "Clinical Efficiency"
-                        },
-                        {
-                            "title":  "Hospital Receptionist Sync",
-                            "description":  "Seamless coordination between hospital reception and physician room.",
-                            "tag":  "Collaboration"
-                        },
-                        {
-                            "title":  "Instant History Lookup",
-                            "description":  "Look up previous consultation notes and prescriptions in under 1 second.",
-                            "tag":  "Records"
-                        }
-                    ],
-    "testimonial":  {
-                        "quote":  "The digital consultation workflow transformed our clinic. The 15-minute slot allocation keeps us on schedule, and pre-filled symptom questionnaires save valuable doctor time with every patient.",
-                        "author":  "Clinical Practice Manager",
-                        "role":  "Operations Coordinator",
-                        "organization":  "Rahmania Medical Center"
-                    },
-    "seo":  {
-                "title":  "Dr. Sajid Sohail: High-Volume Clinic Operations & Patient Consultation Portal — Case Study | Tech Agenz",
-                "description":  "A responsive patient booking and clinical consultation workflow system built with React 19, TypeScript, and PostgreSQL for Dr. Sajid Sohail at Rahmania Medical Center, achieving a \u003c5% patient no-show rate, saving 4 minutes per consultation intake, and increasing monthly consultations by 35%."
-            },
-    "coverImageAlt":  "Dr. Sajid Sohail Clinic Portal"
+  "slug": "dr-sajid-sohail",
+  "title": "Dr. Sajid Sohail: High-Volume Clinic Operations \u0026 Patient Consultation Portal",
+  "shortTitle": "Dr. Sajid Sohail Clinic Portal",
+  "formulaSummary": "A responsive patient booking and clinical consultation workflow system built with React 19, TypeScript, and PostgreSQL for Dr. Sajid Sohail at Rahmania Medical Center, achieving a \u003c5% patient no-show rate, saving 4 minutes per consultation intake, and increasing monthly consultations by 35%.",
+  "clientType": "Hospital \u0026 Medical Center Healthcare",
+  "clientName": "Dr. Sajid Sohail (Rahmania Medical Center)",
+  "category": "Healthcare",
+  "coverImage": "/project-images/dr-sajid-sohail.webp",
+  "tags": ["React 19", "TypeScript", "Node.js", "PostgreSQL", "Healthcare"],
+  "featuredOnHome": true,
+  "order": 3,
+  "timeline": "Live in Production",
+  "status": "Live in Production",
+  "problem": {
+    "heading": "Hospital Quota Coordination \u0026 Manual Intake Bottlenecks",
+    "description": "Operating within Rahmania Medical Center, Dr. Sajid Sohail required a specialized digital workflow that coordinated seamlessly between hospital reception, patient inquiries, and daily consultation quotas. Relying on paper charts and phone calls led to scheduling gaps, manual errors in patient record intake, and high no-show rates during bad weather or hospital emergencies.",
+    "painPoints": [
+      "Manual paper intake taking 4 to 5 minutes of doctor consultation time per patient",
+      "Scheduling gaps and no-show rates reaching 15% due to lack of automated reminders",
+      "Lack of coordination between central hospital reception desk and doctor examination room",
+      "Difficulty rapidly retrieving previous prescription and consultation history"
+    ]
+  },
+  "solution": {
+    "heading": "Dynamic 15-Minute Slot Allocation \u0026 Pre-Consultation Questionnaires",
+    "description": "We built a tailored medical portal with 15-minute slot allocation, intelligent patient symptom intake questionnaires, and automated clinic confirmation notifications. The system features a doctor control panel to view expected patient volumes, mark completed consultations, and seamlessly reschedule appointments with one click. Hospital staff access a dedicated receptionist view to manage check-ins instantly.",
+    "keyDeliverables": [
+      "15-minute slot allocation algorithm tailored to daily hospital consultation quotas",
+      "Pre-filled digital symptom intake questionnaires submitted prior to patient arrival",
+      "Doctor control console with 1-click consultation completion and history lookup",
+      "Dedicated receptionist view for check-ins, queue management, and quota pacing"
+    ]
+  },
+  "stack": ["React 19", "TypeScript", "Tailwind CSS", "Node.js", "Express", "PostgreSQL"],
+  "architecture": {
+    "overview": "Lightweight, sub-second web architecture connecting patient booking with the doctor\u0027s consultation desk and hospital reception. Intake data is cached and synchronized in real time.",
+    "flowSteps": [
+      {
+        "step": "01",
+        "title": "15-Minute Slot Booking",
+        "description": "Patient reserves consultation slot according to daily session capacity."
+      },
+      {
+        "step": "02",
+        "title": "Digital Symptom Intake",
+        "description": "Patient completes brief symptom questionnaire before consultation."
+      },
+      {
+        "step": "03",
+        "title": "Reception Check-In",
+        "description": "Hospital receptionist marks patient arrival with one click."
+      },
+      {
+        "step": "04",
+        "title": "Doctor Consultation View",
+        "description": "Doctor accesses pre-filled brief and records follow-up instructions."
+      }
+    ]
+  },
+  "results": {
+    "stats": [
+      {
+        "metric": "\u003c5%",
+        "label": "Patient No-Show Rate",
+        "context": "Down from 15% via automated pre-visit reminders"
+      },
+      {
+        "metric": "4 Mins",
+        "label": "Saved Per Consultation",
+        "context": "Pre-filled medical intake saves doctor time"
+      },
+      {
+        "metric": "35%",
+        "label": "Consultation Growth",
+        "context": "Increase in verified monthly patient consultations"
+      },
+      {
+        "metric": "\u003c1 sec",
+        "label": "Record Retrieval",
+        "context": "Instantaneous access to appointment history"
+      }
+    ],
+    "bullets": [
+      "35% increase in verified monthly patient consultations through automated scheduling",
+      "No-show rate dropped to under 5% following automated pre-consultation reminders",
+      "Pre-filled medical intake questionnaires saving 4 minutes per doctor consultation",
+      "Integrated patient ledger and appointment history accessible in under 1 second"
+    ]
+  },
+  "keyFeatures": [
+    {
+      "title": "15-Minute Slot Allocation",
+      "description": "Optimized consultation pacing preventing waiting room overcrowding.",
+      "tag": "Scheduling"
+    },
+    {
+      "title": "Symptom Intake Questionnaire",
+      "description": "Pre-fills essential patient history before the doctor consultation begins.",
+      "tag": "Clinical Efficiency"
+    },
+    {
+      "title": "Hospital Receptionist Sync",
+      "description": "Seamless coordination between hospital reception and physician room.",
+      "tag": "Collaboration"
+    },
+    {
+      "title": "Instant History Lookup",
+      "description": "Look up previous consultation notes and prescriptions in under 1 second.",
+      "tag": "Records"
+    }
+  ],
+  "testimonial": {
+    "quote": "The digital consultation workflow transformed our clinic. The 15-minute slot allocation keeps us on schedule, and pre-filled symptom questionnaires save valuable doctor time with every patient.",
+    "author": "Clinical Practice Manager",
+    "role": "Operations Coordinator",
+    "organization": "Rahmania Medical Center"
+  },
+  "seo": {
+    "title": "Dr. Sajid Sohail: High-Volume Clinic Operations & Patient Consultation Portal — Case Study | Tech Agenz",
+    "description": "A responsive patient booking and clinical consultation workflow system built with React 19, TypeScript, and PostgreSQL for Dr. Sajid Sohail at Rahmania Medical Center, achieving a \u003c5% patient no-show rate, saving 4 minutes per consultation intake, and increasing monthly consultations by 35%."
+  },
+  "coverImageAlt": "Dr. Sajid Sohail Clinic Portal"
 }

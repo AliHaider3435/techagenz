@@ -100,45 +100,40 @@ export const ChromaGrid = ({ items, className = "", columns = 3, rows = 2 }: Chr
       style={{ "--cols": columns, "--rows": rows } as React.CSSProperties}
     >
       {data.map((c, i) => (
-          <article
-            key={`${c.title}-${i}`}
-            className="chroma-card"
-            onMouseEnter={handleCardEnter}
-            onMouseLeave={handleCardLeave}
-            onClick={() => handleCardClick(c.url)}
-            style={
-              {
-                "--card-border": c.borderColor || "transparent",
-                "--card-gradient": c.gradient,
-                cursor: c.url ? "pointer" : "default",
-              } as React.CSSProperties
-            }
-          >
-            <div className="chroma-img-wrapper">
-              {c.image && (
-                <>
-                  <img
-                    className="chroma-img-base"
-                    src={c.image}
-                    alt={c.title}
-                    loading="lazy"
-                  />
-                  <img
-                    className="chroma-img-color"
-                    src={c.image}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                </>
-              )}
-            </div>
-            <footer className="chroma-info">
-              <h3 className="name">{c.title}</h3>
-              <p className="role">{c.subtitle}</p>
-            </footer>
-          </article>
-        ))}
+        <article
+          key={`${c.title}-${i}`}
+          className="chroma-card"
+          onMouseEnter={handleCardEnter}
+          onMouseLeave={handleCardLeave}
+          onClick={() => handleCardClick(c.url)}
+          style={
+            {
+              "--card-border": c.borderColor || "transparent",
+              "--card-gradient": c.gradient,
+              cursor: c.url ? "pointer" : "default",
+            } as React.CSSProperties
+          }
+        >
+          <div className="chroma-img-wrapper">
+            {c.image && (
+              <>
+                <img className="chroma-img-base" src={c.image} alt={c.title} loading="lazy" />
+                <img
+                  className="chroma-img-color"
+                  src={c.image}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                />
+              </>
+            )}
+          </div>
+          <footer className="chroma-info">
+            <h3 className="name">{c.title}</h3>
+            <p className="role">{c.subtitle}</p>
+          </footer>
+        </article>
+      ))}
     </div>
   );
 };

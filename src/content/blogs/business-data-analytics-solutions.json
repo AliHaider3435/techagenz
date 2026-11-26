@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#business-analytics",
   "imageAlt": "Illustration of business analytics charts and decision metrics",
   "excerpt": "Plan business intelligence dashboards around trusted definitions, useful decisions and data quality instead of adding charts without context.",
-  "keywords": ["business data analytics solutions", "business intelligence dashboards", "data analytics company Pakistan", "custom analytics software", "data visualization services"],
-  "keyTakeaways": ["Tie each dashboard to a specific decision and accountable audience.", "Agree on metric definitions and source data before designing charts.", "Monitor data freshness and quality as part of the analytics product."],
+  "keywords": [
+    "business data analytics solutions",
+    "business intelligence dashboards",
+    "data analytics company Pakistan",
+    "custom analytics software",
+    "data visualization services"
+  ],
+  "keyTakeaways": [
+    "Tie each dashboard to a specific decision and accountable audience.",
+    "Agree on metric definitions and source data before designing charts.",
+    "Monitor data freshness and quality as part of the analytics product."
+  ],
   "content": [
     "A useful business intelligence dashboard answers a real question quickly. Before selecting chart types, identify who will use the report, what decision they need to make and how often the answer should change.",
     "Different teams may use the same word for different measures. Write down definitions, filters, time periods and data sources for key metrics, then check whether source systems are complete and consistent. Analytics built on unclear definitions can create conflicting reports rather than clarity.",
     "Design the first dashboard around a small set of relevant measures. Show context such as targets or comparisons only when it helps interpretation, and make data freshness visible. Provide appropriate access controls if the report includes customer, financial or employee information.",
     "A data analytics company can help connect existing systems and build tailored reporting, but ownership matters after delivery. Document refresh schedules, calculation logic and maintenance responsibilities so teams can trust and improve the solution over time."
   ],
-  "seo": {"title": "Business Data Analytics Solutions and Dashboards | Tech Agenz", "description": "Build business analytics dashboards around clear metrics, trustworthy data, stakeholder needs and ongoing quality monitoring.", "keywords": "business data analytics solutions, business intelligence dashboards, data analytics company Pakistan"}
+  "seo": {
+    "title": "Business Data Analytics Solutions and Dashboards | Tech Agenz",
+    "description": "Build business analytics dashboards around clear metrics, trustworthy data, stakeholder needs and ongoing quality monitoring.",
+    "keywords": "business data analytics solutions, business intelligence dashboards, data analytics company Pakistan"
+  }
 }

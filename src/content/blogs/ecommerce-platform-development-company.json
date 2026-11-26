@@ -1,37 +1,37 @@
 {
-    "id":  "ecommerce-platform-development-company",
-    "title":  "Ecommerce Platform Development: Building High-Converting Online Stores That Scale",
-    "category":  "Custom Software",
-    "readTime":  "8 min read",
-    "date":  "September 30, 2026",
-    "publishDateIso":  "2026-09-30",
-    "author":  "Tech Agenz Team",
-    "image":  "/blog-images/ecommerce-platform-development-company.webp",
-    "excerpt":  "Why high-growth D2C brands are choosing custom headless commerce architectures over off-the-shelf platforms — and how to build one that converts and scales.",
-    "featured":  false,
-    "keywords":  [
-                     "ecommerce development company",
-                     "custom ecommerce platform",
-                     "online store development",
-                     "headless commerce",
-                     "Shopify alternative",
-                     "ecommerce software house"
-                 ],
-    "keyTakeaways":  [
-                         "Headless commerce architectures with a React storefront and composable backend APIs deliver 2-3x faster page loads than monolithic platforms.",
-                         "Personalized product recommendations powered by collaborative filtering can increase average order value by 15-25%.",
-                         "Server-side rendering (SSR) and edge caching ensure sub-second Time to First Byte (TTFB) even during flash sale traffic spikes."
-                     ],
-    "content":  [
-                    "The ecommerce landscape has shifted dramatically. Brands that once relied on Shopify or WooCommerce templates are discovering that customization limitations, transaction fees, and performance bottlenecks are costing them revenue as they scale past seven figures.",
-                    "Tech Agenz builds headless commerce platforms where a blazing-fast React or Next.js storefront communicates with a composable backend through GraphQL APIs. This decoupled architecture allows marketing teams to update content instantly while engineering teams iterate on checkout flows independently.",
-                    "Our ecommerce stack includes real-time inventory sync across warehouses, dynamic pricing engines, AI-powered product recommendations, and multi-currency checkout with localized tax calculation. Every component is independently scalable to handle Black Friday-level traffic without over-provisioning.",
-                    "Post-launch, we instrument every funnel step with analytics to identify drop-off points. A/B testing infrastructure built into the platform allows continuous conversion rate optimization without developer involvement for each experiment."
-                ],
-    "seo":  {
-                "title":  "Ecommerce Platform Development: Building High-Converting Online Stores That Scale — Tech Agenz",
-                "description":  "Why high-growth D2C brands are choosing custom headless commerce architectures over off-the-shelf platforms — and how to build one that converts and scales.",
-                "keywords":  "ecommerce development company, custom ecommerce platform, online store development, headless commerce, Shopify alternative, ecommerce software house"
-            },
-    "imageAlt":  "Ecommerce Platform Development: Building High-Converting Online Stores That Scale"
+  "id": "ecommerce-platform-development-company",
+  "title": "Ecommerce Platform Development: Building High-Converting Online Stores That Scale",
+  "category": "Custom Software",
+  "readTime": "8 min read",
+  "date": "September 30, 2026",
+  "publishDateIso": "2026-09-30",
+  "author": "Tech Agenz Team",
+  "image": "/blog-images/ecommerce-platform-development-company.webp",
+  "excerpt": "Why high-growth D2C brands are choosing custom headless commerce architectures over off-the-shelf platforms — and how to build one that converts and scales.",
+  "featured": false,
+  "keywords": [
+    "ecommerce development company",
+    "custom ecommerce platform",
+    "online store development",
+    "headless commerce",
+    "Shopify alternative",
+    "ecommerce software house"
+  ],
+  "keyTakeaways": [
+    "Headless commerce architectures with a React storefront and composable backend APIs deliver 2-3x faster page loads than monolithic platforms.",
+    "Personalized product recommendations powered by collaborative filtering can increase average order value by 15-25%.",
+    "Server-side rendering (SSR) and edge caching ensure sub-second Time to First Byte (TTFB) even during flash sale traffic spikes."
+  ],
+  "content": [
+    "The ecommerce landscape has shifted dramatically. Brands that once relied on Shopify or WooCommerce templates are discovering that customization limitations, transaction fees, and performance bottlenecks are costing them revenue as they scale past seven figures.",
+    "Tech Agenz builds headless commerce platforms where a blazing-fast React or Next.js storefront communicates with a composable backend through GraphQL APIs. This decoupled architecture allows marketing teams to update content instantly while engineering teams iterate on checkout flows independently.",
+    "Our ecommerce stack includes real-time inventory sync across warehouses, dynamic pricing engines, AI-powered product recommendations, and multi-currency checkout with localized tax calculation. Every component is independently scalable to handle Black Friday-level traffic without over-provisioning.",
+    "Post-launch, we instrument every funnel step with analytics to identify drop-off points. A/B testing infrastructure built into the platform allows continuous conversion rate optimization without developer involvement for each experiment."
+  ],
+  "seo": {
+    "title": "Ecommerce Platform Development: Building High-Converting Online Stores That Scale — Tech Agenz",
+    "description": "Why high-growth D2C brands are choosing custom headless commerce architectures over off-the-shelf platforms — and how to build one that converts and scales.",
+    "keywords": "ecommerce development company, custom ecommerce platform, online store development, headless commerce, Shopify alternative, ecommerce software house"
+  },
+  "imageAlt": "Ecommerce Platform Development: Building High-Converting Online Stores That Scale"
 }

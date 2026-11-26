@@ -44,6 +44,23 @@ bindings are simulations; local testing does not validate production or remote
 resource behavior. The native rate limiter is approximate and is enforced
 independently in each Cloudflare location, not as a strict global quota.
 
+## API routes
+
+The Worker exposes only public, read-only CMS endpoints and the protected
+enquiry submission endpoint:
+
+| Method | Path                   | Purpose                        |
+| ------ | ---------------------- | ------------------------------ |
+| GET    | `/api/health`          | Health check                   |
+| GET    | `/api/cms/team`        | Public team member listing     |
+| GET    | `/api/cms/blogs`       | Public blog listing            |
+| GET    | `/api/cms/blogs/:slug` | Public blog by slug            |
+| GET    | `/api/cms/projects`    | Public case-study listing      |
+| POST   | `/api/enquiries`       | Enquiry submission (protected) |
+| GET    | `/assets/*`            | Public R2 asset serving        |
+
+All write, mutation, and administrative endpoints have been removed.
+
 ## Enquiry protection and local testing
 
 `POST /api/enquiries` is protected by both server-side Turnstile verification
@@ -66,91 +83,12 @@ Turnstile token and do not submit real enquiries during local security tests.
 The source-code origin and preflight policy in `src/middleware/cors.ts` is
 authoritative; Wrangler CORS variables are not used.
 
-- Public API requests retain these origins: `https://techagenz.com`,
-  `https://www.techagenz.com`, and local development origins
-  `http://localhost:5173`, `3000`, `3001`, and `4173`.
-- The admin frontend origin is exactly `https://admin-dev.techagenz.com`.
-  Credentialed CORS is enabled only for this exact origin.
-- Admin routes and R2 mutation paths accept browser CORS only from the admin
-  origin. Responses to the public website origins cannot expose admin responses.
-- Public preflights allow only `GET` and `POST`; admin preflights allow only
-  `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`. `Content-Type` is allowed for
-  public requests. The browser may not request
-  `Cf-Access-Jwt-Assertion` or `Authorization`.
+- Allowed origins: `https://techagenz.com`, `https://www.techagenz.com`, and
+  local development origins `http://localhost:5173`, `3000`, `3001`, and `4173`.
+- Preflights allow only `GET` and `POST`. `Content-Type` is allowed for
+  requests.
 - Preflights validate the exact origin, requested method, and every requested
   header. They return only CORS metadata and never route to D1 or R2 handlers.
-  A successful preflight is not authentication: actual protected requests
-  still require a valid Access assertion, administrator authorization, and the
-  canonical API hostname. State-changing admin and R2 requests also enforce the
-  exact configured admin Origin before authentication or storage/database
-  operations. This Origin check is not a general substitute for CSRF tokens if
-  cookie-based authentication is introduced in the future.
-
-Cloudflare Access may challenge or reject browser `OPTIONS` preflights before
-they reach the Worker. Verify the actual Access application path scope,
-preflight behavior, cookie credentials, and assertion injection against the
-development hostname before browser integration. Do not add a broad Access
-bypass policy to make preflights work. The local CORS tests do not verify
-Cloudflare edge behavior.
-
-## Cloudflare Access authentication foundation
-
-The Worker verifies `Cf-Access-Jwt-Assertion` using the fixed HTTPS JWKS path
-for `CF_ACCESS_TEAM_DOMAIN`. It accepts RS256 signatures only, validates the
-exact issuer and `CF_ACCESS_AUD`, requires identity/time claims, and fails
-closed on missing configuration, invalid tokens, or unavailable signing keys.
-JWKS keys are cached in memory for at most five minutes; an unknown `kid`
-forces a refresh. Tokens, keys, and provider response bodies are not logged.
-
-Authentication is separate from administrator authorization. `ADMIN_ALLOWED_EMAILS`
-is a comma-separated list of exact email addresses, normalized by trimming and
-lowercasing. The development Wrangler config contains only the owner-approved
-development administrator address; do not copy it into a base or production
-environment without separate approval. An empty or missing allow-list denies
-all administrators with HTTP 403. Missing or invalid authentication receives
-HTTP 401. Do not assume the Cloudflare account email is an approved application
-administrator.
-
-`CF_ACCESS_API_HOST` pins protected routes to `api-dev.techagenz.com`. This
-prevents a valid Access assertion from being replayed against the public
-workers.dev hostname. Keep `workers_dev = true` only while the host check is
-present and tested; before relying on Access in a controlled deployment, attach
-the approved custom API hostname to the Worker, protect that hostname with
-Cloudflare Access, verify the host and assertion path end-to-end, and disable
-the public workers.dev route. None of those Cloudflare resources or settings
-are created or changed by this code.
-
-### Browser-to-Worker development arrangement
-
-The public enquiry helper uses `VITE_API_BASE_URL`, which may point at the
-Worker’s workers.dev URL. The admin frontend has a separate, read-only
-authorization probe configured by `VITE_ADMIN_API_BASE_URL`; keep it unset
-until the custom API hostname and its Access application are verified. The
-recommended development arrangement is:
-
-- Serve the admin UI at `admin-dev.techagenz.com` and the API at
-  `api-dev.techagenz.com`; protect both applications with Cloudflare Access.
-- Scope the API Access application to the protected admin/R2 mutation paths so
-  public CMS and enquiry routes are not unintentionally gated. Establish the
-  Access session through a top-level browser navigation, then use
-  `credentials: "include"` for API fetches. The browser must not read, store, or
-  construct an Access JWT; Access validates its session and supplies
-  `Cf-Access-Jwt-Assertion` to the Worker.
-- The source policy enables credentialed CORS only for the exact admin origin.
-  Determine and test how Access handles unauthenticated `OPTIONS` preflights
-  before enabling the browser client. Any preflight that reaches the Worker is
-  validated and receives only a strict, non-mutating CORS response.
-- Cookie authentication requires origin validation and CSRF protection for
-  future mutations. Require the exact approved `Origin`, JSON content type,
-  and a CSRF defense (for example a synchronizer token) before enabling writes.
-- Do not assume protecting the admin hostname protects the API hostname. Do
-  not expose admin operations through workers.dev; the Worker host pin is an
-  additional defense, not a replacement for Access.
-
-The API hostname, Access applications/policies, CORS credential behavior, and
-DNS are deployment prerequisites and require separate owner approval. Do not
-use a browser-supplied `Cf-Access-Jwt-Assertion` as a substitute for the
-Access edge session.
 
 ## Secrets
 
@@ -177,59 +115,15 @@ wrangler secret put RESEND_API_KEY --config ./wrangler.toml --env dev
 Do not configure secrets or send real enquiries as part of local verification.
 The Turnstile site key is public frontend configuration, not a Worker secret.
 
-## Admin and R2 writes remain disabled
-
-The development administrator identity is owner-approved, but all
-`/api/admin/*` CRUD handlers remain placeholders and return HTTP 501 only after
-authentication and authorization; unauthorized requests return HTTP 401 or 403. R2 upload and delete handlers always return HTTP 403 after authorization
-and never call R2 write operations. Keep these features disabled until Access
-and the custom API hostname are verified, CRUD validation is implemented and
-tested, and R2 MIME/extension/content checks, safe key generation, and size
-limits are complete. Public CMS endpoints remain read-only and do not require
-Access.
-
-## Production Admin Authentication & Provisioning
-
-In production (`ENVIRONMENT=production`), the Admin Console uses server-side sessions rather than Cloudflare Access JWTs. Authentication is strictly separated by environment:
-
-- `ENVIRONMENT=development`: Cloudflare Access JWT assertions (`Cf-Access-Jwt-Assertion`) checked against Access JWKS and `ADMIN_ALLOWED_EMAILS`.
-- `ENVIRONMENT=production`: Shared team credentials with PBKDF2-SHA256 password verification and HttpOnly server-side session cookies.
-
-### Operator Secrets Provisioning
-
-For production deployments, the operator provisions the shared administrator credentials securely via Wrangler secrets (never stored in repository files):
-
-```bash
-wrangler secret put ADMIN_SHARED_USERNAME
-wrangler secret put ADMIN_SHARED_PASSWORD_HASH
-```
-
-Password hashes use the format `pbkdf2_sha256$<iterations>$<salt_hex>$<hash_hex>` with 100,000 iterations of SHA-256 and a 16-byte random salt.
-
-To generate a hash locally without committing it:
-
-```bash
-node -e '
-const crypto = require("crypto");
-const salt = crypto.randomBytes(16).toString("hex");
-const hash = crypto.pbkdf2Sync("YOUR_PASSWORD", Buffer.from(salt, "hex"), 100000, 32, "sha256").toString("hex");
-console.log(`pbkdf2_sha256$100000$${salt}$${hash}`);
-'
-```
-
-### Security Properties
-
-- **Rate Limiting:** `ADMIN_LOGIN_RATE_LIMITER` limits login attempts to 5 per 60 seconds per IP.
-- **Timing Attack Defense:** Constant-time comparison is used for username matching, password verification, and dummy derivation when the user does not exist.
-- **Session Tokens:** 32-byte cryptographically secure random session tokens (256-bit entropy).
-- **Storage:** Only the SHA-256 hash of the session token is stored in the D1 `admin_sessions` table; plaintext tokens are never stored.
-- **Cookies:** Session cookies are set with `HttpOnly`, `SameSite=Strict`, `Secure`, `Path=/`, and host-only (no `Domain` attribute).
-- **CSRF Defense:** State-changing requests (`POST`, `PUT`, `PATCH`, `DELETE`) require an exact match against the configured Admin origin (`https://admin.techagenz.com` in production, `https://admin-dev.techagenz.com` in development).
-
 ## Database and migration safety
 
 Migration scripts explicitly target `--env dev`. Do not run remote migrations
-as part of ordinary development or this Phase 2 hardening task. Before any
-remote operation, verify `wrangler whoami` matches the approved account. Never
-change the verified D1 ID, recreate existing resources, upload production
-files, or modify production, DNS, or Vercel resources.
+as part of ordinary development. Before any remote operation, verify
+`wrangler whoami` matches the approved account. Never change the verified D1
+ID, recreate existing resources, upload production files, or modify production,
+DNS, or Vercel resources.
+
+The `admin_sessions` table exists in D1 from migration `0004_admin_sessions.sql`.
+This table is now orphaned (no code reads or writes to it) and may be dropped
+via a future migration when convenient. Do not delete the migration file itself,
+as removing applied migrations corrupts the migration chain.

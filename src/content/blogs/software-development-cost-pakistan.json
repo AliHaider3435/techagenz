@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#development-cost",
   "imageAlt": "Illustration of a software project estimate and planning dashboard",
   "excerpt": "Understand the main drivers of custom software development cost in Pakistan, from discovery and integrations to testing, deployment and support.",
-  "keywords": ["software development cost Pakistan", "custom software development cost", "software development company Pakistan", "app development cost Pakistan", "software project estimate"],
-  "keyTakeaways": ["Scope, integrations and non-functional requirements drive effort more than a page count.", "A phased estimate makes assumptions and uncertainty easier to manage.", "Include maintenance, hosting and change requests in the ownership budget."],
+  "keywords": [
+    "software development cost Pakistan",
+    "custom software development cost",
+    "software development company Pakistan",
+    "app development cost Pakistan",
+    "software project estimate"
+  ],
+  "keyTakeaways": [
+    "Scope, integrations and non-functional requirements drive effort more than a page count.",
+    "A phased estimate makes assumptions and uncertainty easier to manage.",
+    "Include maintenance, hosting and change requests in the ownership budget."
+  ],
   "content": [
     "There is no reliable flat price for custom software development in Pakistan because two projects with similar screens can have very different workflows, integrations and security requirements. A useful estimate explains the work behind the number and makes its assumptions visible.",
     "Typical cost drivers include discovery, user roles, data migration, third-party APIs, reporting, mobile support, accessibility, testing and deployment. Existing systems can add complexity when their interfaces or data quality are not documented. Request a technical assessment before fixing a final scope.",
     "Ask a software development company to separate must-have launch features from later phases. The estimate should identify deliverables, dependencies, review points, change-control rules and the people needed at each stage. A short discovery phase can narrow uncertainty before a larger build commitment.",
     "Budget for the product after launch as well: cloud hosting, monitoring, backups, security updates, vendor support and future enhancements. Compare proposals on ownership and total cost over time, rather than choosing an unusually low initial quote without understanding exclusions."
   ],
-  "seo": {"title": "Software Development Cost in Pakistan: Estimate Guide | Tech Agenz", "description": "Learn what affects custom software development costs in Pakistan and how to compare project estimates, scope and long-term ownership costs.", "keywords": "software development cost Pakistan, custom software development cost, software project estimate"}
+  "seo": {
+    "title": "Software Development Cost in Pakistan: Estimate Guide | Tech Agenz",
+    "description": "Learn what affects custom software development costs in Pakistan and how to compare project estimates, scope and long-term ownership costs.",
+    "keywords": "software development cost Pakistan, custom software development cost, software project estimate"
+  }
 }

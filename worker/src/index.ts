@@ -11,9 +11,6 @@
  *   GET  /api/cms/projects/:slug   — Single case study (public)
  *   POST /api/enquiries            — Submit enquiry (Turnstile protected)
  *   GET  /api/r2/:path*            — Get asset from R2 (public)
- *   POST /api/r2/upload            — Upload asset (admin — 401 in Phase 2)
- *   DEL  /api/r2/:path*            — Delete asset (admin — 401 in Phase 2)
- *   *    /api/admin/*              — Admin CRUD (401 in Phase 2)
  */
 
 import { Env } from "./types";
@@ -22,9 +19,7 @@ import { withErrorHandling, errorResponse } from "./middleware/error";
 import { handleHealth } from "./routes/health";
 import { getTeam, getTeamMember, getBlogs, getBlog, getProjects, getProject } from "./routes/cms";
 import { submitEnquiry } from "./routes/enquiries";
-import { handleAdminRequest } from "./routes/admin/index";
-import { getAsset, uploadAsset, deleteAsset } from "./routes/r2";
-import { handleLogin, handleGetSession, handleLogout } from "./routes/auth";
+import { getAsset } from "./routes/r2";
 
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
@@ -80,31 +75,10 @@ export default {
         return submitEnquiry(request, env);
       }
 
-      // ── R2 Assets ──────────────────────────────────────────────────────
-      if (pathname === "/api/r2/upload" && method === "POST") {
-        return uploadAsset(request, env);
-      }
+      // ── R2 Assets (Public Read) ─────────────────────────────────────────
       const r2Match = pathname.match(/^\/api\/r2\/(.+)$/);
-      if (r2Match) {
-        const assetPath = r2Match[1];
-        if (method === "GET") return getAsset(request, env, assetPath);
-        if (method === "DELETE") return deleteAsset(request, env, assetPath);
-      }
-
-      // ── Authentication (Production Shared Sessions & Session Probe) ─────
-      if (pathname === "/api/auth/login" && method === "POST") {
-        return handleLogin(request, env);
-      }
-      if (pathname === "/api/auth/session" && method === "GET") {
-        return handleGetSession(request, env);
-      }
-      if (pathname === "/api/auth/logout" && method === "POST") {
-        return handleLogout(request, env);
-      }
-
-      // ── Admin (all protected) ───────────────────────────────────────────
-      if (pathname === "/api/admin" || pathname.startsWith("/api/admin/")) {
-        return handleAdminRequest(request, env, pathname);
+      if (r2Match && method === "GET") {
+        return getAsset(request, env, r2Match[1]);
       }
 
       // ── 404 ────────────────────────────────────────────────────────────

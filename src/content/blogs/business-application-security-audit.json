@@ -9,13 +9,27 @@
   "image": "/blog-images/software-house-illustrations.svg#security-audit",
   "imageAlt": "Illustration of a magnifying glass reviewing application security",
   "excerpt": "Prepare a business application security review by mapping sensitive data, access, dependencies, logging, backups and remediation ownership.",
-  "keywords": ["business application security audit", "application security assessment Pakistan", "software security audit", "secure software development company", "cybersecurity services Pakistan"],
-  "keyTakeaways": ["Define the systems, data and audit scope before testing begins.", "Review identity, dependency, configuration and recovery controls together.", "Prioritize findings by impact and verify remediation through retesting."],
+  "keywords": [
+    "business application security audit",
+    "application security assessment Pakistan",
+    "software security audit",
+    "secure software development company",
+    "cybersecurity services Pakistan"
+  ],
+  "keyTakeaways": [
+    "Define the systems, data and audit scope before testing begins.",
+    "Review identity, dependency, configuration and recovery controls together.",
+    "Prioritize findings by impact and verify remediation through retesting."
+  ],
   "content": [
     "A business application security audit is most useful when it answers a defined question. Identify the applications, environments, data types and account roles in scope, and agree on how findings will be shared and prioritized.",
     "Review how users authenticate and what each role can access. Check configuration and dependency update practices, secret handling, audit logging, data retention and backup restoration. Security depends on operational processes as well as application code.",
     "Use a qualified reviewer and obtain authorization before any testing that interacts with live systems or third-party services. Protect test data, define safe limits and establish a contact path if an unexpected production issue occurs.",
     "A report should describe impact, evidence, practical remediation and ownership. Track fixes to completion and retest important changes; a security review is a cycle of improvement rather than a one-time certificate that risk has disappeared."
   ],
-  "seo": {"title": "Business Application Security Audit Checklist | Tech Agenz", "description": "Prepare for an application security audit with guidance on scope, identity, data protection, dependencies, backups and remediation.", "keywords": "business application security audit, application security assessment Pakistan, software security audit"}
+  "seo": {
+    "title": "Business Application Security Audit Checklist | Tech Agenz",
+    "description": "Prepare for an application security audit with guidance on scope, identity, data protection, dependencies, backups and remediation.",
+    "keywords": "business application security audit, application security assessment Pakistan, software security audit"
+  }
 }
