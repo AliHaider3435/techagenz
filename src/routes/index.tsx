@@ -6,7 +6,7 @@ import type { EnquiryEmailNotificationStatus } from "@/api/send-enquiry";
 import Footer from "@/components/Footer";
 import BouncyButton from "@/components/BouncyButton";
 import RevealSection from "@/components/RevealSection";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import {
   useTransform,
@@ -38,9 +38,15 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { TechCursor } from "@/components/TechCursor";
-import TeamSection from "@/components/TeamSection";
-import { AnimatedTestimonialsDemo } from "@/components/ui/animated-testimonials";
-import { SplineScene } from "@/components/ui/spline-scene";
+const TeamSection = lazy(() => import("@/components/TeamSection"));
+const AnimatedTestimonialsDemo = lazy(() =>
+  import("@/components/ui/animated-testimonials").then((m) => ({
+    default: m.AnimatedTestimonialsDemo,
+  })),
+);
+const SplineScene = lazy(() =>
+  import("@/components/ui/spline-scene").then((m) => ({ default: m.SplineScene })),
+);
 import WorkSocialProof from "@/components/WorkSocialProof";
 import robotHero from "@/assets/robot-hero.webp";
 import workDev from "@/assets/work-dev.webp";
@@ -80,6 +86,10 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
@@ -88,6 +98,10 @@ export const Route = createFileRoute("/")({
           "Simplify complex operations, automate repetitive tasks, and build smarter digital experiences with Tech Agenz. AI Automation, WhatsApp Automation, ERPNext & Custom Software.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
+      {
+        name: "twitter:image:alt",
+        content: "Tech Agenz — AI Automation & Custom Software Development",
+      },
     ],
     links: [{ rel: "canonical", href: "https://techagenz.com/" }],
   }),
@@ -102,7 +116,7 @@ function Index() {
       <TechCursor />
       <WhatsAppButton />
       <Nav />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <Hero />
         <Marquee />
         <AIVision />
@@ -120,7 +134,15 @@ function Index() {
         </RevealSection>
         <RevealSection>
           <div id="team"></div>
-          <TeamSection members={team} />
+          <Suspense
+            fallback={
+              <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                Loading team...
+              </div>
+            }
+          >
+            <TeamSection members={team} />
+          </Suspense>
         </RevealSection>
         <RevealSection>
           <Portfolio projects={projects} />
@@ -249,21 +271,26 @@ function Hero() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               to="/contact"
-              className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.03]"
+              className="font-display glow-brand inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.03]"
+              aria-label="Book a discovery call with Tech Agenz to discuss your project"
             >
-              Start a project <ArrowUpRight className="h-4 w-4" />
+              Book a Discovery Call <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="https://wa.me/923394555004"
+              href="https://wa.me/923394555004?text=Hi%2C%20I%27d%20like%20to%20discuss%20a%20project%20with%20Tech%20Agenz."
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Chat with Tech Agenz on WhatsApp (opens in new tab)"
               className="font-display inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-3 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
             >
               WhatsApp Us
             </a>
-            <div className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-              Clinics &bull; Law Firms &bull; Growing Businesses
+            <div
+              className="font-display glass-card flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground"
+              aria-label="Industries we serve"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />
+              Startups &bull; SMEs &bull; Healthcare &bull; Legal
             </div>
           </div>
         </div>
@@ -281,12 +308,20 @@ function Hero() {
           <div className="relative z-10 aspect-square w-full rounded-full border border-cyan-400/40 bg-gradient-to-b from-cyan-950/20 via-background/40 to-slate-950/70 p-4 shadow-[0_0_40px_-10px_rgba(34,211,238,0.25)] backdrop-blur-[2px] overflow-hidden flex items-center justify-center">
             {isRobotActive ? (
               /* Only mount Spline AFTER user click — defers the ~2MB bundle from initial load */
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="h-full w-full"
-                style={{ background: "transparent" }}
-                onLoad={handleSplineLoad}
-              />
+              <Suspense
+                fallback={
+                  <div className="h-full w-full flex items-center justify-center text-xs text-cyan-400 animate-pulse">
+                    Loading 3D Engine...
+                  </div>
+                }
+              >
+                <SplineScene
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  className="h-full w-full"
+                  style={{ background: "transparent" }}
+                  onLoad={handleSplineLoad}
+                />
+              </Suspense>
             ) : (
               /* Original 3D Robot preview — kept strictly inside the circle */
               <div
@@ -363,11 +398,13 @@ function Marquee() {
     "Smart Business Automation",
     "AI Automation Services",
     "WhatsApp Automation for Business",
+    "AI Agent Development",
+    "n8n Workflow Automation",
     "AI Chatbot Development",
-    "Custom Software Development in Pakistan",
-    "Web Development Company in Pakistan",
+    "Custom Software Development",
+    "Web Application Development",
     "ERPNext Implementation",
-    "Clinic & Law Firm Systems",
+    "Industry Solutions",
   ];
   return (
     <div className="relative overflow-hidden border-y border-border/70 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 py-10 shadow-[0_0_60px_rgba(59,130,246,0.12)]">
@@ -482,7 +519,7 @@ function AIVision() {
               to="/contact"
               className="font-display inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
             >
-              Get In Touch
+              Book a Discovery Call
             </Link>
           </div>
         </div>
@@ -999,7 +1036,15 @@ function Testimonials() {
           </h2>
         </div>
         <div className="mt-14">
-          <AnimatedTestimonialsDemo />
+          <Suspense
+            fallback={
+              <div className="py-20 text-center text-sm text-muted-foreground animate-pulse">
+                Loading testimonials...
+              </div>
+            }
+          >
+            <AnimatedTestimonialsDemo />
+          </Suspense>
         </div>
       </div>
     </section>

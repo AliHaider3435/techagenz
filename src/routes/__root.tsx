@@ -84,27 +84,22 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 const localBusinessSchema = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": ["ProfessionalService", "LocalBusiness"],
+  "@type": "ProfessionalService",
   name: "Tech Agenz",
+  alternateName: "TechAgenz",
   url: "https://techagenz.com",
-  logo: `https://techagenz.com${logo}`,
+  logo: "https://techagenz.com/logo.webp",
   image: "https://techagenz.com/og-image.jpg",
   description:
-    "Tech Agenz is an AI automation and custom software house in Pakistan specializing in WhatsApp automation, ERPNext implementation, AI chatbot development, and bespoke web platforms.",
+    "Tech Agenz is an AI-powered software development and automation company helping businesses worldwide simplify operations, automate workflows, and build smarter digital platforms with custom software, WhatsApp AI agents, and intelligent automation.",
   telephone: "+923394555004",
   email: "info@techagenz.com",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Tech Agenz Headquarters",
-    addressLocality: "Pakistan",
-    addressRegion: "Pakistan",
-    postalCode: "54000",
+    streetAddress: "Canal Road, Near Pull Sheikh Jallu",
+    addressLocality: "Layyah",
+    addressRegion: "Punjab",
     addressCountry: "PK",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: "31.5204",
-    longitude: "74.3587",
   },
   areaServed: [
     { "@type": "Country", name: "Pakistan" },
@@ -112,6 +107,19 @@ const localBusinessSchema = JSON.stringify({
     { "@type": "Country", name: "United Kingdom" },
     { "@type": "Country", name: "United Arab Emirates" },
     { "@type": "Country", name: "Saudi Arabia" },
+    { "@type": "Country", name: "Canada" },
+    { "@type": "Country", name: "Australia" },
+    { "@type": "Country", name: "Germany" },
+  ],
+  serviceType: [
+    "Custom Software Development",
+    "AI Development and Integration",
+    "Business Process Automation",
+    "WhatsApp AI Agents",
+    "Web Application Development",
+    "SaaS Product Development",
+    "API Integration",
+    "Digital Transformation Consulting",
   ],
   priceRange: "$$",
   openingHoursSpecification: [
@@ -123,6 +131,24 @@ const localBusinessSchema = JSON.stringify({
     },
   ],
   sameAs: ["https://www.linkedin.com/in/haider5617/", "https://github.com/AliHaider3435"],
+  founder: {
+    "@type": "Person",
+    name: "Ali Haider",
+    jobTitle: "Managing Director",
+    url: "https://www.linkedin.com/in/haider5617/",
+  },
+  foundingDate: "2026",
+  knowsAbout: [
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Business Process Automation",
+    "WhatsApp Business API",
+    "Custom Software Development",
+    "React.js",
+    "Node.js",
+    "n8n Workflow Automation",
+    "ERPNext",
+  ],
 });
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -149,10 +175,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "AI automation and custom software development in Pakistan: WhatsApp automation, ERPNext implementation, and bespoke enterprise platforms.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://techagenz.com/" },
       { property: "og:image", content: "https://techagenz.com/og-image.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "Tech Agenz — AI-Powered Software House and Business Automation Company",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@techagenz" },
       { name: "twitter:title", content: "Tech Agenz — AI-Powered Software House in Pakistan" },
       {
         name: "twitter:description",
@@ -160,6 +192,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "AI automation, WhatsApp business solutions, ERPNext systems, and custom software engineered for ambitious teams worldwide.",
       },
       { name: "twitter:image", content: "https://techagenz.com/og-image.jpg" },
+      {
+        name: "twitter:image:alt",
+        content: "Tech Agenz — AI-Powered Software House and Business Automation Company",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
