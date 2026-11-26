@@ -88,7 +88,7 @@ const localBusinessSchema = JSON.stringify({
   name: "Tech Agenz",
   alternateName: "TechAgenz",
   url: "https://techagenz.com",
-  logo: "https://techagenz.com/team-images/team1.webp",
+  logo: "https://techagenz.com/logo.webp",
   image: "https://techagenz.com/og-image.jpg",
   description:
     "Tech Agenz is an AI-powered software development and automation company helping businesses worldwide simplify operations, automate workflows, and build smarter digital platforms with custom software, WhatsApp AI agents, and intelligent automation.",
